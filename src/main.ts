@@ -4,7 +4,7 @@ import GameScene from "./scenes/GameScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 800,
+  width: 500,
   height: 800,
   physics: {
     default: "matter",
