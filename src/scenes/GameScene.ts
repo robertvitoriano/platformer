@@ -4,6 +4,8 @@ export default class Game extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private penguin?: Phaser.Physics.Matter.Sprite;
   private isTouchingGround = false;
+  private touchXThreshold = 160; // Adjust based on your layout
+  private touchYThreshold = 400; // Adjust based on your layout
 
   constructor() {
     super("game");
@@ -64,6 +66,8 @@ export default class Game extends Phaser.Scene {
     if (!this.penguin) return;
 
     const speed = 5;
+
+    // Handle keyboard controls
     if (this.cursors.left.isDown) {
       this.penguin.play("player-walk", true);
       this.penguin.setVelocityX(-speed);
@@ -77,8 +81,36 @@ export default class Game extends Phaser.Scene {
       this.penguin.setVelocityX(0);
     }
 
-    const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
+    // Handle touch controls
+    if (this.input.pointer1.isDown) {
+      const touchX = this.input.pointer1.x;
+      const touchY = this.input.pointer1.y;
 
+      if (touchY > this.touchYThreshold) {
+        // Jump
+        if (this.isTouchingGround) {
+          this.penguin.setVelocityY(-15);
+          this.isTouchingGround = false;
+        }
+      } else if (touchX < this.touchXThreshold) {
+        // Move left
+        this.penguin.play("player-walk", true);
+        this.penguin.setVelocityX(-speed);
+        this.penguin.setFlipX(true);
+      } else {
+        // Move right
+        this.penguin.play("player-walk", true);
+        this.penguin.setVelocityX(speed);
+        this.penguin.setFlipX(false);
+      }
+    } else {
+      // No touch input, reset velocity or animations
+      this.penguin.setVelocityX(0);
+      this.penguin.play("player-idle", true);
+    }
+
+    // Check for spacebar (jump) input
+    const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
     if (spaceJustPressed && this.isTouchingGround) {
       this.penguin.setVelocityY(-15);
       this.isTouchingGround = false;
