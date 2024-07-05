@@ -28,7 +28,7 @@ export default class Game extends Phaser.Scene {
       "assets/items-animations/coins/blue-coin-hexagon.json"
     );
     this.load.image("tiles", "assets/sheet.png");
-    this.load.image("background", "assets/bg.png");
+    this.load.image("bg", "assets/bg.png");
 
     this.load.tilemapTiledJSON(
       "penguin-game-tilemap",
@@ -38,17 +38,21 @@ export default class Game extends Phaser.Scene {
 
   create() {
     const map = this.make.tilemap({ key: "penguin-game-tilemap" });
+
+    const bg = this.add.tileSprite(
+      0,
+      0,
+      map.widthInPixels,
+      map.heightInPixels,
+      "bg"
+    );
+    bg.setOrigin(0, 0);
     const tileSet = map.addTilesetImage("iceworld", "tiles");
     const tilesetHeight = map.heightInPixels;
     this.cameras.main.setBounds(0, 0, map.widthInPixels, tilesetHeight);
     this.cameras.main.scrollY = tilesetHeight;
 
-    // const background = this.add.image(0, 1200, "background");
-    // background.setDisplaySize(
-    //   this.cameras.main.width,
-    //   this.cameras.main.height
-    // );
-    this.cameras.main.setBackgroundColor(0xc9edf0);
+    //this.cameras.main.setBackgroundColor(0xc9edf0);
 
     const ground = map.createLayer("ground", tileSet);
     ground.setCollisionByProperty({ collides: true });
