@@ -1,12 +1,12 @@
 import Phaser from "phaser";
 import PlayerController from "./PlayerController";
-import CoinController from "./CoinController";
+import ItemController from "./ItemController";
 
 export default class Game extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private penguin?: Phaser.Physics.Matter.Sprite;
   private playerController?: PlayerController;
-  private coinController?: CoinController;
+  private coins?: ItemController[] = [];
 
   constructor() {
     super("game");
@@ -61,11 +61,15 @@ export default class Game extends Phaser.Scene {
 
           break;
         }
-        case "star-position": {
-          const coin = this.matter.add
-            .sprite(x + width / 2, y, "blue-hexagon-coin")
-            .play("blue-hexagon-coin-rotation");
-          this.coinController = new CoinController(coin);
+        case "blue-coin-hexagon": {
+          const coin = this.matter.add.sprite(
+            x + width / 2,
+            y,
+            "blue-hexagon-coin"
+          );
+          this.coins?.push(
+            new ItemController(coin, "blue-hexagon-coin-rotation")
+          );
 
           break;
         }
@@ -79,5 +83,10 @@ export default class Game extends Phaser.Scene {
     if (!this.playerController) return;
 
     this.playerController.update(deltaTime);
+    this.coins!.forEach((coin: ItemController) => {
+      if (coin.getHasBeenCollected) {
+        coin.getSprite.destroy();
+      }
+    });
   }
 }
