@@ -28,7 +28,8 @@ export default class Game extends Phaser.Scene {
       "assets/items-animations/coins/blue-coin-hexagon.json"
     );
     this.load.image("tiles", "assets/sheet.png");
-    // this.load.image("background-image", "assets/bg.png");
+    this.load.image("background", "assets/bg.png");
+
     this.load.tilemapTiledJSON(
       "penguin-game-tilemap",
       "assets/penguin-game-tile.json"
@@ -41,6 +42,14 @@ export default class Game extends Phaser.Scene {
     const tilesetHeight = map.heightInPixels;
     this.cameras.main.setBounds(0, 0, map.widthInPixels, tilesetHeight);
     this.cameras.main.scrollY = tilesetHeight;
+
+    // const background = this.add.image(0, 1200, "background");
+    // background.setDisplaySize(
+    //   this.cameras.main.width,
+    //   this.cameras.main.height
+    // );
+    this.cameras.main.setBackgroundColor(0xc9edf0);
+
     const ground = map.createLayer("ground", tileSet);
     ground.setCollisionByProperty({ collides: true });
 
