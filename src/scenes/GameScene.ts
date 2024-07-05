@@ -4,8 +4,8 @@ export default class Game extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private penguin?: Phaser.Physics.Matter.Sprite;
   private isTouchingGround = false;
-  private touchXThreshold = 160; // Adjust based on your layout
-  private touchYThreshold = 400; // Adjust based on your layout
+  private touchXThreshold = 160;
+  private touchYThreshold = 400;
 
   constructor() {
     super("game");
