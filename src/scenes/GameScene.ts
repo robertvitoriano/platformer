@@ -1,10 +1,12 @@
 import Phaser from "phaser";
 import PlayerController from "./PlayerController";
+import CoinController from "./CoinController";
 
 export default class Game extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private penguin?: Phaser.Physics.Matter.Sprite;
   private playerController?: PlayerController;
+  private coinController?: CoinController;
 
   constructor() {
     super("game");
@@ -19,6 +21,11 @@ export default class Game extends Phaser.Scene {
       "penguin-animation-frames",
       "assets/penguin-animation/penguin-animation.png",
       "assets/penguin-animation/penguin-animation.json"
+    );
+    this.load.atlas(
+      "blue-hexagon-coin",
+      "assets/items-animations/coins/blue-coin-hexagon.png",
+      "assets/items-animations/coins/blue-coin-hexagon.json"
     );
     this.load.image("tiles", "assets/sheet.png");
     this.load.tilemapTiledJSON(
@@ -51,6 +58,14 @@ export default class Game extends Phaser.Scene {
           );
 
           this.cameras.main.startFollow(this.playerController.getSprite);
+
+          break;
+        }
+        case "star-position": {
+          const coin = this.matter.add
+            .sprite(x + width / 2, y, "blue-hexagon-coin")
+            .play("blue-hexagon-coin-rotation");
+          this.coinController = new CoinController(coin);
 
           break;
         }
