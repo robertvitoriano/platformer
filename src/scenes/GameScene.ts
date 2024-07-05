@@ -28,6 +28,7 @@ export default class Game extends Phaser.Scene {
       "assets/items-animations/coins/blue-coin-hexagon.json"
     );
     this.load.image("tiles", "assets/sheet.png");
+    // this.load.image("background-image", "assets/bg.png");
     this.load.tilemapTiledJSON(
       "penguin-game-tilemap",
       "assets/penguin-game-tile.json"
@@ -83,10 +84,5 @@ export default class Game extends Phaser.Scene {
     if (!this.playerController) return;
 
     this.playerController.update(deltaTime);
-    this.coins!.forEach((coin: ItemController) => {
-      if (coin.getHasBeenCollected) {
-        coin.getSprite.destroy();
-      }
-    });
   }
 }

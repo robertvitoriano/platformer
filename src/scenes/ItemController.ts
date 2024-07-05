@@ -13,22 +13,21 @@ export default class ItemController {
     this.createAnimations();
     this.sprite.setIgnoreGravity(true);
     this.sprite.play(itemAnimation);
-    this.sprite.setOnCollide(({ bodyA, bodyB }: MatterJS.ICollisionPair) => {
-      //@ts-ignore
-      if (!bodyA.gameObject && !bodyB.gameObject) return;
-      console.log({ bodyA, bodyB });
-
-      if (
-        //@ts-ignore
-        bodyA.gameObject.texture?.key === "penguin-animation-frames" ||
-        //@ts-ignore
-        bodyB.gameObject.texture?.key === "penguin-animation-frames"
-      ) {
+    this.sprite.setOnCollide(
+      ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
+        if (!bodyA.gameObject && !bodyB.gameObject) return;
         console.log({ bodyA, bodyB });
-        this.hasBeenCollected = true;
-        return;
+
+        if (
+          bodyA.gameObject.texture?.key === "penguin-animation-frames" ||
+          bodyB.gameObject.texture?.key === "penguin-animation-frames"
+        ) {
+          this.sprite.destroy();
+
+          return;
+        }
       }
-    });
+    );
   }
   public get getSprite(): Phaser.Physics.Matter.Sprite {
     return this.sprite;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="70" tileheight="70" infinite="0" nextlayerid="4" nextobjectid="24">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="70" tileheight="70" infinite="0" nextlayerid="5" nextobjectid="24">
  <editorsettings>
   <export target="penguin-game-tile.json" format="json"/>
  </editorsettings>
@@ -550,6 +550,7 @@
 17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,50,50,50,50,50,50,50,50,50,50,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19
 </data>
  </layer>
+ <imagelayer id="4" name="icebergs-background"/>
  <objectgroup id="2" name="objects" offsetx="4.26326e-14" offsety="-2">
   <object id="1" name="spawn-position" x="7" y="3089" width="61" height="60"/>
   <object id="6" name="blue-coin-hexagon" x="632" y="3010.67" width="65.3333" height="69.3333"/>
