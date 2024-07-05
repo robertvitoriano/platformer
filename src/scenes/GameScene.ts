@@ -15,7 +15,7 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     this.load.atlas(
-      "penguin",
+      "penguin-animation-frames",
       "assets/penguin-animation/penguin-animation.png",
       "assets/penguin-animation/penguin-animation.json"
     );
@@ -43,7 +43,7 @@ export default class Game extends Phaser.Scene {
       switch (name) {
         case "spawn-position": {
           this.penguin = this.matter.add
-            .sprite(x + width / 2, y, "penguin")
+            .sprite(x + width / 2, y, "penguin-animation-frames")
             .play("player-idle")
             .setFixedRotation();
 
@@ -83,18 +83,35 @@ export default class Game extends Phaser.Scene {
       this.penguin.setVelocityY(-15);
       this.isTouchingGround = false;
     }
+    if (!this.isTouchingGround) {
+      this.penguin.play("player-jump", true);
+    }
   }
 
   private createPenguinAnimations() {
     this.anims.create({
       key: "player-idle",
-      frames: [{ key: "penguin", frame: "penguin_walk01.png" }],
+      frames: [
+        { key: "penguin-animation-frames", frame: "penguin_walk01.png" },
+      ],
+    });
+
+    this.anims.create({
+      key: "player-jump",
+      frameRate: 10,
+      frames: this.anims.generateFrameNames("penguin-animation-frames", {
+        start: 1,
+        end: 4,
+        prefix: "penguin_jump0",
+        suffix: ".png",
+      }),
+      repeat: -1,
     });
 
     this.anims.create({
       key: "player-walk",
       frameRate: 10,
-      frames: this.anims.generateFrameNames("penguin", {
+      frames: this.anims.generateFrameNames("penguin-animation-frames", {
         start: 1,
         end: 4,
         prefix: "penguin_walk0",
