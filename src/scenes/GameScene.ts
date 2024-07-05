@@ -20,7 +20,9 @@ export default class Game extends Phaser.Scene {
       "assets/penguin-animation/penguin-animation.png",
       "assets/penguin-animation/penguin-animation.json"
     );
-    this.load.image("tiles", "assets/sheet.png");
+    this.load.image("ice-world-tiles", "assets/sheet.png");
+    this.load.image("bg", "assets/bg-icebergs-1@2x.png");
+
     this.load.tilemapTiledJSON(
       "penguin-game-tilemap",
       "assets/penguin-game-tile.json"
@@ -29,15 +31,26 @@ export default class Game extends Phaser.Scene {
 
   create() {
     const map = this.make.tilemap({ key: "penguin-game-tilemap" });
-    const tileSet = map.addTilesetImage("iceworld", "tiles");
+
+    const bg = this.add.tileSprite(
+      0,
+      0,
+      map.widthInPixels,
+      map.heightInPixels,
+      "bg"
+    );
+    bg.setOrigin(0, 0);
+
+    const tileSet = map.addTilesetImage("iceworld", "ice-world-tiles");
+
     const tilesetHeight = map.heightInPixels;
     this.cameras.main.setBounds(0, 0, map.widthInPixels, tilesetHeight);
     this.cameras.main.scrollY = tilesetHeight;
     const ground = map.createLayer("ground", tileSet);
+
     ground.setCollisionByProperty({ collides: true });
 
     const objectsLayer = map.getObjectLayer("objects");
-
     objectsLayer.objects.forEach((objectData) => {
       const { x = 0, y = 0, name, width = 0 } = objectData;
       switch (name) {
