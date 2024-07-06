@@ -119,7 +119,7 @@ export default class PlayerController {
 
   private jumpOnEnter() {
     this.sprite.setVelocityY(-this.mainSpeed * 3);
-    this.sprite.play("player-jump");
+    this.sprite.scene.sound.play("jump-sound");
   }
 
   private jumpOnUpdate() {
@@ -189,18 +189,13 @@ export default class PlayerController {
     this.uiContainer?.add(this.rightTouchArea);
 
     this.bottomTouchArea = this.sprite.scene.add
-      .zone(0, height, width, 100)
+      .zone(width / 2, height + 1200, width / 3, 100)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
       .on("pointerup", () => this.onTouchEnd());
     this.uiContainer?.add(this.bottomTouchArea);
   }
-
-  // private drawTouchIndicator(x: number, y: number) {
-  //   const circle = this.sprite.scene.add.circle(x, y, 50, 0xff0000, 0.5);
-  //   this.uiContainer?.add(circle);
-  // }
 
   private onLeftTouchStart() {
     this.sprite.setVelocityX(-this.mainSpeed);
@@ -231,6 +226,8 @@ export default class PlayerController {
     this.sprite.setVelocityX(0);
     if (this.stateMachine.isCurrentState("walk")) {
       this.stateMachine.setState("idle");
+      this.hasTouchedLeft = false;
+      this.hasTouchedRight = false;
     }
   }
 }
