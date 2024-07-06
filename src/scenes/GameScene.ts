@@ -35,10 +35,11 @@ export default class Game extends Phaser.Scene {
       "assets/penguin-game-tile.json"
     );
     this.load.audio("jump-sound", [
-      "assets/audio/sx/jump.mp3",
-      "assets/audio/sx/jump.ogg",
-      "assets/audio/sx/jump.wav",
+      "assets/audio/sx/jump/jump.mp3",
+      "assets/audio/sx/jump/jump.ogg",
+      "assets/audio/sx/jump/jump.wav",
     ]);
+    this.load.audio("coin-picked-sound", ["assets/audio/sx/coin-picked.mp3"]);
   }
 
   create() {

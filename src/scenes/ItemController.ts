@@ -16,12 +16,12 @@ export default class ItemController {
     this.sprite.setOnCollide(
       ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
         if (!bodyA.gameObject && !bodyB.gameObject) return;
-        console.log({ bodyA, bodyB });
 
         if (
           bodyA.gameObject.texture?.key === "penguin-animation-frames" ||
           bodyB.gameObject.texture?.key === "penguin-animation-frames"
         ) {
+          this.sprite.scene.sound.play("coin-picked-sound");
           this.sprite.destroy();
 
           return;
