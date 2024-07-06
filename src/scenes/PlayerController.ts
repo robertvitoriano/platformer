@@ -119,7 +119,7 @@ export default class PlayerController {
 
   private jumpOnEnter() {
     this.sprite.setVelocityY(-this.mainSpeed * 3);
-    this.sprite.play("player-jump");
+    this.sprite.scene.sound.play("jump-sound");
   }
 
   private jumpOnUpdate() {
