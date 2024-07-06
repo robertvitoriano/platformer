@@ -30,6 +30,7 @@ export default class PlayerController {
       .addState("walk", {
         onEnter: this.walkOnEnter,
         onUpdate: this.walkOnUpdate,
+        onExit: this.walkOnExit,
       })
       .addState("jump", {
         onEnter: this.jumpOnEnter,
@@ -111,16 +112,21 @@ export default class PlayerController {
     }
   }
 
+  private walkOnExit() {
+    this.hasTouchedLeft = false;
+    this.hasTouchedRight = false;
+  }
+
   private jumpOnEnter() {
     this.sprite.setVelocityY(-this.mainSpeed * 3);
     this.sprite.play("player-jump");
   }
 
   private jumpOnUpdate() {
-    if (this.cursors.left.isDown) {
+    if (this.cursors.left.isDown || this.hasTouchedLeft) {
       this.sprite.setVelocityX(-this.mainSpeed);
       this.sprite.setFlipX(true);
-    } else if (this.cursors.right.isDown) {
+    } else if (this.cursors.right.isDown || this.hasTouchedRight) {
       this.sprite.setVelocityX(this.mainSpeed);
       this.sprite.setFlipX(false);
     }
@@ -165,8 +171,7 @@ export default class PlayerController {
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
     const touchableWidth = width / 4;
-    const touchableHeight = height * 0.7;
-    const walkButtonsYPosition = height * 0.8;
+
     this.leftTouchArea = this.sprite.scene.add
       .zone(100, height, touchableWidth, height)
       .setOrigin(0)
@@ -184,7 +189,7 @@ export default class PlayerController {
     this.uiContainer?.add(this.rightTouchArea);
 
     this.bottomTouchArea = this.sprite.scene.add
-      .zone(0, 0, width, 400)
+      .zone(0, height - 100, width, 100)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
@@ -220,8 +225,6 @@ export default class PlayerController {
     ) {
       this.stateMachine.setState("jump");
     }
-    this.hasTouchedLeft = false;
-    this.hasTouchedRight = false;
   }
 
   private onTouchEnd() {
@@ -229,7 +232,5 @@ export default class PlayerController {
     if (this.stateMachine.isCurrentState("walk")) {
       this.stateMachine.setState("idle");
     }
-    this.hasTouchedLeft = false;
-    this.hasTouchedRight = false;
   }
 }
