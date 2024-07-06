@@ -184,7 +184,7 @@ export default class PlayerController {
     this.uiContainer?.add(this.rightTouchArea);
 
     this.bottomTouchArea = this.sprite.scene.add
-      .zone(0, height, width, 400)
+      .zone(0, 0, width, 400)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
