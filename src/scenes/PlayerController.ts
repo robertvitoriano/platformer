@@ -164,11 +164,11 @@ export default class PlayerController {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-    const touchableWidth = width / 3;
+    const touchableWidth = width / 4;
     const touchableHeight = height * 0.7;
     const walkButtonsYPosition = height * 0.8;
     this.leftTouchArea = this.sprite.scene.add
-      .zone(width / 6, walkButtonsYPosition, touchableWidth, touchableHeight)
+      .zone(100, height, touchableWidth, height)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onLeftTouchStart())
@@ -177,12 +177,7 @@ export default class PlayerController {
     this.drawTouchIndicator(width / 6, walkButtonsYPosition);
 
     this.rightTouchArea = this.sprite.scene.add
-      .zone(
-        (width / 6) * 5,
-        walkButtonsYPosition,
-        touchableWidth,
-        touchableHeight
-      )
+      .zone(width - 100, height, touchableWidth, height)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onRightTouchStart())
