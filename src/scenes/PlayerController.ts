@@ -15,6 +15,7 @@ export default class PlayerController {
   private hasTouchedLeft?: boolean = false;
   private hasTouchedRight?: boolean = false;
   private uiContainer?: Phaser.GameObjects.Container;
+  private totalHealth: number = 100;
   constructor(sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys) {
     this.sprite = sprite;
     this.cursors = cursors;
@@ -44,6 +45,9 @@ export default class PlayerController {
     });
 
     this.isTouchDevice = this.checkTouchDevice();
+
+    this.setupUiContainer();
+
     if (this.isTouchDevice) {
       this.setupTouchControls();
     }
@@ -55,6 +59,18 @@ export default class PlayerController {
 
   public get getSprite(): Phaser.Physics.Matter.Sprite {
     return this.sprite;
+  }
+
+  private setupUiContainer() {
+    this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0);
+    const healthBar = this.sprite.scene.add.rectangle(
+      300,
+      100,
+      this.totalHealth * 4,
+      70,
+      0x00ff00
+    );
+    this.uiContainer.add(healthBar);
   }
 
   private idleOnEnter() {
@@ -148,7 +164,6 @@ export default class PlayerController {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-    this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0);
 
     this.leftTouchArea = this.sprite.scene.add
       .zone(0, height / 3 - 400, width / 3, height)
