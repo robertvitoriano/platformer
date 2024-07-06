@@ -164,33 +164,33 @@ export default class PlayerController {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-
+    console.log({ height: height * 0.7 });
     this.leftTouchArea = this.sprite.scene.add
-      .zone(0, height / 3 - 400, width / 3, height)
+      .zone(width / 6, height * 0.8, width / 3, height * 0.7)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onLeftTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer.add(this.leftTouchArea);
-    this.drawTouchIndicator(width / 6, height / 2);
+    this.uiContainer?.add(this.leftTouchArea);
+    this.drawTouchIndicator(width / 6, height * 0.8);
 
     this.rightTouchArea = this.sprite.scene.add
-      .zone((width / 3) * 2, height / 3 - 400, width / 3, height)
+      .zone((width / 6) * 5, height * 0.8, width / 3, height * 0.7)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onRightTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer.add(this.rightTouchArea);
-    this.drawTouchIndicator((width / 6) * 5, height / 2);
+    this.uiContainer?.add(this.rightTouchArea);
+    this.drawTouchIndicator((width / 6) * 5, height * 0.8);
 
     this.bottomTouchArea = this.sprite.scene.add
-      .zone(0, 3400, width, height / 3)
+      .zone(width / 2, height * 0.9, width / 3, height * 0.7)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer.add(this.bottomTouchArea);
-    this.drawTouchIndicator(width / 2, 2000);
+    this.uiContainer?.add(this.bottomTouchArea);
+    this.drawTouchIndicator(width / 2, height * 0.9);
   }
 
   private drawTouchIndicator(x: number, y: number) {
