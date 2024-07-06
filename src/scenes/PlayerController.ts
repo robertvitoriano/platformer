@@ -14,7 +14,7 @@ export default class PlayerController {
   private bottomTouchArea?: Phaser.GameObjects.Zone;
   private hasTouchedLeft?: boolean = false;
   private hasTouchedRight?: boolean = false;
-
+  private uiContainer?: Phaser.GameObjects.Container;
   constructor(sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys) {
     this.sprite = sprite;
     this.cursors = cursors;
@@ -148,9 +148,7 @@ export default class PlayerController {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-    const uiContainer = this.sprite.scene.add
-      .container(0, 0)
-      .setScrollFactor(0);
+    this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0);
 
     this.leftTouchArea = this.sprite.scene.add
       .zone(0, height / 3 - 400, width / 3, height)
@@ -158,8 +156,8 @@ export default class PlayerController {
       .setInteractive()
       .on("pointerdown", () => this.onLeftTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    uiContainer.add(this.leftTouchArea);
-    this.drawTouchIndicator(uiContainer, width / 6, height / 2);
+    this.uiContainer.add(this.leftTouchArea);
+    this.drawTouchIndicator(width / 6, height / 2);
 
     this.rightTouchArea = this.sprite.scene.add
       .zone((width / 3) * 2, height / 3 - 400, width / 3, height)
@@ -167,8 +165,8 @@ export default class PlayerController {
       .setInteractive()
       .on("pointerdown", () => this.onRightTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    uiContainer.add(this.rightTouchArea);
-    this.drawTouchIndicator(uiContainer, (width / 6) * 5, height / 2);
+    this.uiContainer.add(this.rightTouchArea);
+    this.drawTouchIndicator((width / 6) * 5, height / 2);
 
     this.bottomTouchArea = this.sprite.scene.add
       .zone(0, 3400, width, height / 3)
@@ -176,17 +174,13 @@ export default class PlayerController {
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    uiContainer.add(this.bottomTouchArea);
-    this.drawTouchIndicator(uiContainer, width / 2, 2000);
+    this.uiContainer.add(this.bottomTouchArea);
+    this.drawTouchIndicator(width / 2, 2000);
   }
 
-  private drawTouchIndicator(
-    container: Phaser.GameObjects.Container,
-    x: number,
-    y: number
-  ) {
+  private drawTouchIndicator(x: number, y: number) {
     const circle = this.sprite.scene.add.circle(x, y, 50, 0xff0000, 0.5);
-    container.add(circle);
+    this.uiContainer?.add(circle);
   }
 
   private onLeftTouchStart() {
