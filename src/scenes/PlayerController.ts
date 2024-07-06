@@ -166,24 +166,29 @@ export default class PlayerController {
     const { width, height } = this.sprite.scene.scale;
     const touchableWidth = width / 3;
     const touchableHeight = height * 0.7;
-    const walkButtonsHeight = height * 0.8;
+    const walkButtonsYPosition = height * 0.8;
     this.leftTouchArea = this.sprite.scene.add
-      .zone(width / 6, walkButtonsHeight, touchableWidth, touchableHeight)
+      .zone(width / 6, walkButtonsYPosition, touchableWidth, touchableHeight)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onLeftTouchStart())
       .on("pointerup", () => this.onTouchEnd());
     this.uiContainer?.add(this.leftTouchArea);
-    this.drawTouchIndicator(width / 6, walkButtonsHeight);
+    this.drawTouchIndicator(width / 6, walkButtonsYPosition);
 
     this.rightTouchArea = this.sprite.scene.add
-      .zone((width / 6) * 5, walkButtonsHeight, touchableWidth, touchableHeight)
+      .zone(
+        (width / 6) * 5,
+        walkButtonsYPosition,
+        touchableWidth,
+        touchableHeight
+      )
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onRightTouchStart())
       .on("pointerup", () => this.onTouchEnd());
     this.uiContainer?.add(this.rightTouchArea);
-    this.drawTouchIndicator((width / 6) * 5, walkButtonsHeight);
+    this.drawTouchIndicator((width / 6) * 5, walkButtonsYPosition);
 
     this.bottomTouchArea = this.sprite.scene.add
       .zone(width / 2, height * 0.9, touchableWidth, touchableHeight)
