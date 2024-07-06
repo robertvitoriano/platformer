@@ -174,7 +174,6 @@ export default class PlayerController {
       .on("pointerdown", () => this.onLeftTouchStart())
       .on("pointerup", () => this.onTouchEnd());
     this.uiContainer?.add(this.leftTouchArea);
-    this.drawTouchIndicator(width / 6, walkButtonsYPosition);
 
     this.rightTouchArea = this.sprite.scene.add
       .zone(width - 100, height, touchableWidth, height)
@@ -183,22 +182,20 @@ export default class PlayerController {
       .on("pointerdown", () => this.onRightTouchStart())
       .on("pointerup", () => this.onTouchEnd());
     this.uiContainer?.add(this.rightTouchArea);
-    this.drawTouchIndicator((width / 6) * 5, walkButtonsYPosition);
 
     this.bottomTouchArea = this.sprite.scene.add
-      .zone(width / 2, height * 0.9, touchableWidth, touchableHeight)
+      .zone(0, height, width, 400)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
       .on("pointerup", () => this.onTouchEnd());
     this.uiContainer?.add(this.bottomTouchArea);
-    this.drawTouchIndicator(width / 2, height * 0.9);
   }
 
-  private drawTouchIndicator(x: number, y: number) {
-    const circle = this.sprite.scene.add.circle(x, y, 50, 0xff0000, 0.5);
-    this.uiContainer?.add(circle);
-  }
+  // private drawTouchIndicator(x: number, y: number) {
+  //   const circle = this.sprite.scene.add.circle(x, y, 50, 0xff0000, 0.5);
+  //   this.uiContainer?.add(circle);
+  // }
 
   private onLeftTouchStart() {
     this.sprite.setVelocityX(-this.mainSpeed);
