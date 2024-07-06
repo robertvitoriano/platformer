@@ -147,38 +147,48 @@ export default class PlayerController {
   }
 
   private setupTouchControls() {
-    const { width } = this.sprite.scene.scale;
+    const { width, height } = this.sprite.scene.scale;
+    const uiContainer = this.sprite.scene.add
+      .container(0, 0)
+      .setScrollFactor(0);
 
     this.leftTouchArea = this.sprite.scene.add
-      .zone(50, 3050, 100, 100)
+      .zone(0, height / 3 - 400, width / 3, height)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onLeftTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    this.drawTouchIndicator(100, 3050, 100);
+    uiContainer.add(this.leftTouchArea);
+    this.drawTouchIndicator(uiContainer, width / 6, height / 2);
 
     this.rightTouchArea = this.sprite.scene.add
-      .zone(width - 150, 3000, 100, 100)
+      .zone((width / 3) * 2, height / 3 - 400, width / 3, height)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onRightTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-
-    this.drawTouchIndicator(width - 150, 3050, 100);
+    uiContainer.add(this.rightTouchArea);
+    this.drawTouchIndicator(uiContainer, (width / 6) * 5, height / 2);
 
     this.bottomTouchArea = this.sprite.scene.add
-      .zone(width / 3 + 150, 3400, 100, 100)
+      .zone(0, 3400, width, height / 3)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-
-    this.drawTouchIndicator(width / 2, 3400, 100);
+    uiContainer.add(this.bottomTouchArea);
+    this.drawTouchIndicator(uiContainer, width / 2, 2000);
   }
 
-  private drawTouchIndicator(x: number, y: number, width: number) {
-    this.sprite.scene.add.circle(x, y, width, 0xff0000, 0.5);
+  private drawTouchIndicator(
+    container: Phaser.GameObjects.Container,
+    x: number,
+    y: number
+  ) {
+    const circle = this.sprite.scene.add.circle(x, y, 50, 0xff0000, 0.5);
+    container.add(circle);
   }
+
   private onLeftTouchStart() {
     this.sprite.setVelocityX(-this.mainSpeed);
     this.sprite.setFlipX(true);
