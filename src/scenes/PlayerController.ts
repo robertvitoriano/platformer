@@ -164,7 +164,7 @@ export default class PlayerController {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-    console.log({ height: height * 0.7 });
+
     this.leftTouchArea = this.sprite.scene.add
       .zone(width / 6, height * 0.8, width / 3, height * 0.7)
       .setOrigin(0)
