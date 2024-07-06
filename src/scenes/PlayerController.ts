@@ -164,27 +164,29 @@ export default class PlayerController {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-
+    const touchableWidth = width / 3;
+    const touchableHeight = height * 0.7;
+    const walkButtonsHeight = height * 0.8;
     this.leftTouchArea = this.sprite.scene.add
-      .zone(width / 6, height * 0.8, width / 3, height * 0.7)
+      .zone(width / 6, walkButtonsHeight, touchableWidth, touchableHeight)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onLeftTouchStart())
       .on("pointerup", () => this.onTouchEnd());
     this.uiContainer?.add(this.leftTouchArea);
-    this.drawTouchIndicator(width / 6, height * 0.8);
+    this.drawTouchIndicator(width / 6, walkButtonsHeight);
 
     this.rightTouchArea = this.sprite.scene.add
-      .zone((width / 6) * 5, height * 0.8, width / 3, height * 0.7)
+      .zone((width / 6) * 5, walkButtonsHeight, touchableWidth, touchableHeight)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onRightTouchStart())
       .on("pointerup", () => this.onTouchEnd());
     this.uiContainer?.add(this.rightTouchArea);
-    this.drawTouchIndicator((width / 6) * 5, height * 0.8);
+    this.drawTouchIndicator((width / 6) * 5, walkButtonsHeight);
 
     this.bottomTouchArea = this.sprite.scene.add
-      .zone(width / 2, height * 0.9, width / 3, height * 0.7)
+      .zone(width / 2, height * 0.9, touchableWidth, touchableHeight)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
