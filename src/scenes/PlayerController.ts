@@ -53,9 +53,9 @@ export default class PlayerController {
 
     this.setupUiContainer();
 
-    if (this.isTouchDevice) {
-      this.setupTouchControls();
-    }
+    // if (this.isTouchDevice) {
+    this.setupTouchControls();
+    // }
   }
 
   update(deltaTime: number) {
@@ -84,7 +84,12 @@ export default class PlayerController {
   }
 
   private idleOnUpdate() {
-    if (this.cursors.left.isDown || this.cursors.right.isDown) {
+    if (
+      this.cursors.left.isDown ||
+      this.cursors.right.isDown ||
+      this.hasTouchedLeft ||
+      this.hasTouchedRight
+    ) {
       this.stateMachine.setState("walk");
     }
     const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
@@ -105,11 +110,9 @@ export default class PlayerController {
     if (this.cursors.left.isDown || this.hasTouchedLeft) {
       this.sprite.setVelocityX(-this.mainSpeed);
       this.sprite.setFlipX(true);
-      this.stateMachine.setState("walk");
     } else if (this.cursors.right.isDown || this.hasTouchedRight) {
       this.sprite.setVelocityX(this.mainSpeed);
       this.sprite.setFlipX(false);
-      this.stateMachine.setState("walk");
     } else {
       this.sprite.setVelocityX(0);
       this.stateMachine.setState("idle");
@@ -188,9 +191,8 @@ export default class PlayerController {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-
     this.leftButton = this.sprite.scene.add
-      .image(100, height - 100, "left-button")
+      .image(100, height - 200, "left-button")
       .setInteractive()
       .setAlpha(0.5)
       .on("pointerdown", () => this.onLeftTouchStart())
@@ -198,7 +200,7 @@ export default class PlayerController {
     this.uiContainer?.add(this.leftButton);
 
     this.rightButton = this.sprite.scene.add
-      .image(width - 100, height - 100, "right-button")
+      .image(width - 100, height - 200, "right-button")
       .setInteractive()
       .setAlpha(0.5)
       .on("pointerdown", () => this.onRightTouchStart())
@@ -206,7 +208,7 @@ export default class PlayerController {
     this.uiContainer?.add(this.rightButton);
 
     this.jumpButton = this.sprite.scene.add
-      .image(width / 2, height - 50, "jump-button")
+      .image(width / 2, height - 100, "jump-button")
       .setInteractive()
       .setAlpha(0.5)
       .on("pointerdown", () => this.onJumpTouchStart())
@@ -223,10 +225,9 @@ export default class PlayerController {
   }
 
   private onRightTouchStart() {
-    console.log("IS TOUCHING RIGHT");
-    this.stateMachine.setState("walk");
     this.sprite.setVelocityX(this.mainSpeed);
     this.sprite.setFlipX(false);
+    this.stateMachine.setState("walk");
     this.hasTouchedLeft = false;
     this.hasTouchedRight = true;
   }
