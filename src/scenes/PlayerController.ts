@@ -79,6 +79,7 @@ export default class PlayerController {
 
   private idleOnEnter() {
     this.sprite.play("player-idle");
+    this.sprite.scene.sound.play("jump-fall-sound");
   }
 
   private idleOnUpdate() {
@@ -127,7 +128,6 @@ export default class PlayerController {
     this.sprite.scene.sound.stopByKey("foot-steps-sound");
   }
   private jumpOnExit() {
-    this.sprite.scene.sound.play("jump-fall-sound");
     this.isTouchingGround = true;
   }
 
