@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A typescript template project for Phaser 3 using Parceljs",
   "scripts": {
-    "start": "rm dist -r & rm .cache -r && parcel src/index.html -p 7000",
+    "start": "parcel src/index.html -p 7000",
     "build": "parcel build src/index.html  --out-dir dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "android": "npm run build && npx cap run android",
