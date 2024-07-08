@@ -1,8 +1,8 @@
 import Phaser from "phaser";
-import PlayerController from "./PlayerController";
-import ItemController from "./ItemController";
+import PlayerController from "../PlayerController";
+import ItemController from "../ItemController";
 
-export default class Game extends Phaser.Scene {
+export default class First extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private penguin?: Phaser.Physics.Matter.Sprite;
   private playerController?: PlayerController;
@@ -59,8 +59,6 @@ export default class Game extends Phaser.Scene {
     const tilesetHeight = map.heightInPixels;
     this.cameras.main.setBounds(0, 0, map.widthInPixels, tilesetHeight);
     this.cameras.main.scrollY = tilesetHeight;
-
-    //this.cameras.main.setBackgroundColor(0xc9edf0);
 
     const ground = map.createLayer("ground", tileSet);
     ground.setCollisionByProperty({ collides: true });

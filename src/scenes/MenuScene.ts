@@ -10,11 +10,10 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("menu-background", "assets/bg.png"); // Ensure the correct path and key
+    this.load.image("menu-background", "assets/bg.png");
   }
 
   create() {
-    // Set the background image
     const bg = this.add.tileSprite(
       0,
       0,
@@ -24,15 +23,13 @@ export default class MenuScene extends Phaser.Scene {
     );
     bg.setOrigin(0, 0);
 
-    // Add the start button
     const buttonWidth = 200;
     const buttonHeight = 50;
     const buttonX = this.cameras.main.width / 2 - buttonWidth / 2;
     const buttonY = this.cameras.main.height / 2 - buttonHeight / 2;
 
-    // Create a graphics object for the button background
     const button = this.add.graphics();
-    button.fillStyle(0x0000ff, 1);
+    button.fillStyle(0xa3dbf2, 1);
     button.fillRoundedRect(buttonX, buttonY, buttonWidth, buttonHeight, 15);
     button.lineStyle(2, 0xffffff, 1);
     button.strokeRoundedRect(buttonX, buttonY, buttonWidth, buttonHeight, 15);
@@ -44,7 +41,6 @@ export default class MenuScene extends Phaser.Scene {
     );
     button.setInteractive(buttonHitArea, Phaser.Geom.Rectangle.Contains);
 
-    // Add pointer events to change the cursor
     button.on("pointerover", () => {
       this.game.canvas.style.cursor = "pointer";
     });
@@ -53,7 +49,6 @@ export default class MenuScene extends Phaser.Scene {
     });
     button.on("pointerdown", this.startGame, this);
 
-    // Add text to the button without assigning to a variable
     this.add
       .text(
         this.cameras.main.width / 2,
