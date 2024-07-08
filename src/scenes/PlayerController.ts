@@ -192,7 +192,7 @@ export default class PlayerController {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-    const touchableWidth = width / 4;
+    const touchableWidth = width / 6;
 
     this.leftTouchArea = this.sprite.scene.add
       .zone(100, height, touchableWidth, height)
@@ -244,19 +244,23 @@ export default class PlayerController {
   }
 
   private onLeftTouchStart() {
-    this.sprite.setVelocityX(-this.mainSpeed);
-    this.sprite.setFlipX(true);
-    this.stateMachine.setState("walk");
-    this.hasTouchedLeft = true;
-    this.hasTouchedRight = false;
+    if (!this.hasTouchedLeft) {
+      this.sprite.setVelocityX(-this.mainSpeed);
+      this.sprite.setFlipX(true);
+      this.stateMachine.setState("walk");
+      this.hasTouchedLeft = true;
+      this.hasTouchedRight = false;
+    }
   }
 
   private onRightTouchStart() {
-    this.stateMachine.setState("walk");
-    this.sprite.setVelocityX(this.mainSpeed);
-    this.sprite.setFlipX(false);
-    this.hasTouchedLeft = false;
-    this.hasTouchedRight = true;
+    if (!this.hasTouchedRight) {
+      this.stateMachine.setState("walk");
+      this.sprite.setVelocityX(this.mainSpeed);
+      this.sprite.setFlipX(false);
+      this.hasTouchedLeft = false;
+      this.hasTouchedRight = true;
+    }
   }
 
   private onJumpTouchStart() {
