@@ -16,6 +16,7 @@ export default class PlayerController {
   private hasTouchedRight?: boolean = false;
   private uiContainer?: Phaser.GameObjects.Container;
   private totalHealth: number = 100;
+  private isTouchingGround: boolean = true;
   constructor(sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys) {
     this.sprite = sprite;
     this.cursors = cursors;
@@ -35,6 +36,7 @@ export default class PlayerController {
       .addState("jump", {
         onEnter: this.jumpOnEnter,
         onUpdate: this.jumpOnUpdate,
+        onExit: this.jumpOnExit,
       })
       .setState("idle");
 
@@ -42,6 +44,7 @@ export default class PlayerController {
       if (this.stateMachine.isCurrentState("jump")) {
         this.sprite.play("player-idle");
         this.stateMachine.setState("idle");
+        this.isTouchingGround = true;
       }
     });
 
@@ -90,6 +93,9 @@ export default class PlayerController {
 
   private walkOnEnter() {
     this.sprite.play("player-walk");
+    if (this.isTouchingGround) {
+      this.sprite.scene.sound.play("foot-steps-sound", { loop: true });
+    }
   }
 
   private walkOnUpdate() {
@@ -110,17 +116,26 @@ export default class PlayerController {
     if (spaceJustPressed) {
       this.stateMachine.setState("jump");
     }
+    if (!this.isTouchingGround) {
+      this.sprite.scene.sound.stopByKey("foot-steps-sound");
+    }
   }
 
   private walkOnExit() {
     this.hasTouchedLeft = false;
     this.hasTouchedRight = false;
+    this.sprite.scene.sound.stopByKey("foot-steps-sound");
+  }
+  private jumpOnExit() {
+    this.sprite.scene.sound.play("jump-fall-sound");
+    this.isTouchingGround = true;
   }
 
   private jumpOnEnter() {
     this.sprite.scene.sound.play("jump-sound");
     this.sprite.setVelocityY(-this.mainSpeed * 3);
     this.sprite.play("player-jump");
+    this.isTouchingGround = false;
   }
 
   private jumpOnUpdate() {

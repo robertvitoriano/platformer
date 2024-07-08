@@ -40,6 +40,8 @@ export default class Game extends Phaser.Scene {
       "assets/audio/sx/jump/jump.wav",
     ]);
     this.load.audio("coin-picked-sound", ["assets/audio/sx/coin-picked.mp3"]);
+    this.load.audio("foot-steps-sound", ["assets/audio/sx/foot-steps.mp3"]);
+    this.load.audio("jump-fall-sound", ["assets/audio/sx/jump-fall.mp3"]);
   }
 
   create() {
