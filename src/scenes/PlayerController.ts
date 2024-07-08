@@ -9,14 +9,15 @@ export default class PlayerController {
   private cursors: CursorKeys;
   private mainSpeed = 5;
   private isTouchDevice: boolean;
-  private leftTouchArea?: Phaser.GameObjects.Zone;
-  private rightTouchArea?: Phaser.GameObjects.Zone;
-  private bottomTouchArea?: Phaser.GameObjects.Zone;
-  private hasTouchedLeft?: boolean = false;
-  private hasTouchedRight?: boolean = false;
+  private leftButton?: Phaser.GameObjects.Image;
+  private rightButton?: Phaser.GameObjects.Image;
+  private jumpButton?: Phaser.GameObjects.Image;
   private uiContainer?: Phaser.GameObjects.Container;
   private totalHealth: number = 100;
   private isTouchingGround: boolean = true;
+  private hasTouchedLeft?: boolean = false;
+  private hasTouchedRight?: boolean = false;
+
   constructor(sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys) {
     this.sprite = sprite;
     this.cursors = cursors;
@@ -127,6 +128,7 @@ export default class PlayerController {
     this.hasTouchedRight = false;
     this.sprite.scene.sound.stopByKey("foot-steps-sound");
   }
+
   private jumpOnExit() {
     this.isTouchingGround = true;
   }
@@ -186,31 +188,30 @@ export default class PlayerController {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-    const touchableWidth = width / 4;
 
-    this.leftTouchArea = this.sprite.scene.add
-      .zone(100, height, touchableWidth, height)
-      .setOrigin(0)
+    this.leftButton = this.sprite.scene.add
+      .image(100, height - 100, "left-button")
       .setInteractive()
+      .setAlpha(0.5)
       .on("pointerdown", () => this.onLeftTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer?.add(this.leftTouchArea);
+    this.uiContainer?.add(this.leftButton);
 
-    this.rightTouchArea = this.sprite.scene.add
-      .zone(width - 100, height, touchableWidth, height)
-      .setOrigin(0)
+    this.rightButton = this.sprite.scene.add
+      .image(width - 100, height - 100, "right-button")
       .setInteractive()
+      .setAlpha(0.5)
       .on("pointerdown", () => this.onRightTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer?.add(this.rightTouchArea);
+    this.uiContainer?.add(this.rightButton);
 
-    this.bottomTouchArea = this.sprite.scene.add
-      .zone(width / 2, height + 1200, width / 3, 100)
-      .setOrigin(0)
+    this.jumpButton = this.sprite.scene.add
+      .image(width / 2, height - 50, "jump-button")
       .setInteractive()
+      .setAlpha(0.5)
       .on("pointerdown", () => this.onJumpTouchStart())
       .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer?.add(this.bottomTouchArea);
+    this.uiContainer?.add(this.jumpButton);
   }
 
   private onLeftTouchStart() {
@@ -222,6 +223,7 @@ export default class PlayerController {
   }
 
   private onRightTouchStart() {
+    console.log("IS TOUCHING RIGHT");
     this.stateMachine.setState("walk");
     this.sprite.setVelocityX(this.mainSpeed);
     this.sprite.setFlipX(false);
