@@ -1,12 +1,6 @@
 export default class MenuScene extends Phaser.Scene {
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
-
   constructor() {
     super("menu");
-  }
-
-  init() {
-    this.cursors = this.input.keyboard.createCursorKeys();
   }
 
   preload() {
