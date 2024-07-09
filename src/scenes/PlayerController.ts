@@ -20,7 +20,14 @@ export default class PlayerController {
   private uiContainer?: Phaser.GameObjects.Container;
   private totalHealth: number = 100;
   private isTouchingGround: boolean = true;
-  constructor(sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys) {
+  private uiLayer!: Phaser.GameObjects.Container;
+
+  constructor(
+    sprite: Phaser.Physics.Matter.Sprite,
+    cursors: CursorKeys,
+    uiLayer: Phaser.GameObjects.Container
+  ) {
+    this.uiLayer = uiLayer;
     this.sprite = sprite;
     this.cursors = cursors;
     this.createAnimations();
@@ -190,57 +197,80 @@ export default class PlayerController {
     return "ontouchstart" in window || navigator.maxTouchPoints > 0;
   }
 
-  private setupTouchControls() {
+  setupTouchControls() {
+    const { width, height } = this.sprite.scene.scale;
+
+    const buttonSize = 100;
+    const walkButtonsOffset = 200;
+    const jumpButtonOffset = 100;
+
+    this.leftButton = this.sprite.scene.add
+      .image(buttonSize, height - buttonSize - walkButtonsOffset, "left-button")
+      .setOrigin(0)
+      .setInteractive()
+      .on("pointerdown", () => this.onLeftTouchStart())
+      .on("pointerup", () => this.onTouchEnd())
+      .on("pointerout", () => this.onTouchEnd());
+    this.uiLayer.add(this.leftButton);
+
+    this.rightButton = this.sprite.scene.add
+      .image(
+        width - buttonSize * 2,
+        height - buttonSize - walkButtonsOffset,
+        "right-button"
+      )
+      .setOrigin(0)
+      .setInteractive()
+      .on("pointerdown", () => this.onRightTouchStart())
+      .on("pointerup", () => this.onTouchEnd())
+      .on("pointerout", () => this.onTouchEnd());
+    this.uiLayer.add(this.rightButton);
+
+    this.jumpButton = this.sprite.scene.add
+      .image(
+        width / 2 - buttonSize / 2,
+        height - buttonSize - jumpButtonOffset,
+        "jump-button"
+      )
+      .setOrigin(0)
+      .setInteractive()
+      .on("pointerdown", () => this.onJumpTouchStart())
+      .on("pointerup", () => this.onTouchEnd())
+      .on("pointerout", () => this.onTouchEnd());
+    this.uiLayer.add(this.jumpButton);
+  }
+
+  defineTouchableZones() {
     const { width, height } = this.sprite.scene.scale;
     const touchableWidth = width / 6;
 
     this.leftTouchArea = this.sprite.scene.add
-      .zone(100, height, touchableWidth, height)
+      .zone(100, height - 200, touchableWidth, height)
       .setOrigin(0)
+
       .setInteractive()
       .on("pointerdown", () => this.onLeftTouchStart())
-      .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer?.add(this.leftTouchArea);
+      .on("pointerup", () => this.onTouchEnd())
+      .on("pointerout", () => this.onTouchEnd());
+    this.uiLayer.add(this.leftTouchArea);
 
     this.rightTouchArea = this.sprite.scene.add
-      .zone(width - 100, height, touchableWidth, height)
+      .zone(width - 100 - touchableWidth, height - 200, touchableWidth, height)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onRightTouchStart())
-      .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer?.add(this.rightTouchArea);
+      .on("pointerup", () => this.onTouchEnd())
+      .on("pointerout", () => this.onTouchEnd());
+    this.uiLayer.add(this.rightTouchArea);
 
     this.bottomTouchArea = this.sprite.scene.add
-      .zone(width / 2, height + 1200, width / 3, 100)
+      .zone((width - touchableWidth) / 2, height - 100, touchableWidth, height)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
-      .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer?.add(this.bottomTouchArea);
-
-    this.leftButton = this.sprite.scene.add
-      .image(100, height - 200, "left-button")
-      .setInteractive()
-      .setAlpha(0.5)
-      .on("pointerdown", () => this.onLeftTouchStart())
-      .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer?.add(this.leftButton);
-
-    this.rightButton = this.sprite.scene.add
-      .image(width - 100, height - 200, "right-button")
-      .setInteractive()
-      .setAlpha(0.5)
-      .on("pointerdown", () => this.onRightTouchStart())
-      .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer?.add(this.rightButton);
-
-    this.jumpButton = this.sprite.scene.add
-      .image(width / 2, height - 100, "jump-button")
-      .setInteractive()
-      .setAlpha(0.5)
-      .on("pointerdown", () => this.onJumpTouchStart())
-      .on("pointerup", () => this.onTouchEnd());
-    this.uiContainer?.add(this.jumpButton);
+      .on("pointerup", () => this.onTouchEnd())
+      .on("pointerout", () => this.onTouchEnd());
+    this.uiLayer.add(this.bottomTouchArea);
   }
 
   private onLeftTouchStart() {
@@ -274,7 +304,10 @@ export default class PlayerController {
 
   private onTouchEnd() {
     this.sprite.setVelocityX(0);
-    if (this.stateMachine.isCurrentState("walk")) {
+    if (
+      this.stateMachine.isCurrentState("walk") ||
+      this.stateMachine.isCurrentState("idle")
+    ) {
       this.stateMachine.setState("idle");
       this.hasTouchedLeft = false;
       this.hasTouchedRight = false;

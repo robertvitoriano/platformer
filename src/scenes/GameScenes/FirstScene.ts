@@ -7,7 +7,7 @@ export default class First extends Phaser.Scene {
   private penguin?: Phaser.Physics.Matter.Sprite;
   private playerController?: PlayerController;
   private coins?: ItemController[] = [];
-
+  private uiLayer!: Phaser.GameObjects.Container;
   constructor() {
     super("game");
   }
@@ -67,6 +67,7 @@ export default class First extends Phaser.Scene {
     ground.setCollisionByProperty({ collides: true });
 
     const objectsLayer = map.getObjectLayer("objects");
+    this.uiLayer = this.add.container();
 
     objectsLayer.objects.forEach((objectData) => {
       const { x = 0, y = 0, name, width = 0 } = objectData;
@@ -77,7 +78,8 @@ export default class First extends Phaser.Scene {
             .setFixedRotation();
           this.playerController = new PlayerController(
             this.penguin,
-            this.cursors
+            this.cursors,
+            this.uiLayer
           );
 
           this.cameras.main.startFollow(this.playerController.getSprite);
@@ -106,5 +108,9 @@ export default class First extends Phaser.Scene {
     if (!this.playerController) return;
 
     this.playerController.update(deltaTime);
+    this.uiLayer.setPosition(
+      this.cameras.main.scrollX,
+      this.cameras.main.scrollY
+    );
   }
 }
