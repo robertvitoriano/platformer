@@ -131,7 +131,6 @@ export default class PlayerController {
     const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
     if (spaceJustPressed || this.hasTouchedJump) {
       this.stateMachine.setState("jump");
-      this.hasTouchedJump = false;
     }
     if (!this.isTouchingGround) {
       this.sprite.scene.sound.stopByKey("foot-steps-sound");
@@ -152,6 +151,7 @@ export default class PlayerController {
     this.sprite.setVelocityY(-this.mainSpeed * 3);
     this.sprite.play("player-jump");
     this.isTouchingGround = false;
+    this.hasTouchedJump = false;
   }
 
   private jumpOnUpdate() {
