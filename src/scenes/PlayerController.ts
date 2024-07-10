@@ -94,6 +94,16 @@ export default class PlayerController {
   }
 
   private idleOnUpdate() {
+    console.log({
+      hasTouchedRIght: this.hasTouchedRight,
+      hasTouchedLeft: this.hasTouchedLeft,
+    });
+    if (
+      this.stateMachine.previousStateName === "walk" &&
+      (this.hasTouchedLeft || this.hasTouchedRight)
+    ) {
+      this.walkOnUpdate();
+    }
     if (
       this.cursors.left.isDown ||
       this.cursors.right.isDown ||
@@ -212,8 +222,7 @@ export default class PlayerController {
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onLeftTouchStart())
-      .on("pointerup", () => this.onTouchEnd())
-      .on("pointerout", () => this.onTouchEnd());
+      .on("pointerup", () => this.onWalkTouchEnd());
     this.uiLayer.add(this.leftButton);
 
     this.rightButton = this.sprite.scene.add
@@ -225,8 +234,7 @@ export default class PlayerController {
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onRightTouchStart())
-      .on("pointerup", () => this.onTouchEnd())
-      .on("pointerout", () => this.onTouchEnd());
+      .on("pointerup", () => this.onWalkTouchEnd());
     this.uiLayer.add(this.rightButton);
 
     this.jumpButton = this.sprite.scene.add
@@ -238,77 +246,45 @@ export default class PlayerController {
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", () => this.onJumpTouchStart())
-      .on("pointerup", () => this.onTouchEnd())
-      .on("pointerout", () => this.onTouchEnd());
+      .on("pointerup", () => this.onJumpTouchEnd());
+
     this.uiLayer.add(this.jumpButton);
   }
 
-  defineTouchableZones() {
-    const { width, height } = this.sprite.scene.scale;
-    const touchableWidth = width / 6;
-
-    this.leftTouchArea = this.sprite.scene.add
-      .zone(100, height - 200, touchableWidth, height)
-      .setOrigin(0)
-
-      .setInteractive()
-      .on("pointerdown", () => this.onLeftTouchStart())
-      .on("pointerup", () => this.onTouchEnd())
-      .on("pointerout", () => this.onTouchEnd());
-    this.uiLayer.add(this.leftTouchArea);
-
-    this.rightTouchArea = this.sprite.scene.add
-      .zone(width - 100 - touchableWidth, height - 200, touchableWidth, height)
-      .setOrigin(0)
-      .setInteractive()
-      .on("pointerdown", () => this.onRightTouchStart())
-      .on("pointerup", () => this.onTouchEnd())
-      .on("pointerout", () => this.onTouchEnd());
-    this.uiLayer.add(this.rightTouchArea);
-
-    this.bottomTouchArea = this.sprite.scene.add
-      .zone((width - touchableWidth) / 2, height - 100, touchableWidth, height)
-      .setOrigin(0)
-      .setInteractive()
-      .on("pointerdown", () => this.onJumpTouchStart())
-      .on("pointerup", () => this.onTouchEnd())
-      .on("pointerout", () => this.onTouchEnd());
-    this.uiLayer.add(this.bottomTouchArea);
-  }
-
   private onLeftTouchStart() {
-    if (!this.hasTouchedLeft) {
-      this.sprite.setVelocityX(-this.mainSpeed);
-      this.sprite.setFlipX(true);
-      this.stateMachine.setState("walk");
-      this.hasTouchedLeft = true;
-      this.hasTouchedRight = false;
-    }
+    this.sprite.setVelocityX(-this.mainSpeed);
+    this.sprite.setFlipX(true);
+    this.stateMachine.setState("walk");
+    this.hasTouchedLeft = true;
+    this.hasTouchedRight = false;
   }
 
   private onRightTouchStart() {
-    if (!this.hasTouchedRight) {
-      this.stateMachine.setState("walk");
-      this.sprite.setVelocityX(this.mainSpeed);
-      this.sprite.setFlipX(false);
-      this.hasTouchedLeft = false;
-      this.hasTouchedRight = true;
-    }
+    this.sprite.setVelocityX(this.mainSpeed);
+    this.sprite.setFlipX(false);
+    this.stateMachine.setState("walk");
+    this.hasTouchedLeft = false;
+    this.hasTouchedRight = true;
   }
 
   private onJumpTouchStart() {
     this.hasTouchedJump = true;
   }
 
-  private onTouchEnd() {
+  private onWalkTouchEnd() {
+    setTimeout(() => {
+      this.sprite.setVelocityX(0);
+
+      this.stateMachine.setState("idle");
+    }, 2000);
+  }
+  private onJumpTouchEnd() {
     this.sprite.setVelocityX(0);
     if (
       this.stateMachine.isCurrentState("walk") ||
       this.stateMachine.isCurrentState("idle")
     ) {
       this.stateMachine.setState("idle");
-      this.hasTouchedLeft = false;
-      this.hasTouchedRight = false;
     }
   }
 }

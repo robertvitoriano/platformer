@@ -6,7 +6,7 @@
     "start": "parcel src/index.html -p 7000",
     "build": "parcel build src/index.html  --out-dir dist",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "android": "npm run build && npx cap run android",
+    "android": "npx cap run android",
     "sync": "npx cap sync",
     "show-logs": "logkitty android 'console.log'",
     "build-android": "ionic capacitor build android",
