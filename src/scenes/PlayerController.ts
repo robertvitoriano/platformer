@@ -17,6 +17,7 @@ export default class PlayerController {
   private jumpButton?: Phaser.GameObjects.Image;
   private hasTouchedLeft?: boolean = false;
   private hasTouchedRight?: boolean = false;
+  private hasTouchedJump?: boolean = false;
   private uiContainer?: Phaser.GameObjects.Container;
   private totalHealth: number = 100;
   private isTouchingGround: boolean = true;
@@ -102,8 +103,9 @@ export default class PlayerController {
       this.stateMachine.setState("walk");
     }
     const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
-    if (spaceJustPressed) {
+    if (spaceJustPressed || this.hasTouchedJump) {
       this.stateMachine.setState("jump");
+      this.hasTouchedJump = false;
     }
   }
 
@@ -127,8 +129,9 @@ export default class PlayerController {
       this.stateMachine.setState("idle");
     }
     const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
-    if (spaceJustPressed) {
+    if (spaceJustPressed || this.hasTouchedJump) {
       this.stateMachine.setState("jump");
+      this.hasTouchedJump = false;
     }
     if (!this.isTouchingGround) {
       this.sprite.scene.sound.stopByKey("foot-steps-sound");
@@ -294,12 +297,7 @@ export default class PlayerController {
   }
 
   private onJumpTouchStart() {
-    if (
-      this.stateMachine.isCurrentState("idle") ||
-      this.stateMachine.isCurrentState("walk")
-    ) {
-      this.stateMachine.setState("jump");
-    }
+    this.hasTouchedJump = true;
   }
 
   private onTouchEnd() {
