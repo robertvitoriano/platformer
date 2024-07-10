@@ -9,19 +9,17 @@ export default class PlayerController {
   private cursors: CursorKeys;
   private mainSpeed = 5;
   private isTouchDevice: boolean;
-  private leftTouchArea?: Phaser.GameObjects.Zone;
-  private rightTouchArea?: Phaser.GameObjects.Zone;
-  private bottomTouchArea?: Phaser.GameObjects.Zone;
   private leftButton?: Phaser.GameObjects.Image;
   private rightButton?: Phaser.GameObjects.Image;
   private jumpButton?: Phaser.GameObjects.Image;
-  private hasTouchedLeft?: boolean = false;
-  private hasTouchedRight?: boolean = false;
-  private hasTouchedJump?: boolean = false;
+  private hasTouchedLeft = false;
+  private hasTouchedRight = false;
+  private hasTouchedJump = false;
   private uiContainer?: Phaser.GameObjects.Container;
-  private totalHealth: number = 100;
-  private isTouchingGround: boolean = true;
-  private uiLayer!: Phaser.GameObjects.Container;
+  private totalHealth = 100;
+  private isTouchingGround = true;
+  private uiLayer: Phaser.GameObjects.Container;
+  private diagonalMoveTimeout?: Phaser.Time.TimerEvent;
 
   constructor(
     sprite: Phaser.Physics.Matter.Sprite,
@@ -60,7 +58,6 @@ export default class PlayerController {
     });
 
     this.isTouchDevice = this.checkTouchDevice();
-
     this.setupUiContainer();
 
     if (this.isTouchDevice) {
@@ -88,22 +85,12 @@ export default class PlayerController {
     this.uiContainer.add(healthBar);
   }
 
-  private idleOnEnter() {
+  private idleOnEnter = () => {
     this.sprite.play("player-idle");
     this.sprite.scene.sound.play("jump-fall-sound");
-  }
+  };
 
-  private idleOnUpdate() {
-    console.log({
-      hasTouchedRIght: this.hasTouchedRight,
-      hasTouchedLeft: this.hasTouchedLeft,
-    });
-    if (
-      this.stateMachine.previousStateName === "walk" &&
-      (this.hasTouchedLeft || this.hasTouchedRight)
-    ) {
-      this.walkOnUpdate();
-    }
+  private idleOnUpdate = () => {
     if (
       this.cursors.left.isDown ||
       this.cursors.right.isDown ||
@@ -112,22 +99,23 @@ export default class PlayerController {
     ) {
       this.stateMachine.setState("walk");
     }
-    const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
-    if (spaceJustPressed || this.hasTouchedJump) {
+    if (
+      Phaser.Input.Keyboard.JustDown(this.cursors.space) ||
+      this.hasTouchedJump
+    ) {
       this.stateMachine.setState("jump");
       this.hasTouchedJump = false;
     }
-  }
+  };
 
-  private walkOnEnter() {
+  private walkOnEnter = () => {
     this.sprite.play("player-walk");
     if (this.isTouchingGround) {
       this.sprite.scene.sound.play("foot-steps-sound", { loop: true });
     }
-  }
+  };
 
-  private walkOnUpdate() {
-    if (!this.sprite) return;
+  private walkOnUpdate = () => {
     if (this.cursors.left.isDown || this.hasTouchedLeft) {
       this.sprite.setVelocityX(-this.mainSpeed);
       this.sprite.setFlipX(true);
@@ -138,33 +126,32 @@ export default class PlayerController {
       this.sprite.setVelocityX(0);
       this.stateMachine.setState("idle");
     }
-    const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
-    if (spaceJustPressed || this.hasTouchedJump) {
+    if (
+      Phaser.Input.Keyboard.JustDown(this.cursors.space) ||
+      this.hasTouchedJump
+    ) {
       this.stateMachine.setState("jump");
     }
     if (!this.isTouchingGround) {
       this.sprite.scene.sound.stopByKey("foot-steps-sound");
     }
-  }
+  };
 
-  private walkOnExit() {
+  private walkOnExit = () => {
     this.hasTouchedLeft = false;
     this.hasTouchedRight = false;
     this.sprite.scene.sound.stopByKey("foot-steps-sound");
-  }
-  private jumpOnExit() {
-    this.isTouchingGround = true;
-  }
+  };
 
-  private jumpOnEnter() {
+  private jumpOnEnter = () => {
     this.sprite.scene.sound.play("jump-sound");
     this.sprite.setVelocityY(-this.mainSpeed * 3);
     this.sprite.play("player-jump");
     this.isTouchingGround = false;
     this.hasTouchedJump = false;
-  }
+  };
 
-  private jumpOnUpdate() {
+  private jumpOnUpdate = () => {
     if (this.cursors.left.isDown || this.hasTouchedLeft) {
       this.sprite.setVelocityX(-this.mainSpeed);
       this.sprite.setFlipX(true);
@@ -172,7 +159,11 @@ export default class PlayerController {
       this.sprite.setVelocityX(this.mainSpeed);
       this.sprite.setFlipX(false);
     }
-  }
+  };
+
+  private jumpOnExit = () => {
+    this.isTouchingGround = true;
+  };
 
   private createAnimations() {
     this.sprite.anims.create({
@@ -210,9 +201,8 @@ export default class PlayerController {
     return "ontouchstart" in window || navigator.maxTouchPoints > 0;
   }
 
-  setupTouchControls() {
+  private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-
     const buttonSize = 100;
     const walkButtonsOffset = 200;
     const jumpButtonOffset = 100;
@@ -221,8 +211,8 @@ export default class PlayerController {
       .image(buttonSize, height - buttonSize - walkButtonsOffset, "left-button")
       .setOrigin(0)
       .setInteractive()
-      .on("pointerdown", () => this.onLeftTouchStart())
-      .on("pointerup", () => this.onWalkTouchEnd());
+      .on("pointerdown", this.onLeftTouchStart)
+      .on("pointerup", this.onWalkTouchEnd);
     this.uiLayer.add(this.leftButton);
 
     this.rightButton = this.sprite.scene.add
@@ -233,8 +223,8 @@ export default class PlayerController {
       )
       .setOrigin(0)
       .setInteractive()
-      .on("pointerdown", () => this.onRightTouchStart())
-      .on("pointerup", () => this.onWalkTouchEnd());
+      .on("pointerdown", this.onRightTouchStart)
+      .on("pointerup", this.onWalkTouchEnd);
     this.uiLayer.add(this.rightButton);
 
     this.jumpButton = this.sprite.scene.add
@@ -245,40 +235,42 @@ export default class PlayerController {
       )
       .setOrigin(0)
       .setInteractive()
-      .on("pointerdown", () => this.onJumpTouchStart())
-      .on("pointerup", () => this.onJumpTouchEnd());
-
+      .on("pointerdown", this.onJumpTouchStart)
+      .on("pointerup", this.onJumpTouchEnd);
     this.uiLayer.add(this.jumpButton);
   }
 
-  private onLeftTouchStart() {
+  private onLeftTouchStart = () => {
+    this.hasTouchedLeft = true;
+    this.hasTouchedRight = false;
     this.sprite.setVelocityX(-this.mainSpeed);
     this.sprite.setFlipX(true);
     this.stateMachine.setState("walk");
-    this.hasTouchedLeft = true;
-    this.hasTouchedRight = false;
-  }
+  };
 
-  private onRightTouchStart() {
+  private onRightTouchStart = () => {
+    this.hasTouchedLeft = false;
+    this.hasTouchedRight = true;
     this.sprite.setVelocityX(this.mainSpeed);
     this.sprite.setFlipX(false);
     this.stateMachine.setState("walk");
-    this.hasTouchedLeft = false;
-    this.hasTouchedRight = true;
-  }
+  };
 
-  private onJumpTouchStart() {
+  private onJumpTouchStart = () => {
     this.hasTouchedJump = true;
-  }
+  };
 
-  private onWalkTouchEnd() {
-    setTimeout(() => {
-      this.sprite.setVelocityX(0);
+  private onWalkTouchEnd = () => {
+    this.diagonalMoveTimeout = this.sprite.scene.time.addEvent({
+      delay: 2000,
+      callback: () => {
+        this.sprite.setVelocityX(0);
+        this.stateMachine.setState("idle");
+      },
+    });
+  };
 
-      this.stateMachine.setState("idle");
-    }, 2000);
-  }
-  private onJumpTouchEnd() {
+  private onJumpTouchEnd = () => {
     this.sprite.setVelocityX(0);
     if (
       this.stateMachine.isCurrentState("walk") ||
@@ -286,5 +278,5 @@ export default class PlayerController {
     ) {
       this.stateMachine.setState("idle");
     }
-  }
+  };
 }
