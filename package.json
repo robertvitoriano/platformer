@@ -4,6 +4,7 @@
   "description": "A typescript template project for Phaser 3 using Parceljs",
   "scripts": {
     "start": "parcel src/index.html -p 7000",
+    "ionic-dev":"ionic capacitor run android --livereload --external",
     "build": "parcel build src/index.html  --out-dir dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "android": "npx cap run android",
@@ -11,7 +12,8 @@
     "show-logs": "logkitty android 'console.log'",
     "build-android": "ionic capacitor build android",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
-    "deploy": "aws s3 sync dist/ s3://plataformer --acl public-read"
+    "deploy": "aws s3 sync dist/ s3://plataformer --acl public-read",
+    "ionic:serve": "parcel src/index.html"
   },
   "author": "supertommy",
   "license": "MIT",
@@ -21,6 +23,7 @@
   },
   "homepage": "https://github.com/ourcade/phaser3-parcel-template",
   "devDependencies": {
+    "@capacitor/cli": "6.1.0",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
     "cssnano": "^7.0.3",
@@ -33,8 +36,11 @@
   },
   "dependencies": {
     "@capacitor/android": "^6.1.0",
-    "@capacitor/cli": "^6.1.0",
-    "@capacitor/core": "^6.1.0",
+    "@capacitor/app": "6.0.0",
+    "@capacitor/core": "6.1.0",
+    "@capacitor/haptics": "6.0.0",
+    "@capacitor/keyboard": "6.0.1",
+    "@capacitor/status-bar": "6.0.0",
     "copyfiles": "^2.4.1",
     "phaser": "^3.55.2"
   },
@@ -44,6 +50,6 @@
   "staticFiles": {
     "staticPath": "public",
     "watcherGlob": "**",
-    "destinationPath": "./" 
+    "destinationPath": "./"
   }
 }

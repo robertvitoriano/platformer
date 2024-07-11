@@ -1,0 +1,7 @@
+{
+  "name": "plataformer",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}

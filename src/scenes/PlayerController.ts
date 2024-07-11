@@ -19,7 +19,6 @@ export default class PlayerController {
   private totalHealth = 100;
   private isTouchingGround = true;
   private uiLayer: Phaser.GameObjects.Container;
-  private diagonalMoveTimeout?: Phaser.Time.TimerEvent;
 
   constructor(
     sprite: Phaser.Physics.Matter.Sprite,
@@ -157,6 +156,7 @@ export default class PlayerController {
       this.sprite.setFlipX(true);
     } else if (this.cursors.right.isDown || this.hasTouchedRight) {
       this.sprite.setVelocityX(this.mainSpeed);
+
       this.sprite.setFlipX(false);
     }
   };
@@ -261,13 +261,9 @@ export default class PlayerController {
   };
 
   private onWalkTouchEnd = () => {
-    this.diagonalMoveTimeout = this.sprite.scene.time.addEvent({
-      delay: 2000,
-      callback: () => {
-        this.sprite.setVelocityX(0);
-        this.stateMachine.setState("idle");
-      },
-    });
+    if (this.hasTouchedJump) return;
+    this.sprite.setVelocityX(0);
+    this.stateMachine.setState("idle");
   };
 
   private onJumpTouchEnd = () => {
