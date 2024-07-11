@@ -42,6 +42,9 @@ export default class First extends Phaser.Scene {
     this.load.audio("coin-picked-sound", ["assets/audio/sx/coin-picked.mp3"]);
     this.load.audio("foot-steps-sound", ["assets/audio/sx/foot-steps.mp3"]);
     this.load.audio("jump-fall-sound", ["assets/audio/sx/jump-fall.mp3"]);
+
+    this.load.audio("a-friagem", ["assets/audio/music/a_friagem.mp3"]);
+
     this.load.image("left-button", "assets/controls/left-button.png");
     this.load.image("right-button", "assets/controls/right-button.png");
     this.load.image("jump-button", "assets/controls/jump-button.png");
@@ -102,6 +105,7 @@ export default class First extends Phaser.Scene {
     });
 
     this.matter.world.convertTilemapLayer(ground);
+    this.sound.play("a-friagem", { loop: true, volume: 0.8 });
   }
 
   update(time: number, deltaTime: number) {
