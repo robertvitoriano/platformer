@@ -43,7 +43,7 @@ export default class First extends Phaser.Scene {
     this.load.audio("foot-steps-sound", ["assets/audio/sx/foot-steps.mp3"]);
     this.load.audio("jump-fall-sound", ["assets/audio/sx/jump-fall.mp3"]);
 
-    this.load.audio("a-friagem", ["assets/audio/music/a_friagem.mp3"]);
+    this.load.audio("a-friagem", ["assets/audio/music/a-friagem.mp3"]);
 
     this.load.image("left-button", "assets/controls/left-button.png");
     this.load.image("right-button", "assets/controls/right-button.png");
