@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import StateMachine from "~/state-machine/StateMachine";
-
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export default class PlayerController {
@@ -213,7 +212,6 @@ export default class PlayerController {
       .setInteractive()
       .on("pointerdown", this.onLeftTouchStart)
       .on("pointerup", this.onWalkTouchEnd);
-    this.uiLayer.add(this.leftButton);
 
     this.rightButton = this.sprite.scene.add
       .image(
@@ -225,7 +223,6 @@ export default class PlayerController {
       .setInteractive()
       .on("pointerdown", this.onRightTouchStart)
       .on("pointerup", this.onWalkTouchEnd);
-    this.uiLayer.add(this.rightButton);
 
     this.jumpButton = this.sprite.scene.add
       .image(
@@ -237,7 +234,8 @@ export default class PlayerController {
       .setInteractive()
       .on("pointerdown", this.onJumpTouchStart)
       .on("pointerup", this.onJumpTouchEnd);
-    this.uiLayer.add(this.jumpButton);
+
+    this.uiLayer.add([this.leftButton, this.rightButton, this.jumpButton]);
   }
 
   private onLeftTouchStart = () => {
