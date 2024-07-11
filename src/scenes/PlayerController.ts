@@ -99,7 +99,8 @@ export default class PlayerController {
     if (
       this.cursors.left.isDown ||
       this.cursors.right.isDown ||
-      this.shouldRunRight
+      this.shouldRunRight ||
+      this.shouldRunLeft
     ) {
       this.stateMachine.setState("walk");
     }
