@@ -11,8 +11,9 @@ export default class PlayerController {
   private leftButton?: Phaser.GameObjects.Image;
   private rightButton?: Phaser.GameObjects.Image;
   private jumpButton?: Phaser.GameObjects.Image;
-  private hasTouchedLeft = false;
-  private hasTouchedRight = false;
+  private shouldRunRight = false;
+  private shouldRunLeft = false;
+
   private hasTouchedJump = false;
   private uiContainer?: Phaser.GameObjects.Container;
   private totalHealth = 100;
@@ -60,6 +61,8 @@ export default class PlayerController {
 
     if (this.isTouchDevice) {
       this.setupTouchControls();
+      this.stateMachine.setState("walk");
+      this.shouldRunRight = true;
     }
   }
 
@@ -86,14 +89,17 @@ export default class PlayerController {
   private idleOnEnter = () => {
     this.sprite.play("player-idle");
     this.sprite.scene.sound.play("jump-fall-sound");
+    if (this.isTouchDevice) {
+      this.shouldRunRight = true;
+      this.stateMachine.setState("walk");
+    }
   };
 
   private idleOnUpdate = () => {
     if (
       this.cursors.left.isDown ||
       this.cursors.right.isDown ||
-      this.hasTouchedLeft ||
-      this.hasTouchedRight
+      this.shouldRunRight
     ) {
       this.stateMachine.setState("walk");
     }
@@ -114,10 +120,10 @@ export default class PlayerController {
   };
 
   private walkOnUpdate = () => {
-    if (this.cursors.left.isDown || this.hasTouchedLeft) {
+    if (this.cursors.left.isDown || this.shouldRunLeft) {
       this.sprite.setVelocityX(-this.mainSpeed);
       this.sprite.setFlipX(true);
-    } else if (this.cursors.right.isDown || this.hasTouchedRight) {
+    } else if (this.cursors.right.isDown || this.shouldRunRight) {
       this.sprite.setVelocityX(this.mainSpeed);
       this.sprite.setFlipX(false);
     } else {
@@ -136,8 +142,7 @@ export default class PlayerController {
   };
 
   private walkOnExit = () => {
-    this.hasTouchedLeft = false;
-    this.hasTouchedRight = false;
+    this.shouldRunRight = false;
     this.sprite.scene.sound.stopByKey("foot-steps-sound");
   };
 
@@ -150,10 +155,10 @@ export default class PlayerController {
   };
 
   private jumpOnUpdate = () => {
-    if (this.cursors.left.isDown || this.hasTouchedLeft) {
+    if (this.cursors.left.isDown || this.shouldRunLeft) {
       this.sprite.setVelocityX(-this.mainSpeed);
       this.sprite.setFlipX(true);
-    } else if (this.cursors.right.isDown || this.hasTouchedRight) {
+    } else if (this.cursors.right.isDown || this.shouldRunRight) {
       this.sprite.setVelocityX(this.mainSpeed);
 
       this.sprite.setFlipX(false);
@@ -162,6 +167,9 @@ export default class PlayerController {
 
   private jumpOnExit = () => {
     this.isTouchingGround = true;
+    if (this.isTouchDevice) {
+      this.stateMachine.setState("walk");
+    }
   };
 
   private createAnimations() {
@@ -210,8 +218,7 @@ export default class PlayerController {
       .image(buttonSize, height - buttonSize - walkButtonsOffset, "left-button")
       .setOrigin(0)
       .setInteractive()
-      .on("pointerdown", this.onLeftTouchStart)
-      .on("pointerup", this.onWalkTouchEnd);
+      .on("pointerdown", this.onLeftTouchStart);
 
     this.rightButton = this.sprite.scene.add
       .image(
@@ -221,8 +228,7 @@ export default class PlayerController {
       )
       .setOrigin(0)
       .setInteractive()
-      .on("pointerdown", this.onRightTouchStart)
-      .on("pointerup", this.onWalkTouchEnd);
+      .on("pointerdown", this.onRightTouchStart);
 
     this.jumpButton = this.sprite.scene.add
       .image(
@@ -239,16 +245,16 @@ export default class PlayerController {
   }
 
   private onLeftTouchStart = () => {
-    this.hasTouchedLeft = true;
-    this.hasTouchedRight = false;
+    this.shouldRunLeft = true;
+    this.shouldRunRight = false;
     this.sprite.setVelocityX(-this.mainSpeed);
     this.sprite.setFlipX(true);
     this.stateMachine.setState("walk");
   };
 
   private onRightTouchStart = () => {
-    this.hasTouchedLeft = false;
-    this.hasTouchedRight = true;
+    this.shouldRunLeft = false;
+    this.shouldRunRight = true;
     this.sprite.setVelocityX(this.mainSpeed);
     this.sprite.setFlipX(false);
     this.stateMachine.setState("walk");
@@ -256,12 +262,15 @@ export default class PlayerController {
 
   private onJumpTouchStart = () => {
     this.hasTouchedJump = true;
-  };
 
-  private onWalkTouchEnd = () => {
-    if (this.hasTouchedJump) return;
-    this.sprite.setVelocityX(0);
-    this.stateMachine.setState("idle");
+    if (this.isTouchDevice) {
+      if (this.shouldRunRight) {
+        this.sprite.setVelocityX(this.mainSpeed);
+      }
+      if (this.shouldRunLeft) {
+        this.sprite.setVelocityX(-this.mainSpeed);
+      }
+    }
   };
 
   private onJumpTouchEnd = () => {
