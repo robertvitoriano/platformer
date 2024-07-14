@@ -80,8 +80,10 @@ export default class Player {
     uiLayer?: Phaser.GameObjects.Container
   ): Player {
     if (!this.instance) {
-      if (sprite && cursors && uiLayer)
-        return new Player(sprite, cursors, uiLayer);
+      if (sprite && cursors && uiLayer) {
+        this.instance = new Player(sprite, cursors, uiLayer);
+        return this.instance;
+      }
     }
     return this.instance as Player;
   }

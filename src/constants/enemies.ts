@@ -1,5 +1,6 @@
-export const ENEMY_TYPES = {
+export const ENEMIES = {
   SNOW_BALL_SHOOTER: {
     name: "snow-ball-shooter",
+    animations: {},
   },
 };

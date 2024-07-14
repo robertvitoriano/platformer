@@ -498,7 +498,7 @@
   </tile>
  </tileset>
  <objectgroup id="2" name="objects" offsetx="4.26326e-14" offsety="-2">
-  <object id="1" name="snowball-shooter-position" x="1334" y="3078" width="64" height="60"/>
+  <object id="1" name="snowball-shooter-position" x="1333.33" y="3094" width="64" height="60"/>
   <object id="26" name="spawn-position" x="140" y="3080" width="64" height="60"/>
   <object id="6" name="blue-coin-hexagon" x="632" y="3010.67" width="65.3333" height="69.3333"/>
   <object id="9" name="blue-coin-hexagon" x="910.667" y="3014.67" width="66.6667" height="62.6667"/>
