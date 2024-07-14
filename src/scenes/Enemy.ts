@@ -53,6 +53,7 @@ export default class Enemy {
       onUpdate: this.runOnUpdate,
     });
     this.stateMachine.setState("idle");
+    this.sprite.setFixedRotation();
   }
 
   public get getSprite(): Phaser.Physics.Matter.Sprite {
