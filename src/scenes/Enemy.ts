@@ -30,7 +30,7 @@ export default class Enemy {
     this.animations = animations;
     this.YPosition = this.sprite.y;
     this.createAnimations();
-
+    console.log(`${this.id} x position is ${this.sprite.x}`);
     this.sprite.setOnCollide(
       ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
         if (!bodyA.gameObject && !bodyB.gameObject) {
@@ -69,11 +69,18 @@ export default class Enemy {
 
   private detectFall() {
     const differenceInYToDetectFall = 50;
+    const screenHeight = this.sprite.scene.scale.height;
+
     if (this.sprite.y - this.YPosition >= differenceInYToDetectFall) {
       this.isTouchingGround = false;
       this.sprite.setVelocityY(this.mainSpeed * 2);
     }
+
+    if (this.sprite.y > screenHeight) {
+      this.sprite.destroy();
+    }
   }
+
   private createAnimations() {
     this.animations.forEach((animation) => {
       this.sprite.anims.create({
@@ -91,22 +98,28 @@ export default class Enemy {
   }
 
   private idleOnEnter() {
-    this.sprite.play(this.animations[0].key, true);
+    console.log(this.sprite);
+    if (this.sprite) this.sprite.play(this.animations[0].key, true);
   }
   private idleOnUpdate() {
+    console.log(`ENEMY: ${this.id} Enter in iddle state`);
     const distanceToStartToFollow = 320;
     const distnaceToResetCollision = 30;
     const player = Player.getInstance();
     if (this.stateMachine?.isCurrentState("idle")) {
-      this.sprite.play(this.animations[0].key, true);
+      if (this.sprite) this.sprite?.play(this.animations[0].key, true);
     }
     if (player) {
       const distance = Math.abs(this.sprite.x - player.getSprite.x);
       if (distance > distnaceToResetCollision) {
         this.isCollidingWithPlayer = false;
       }
+      console.log(`ENEMY: ${this.id} currentDistance: ${distance}`);
       if (distance <= distanceToStartToFollow && !this.isCollidingWithPlayer) {
+        console.log(`ENEMY: ${this.id} should run`);
+
         this.stateMachine?.setState("run");
+        console.log(`ENEMY: ${this.id} Enter should  run`);
       }
     }
   }

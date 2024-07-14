@@ -6,11 +6,11 @@ import Enemy from "~/scenes/Enemy";
 export default class First extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private penguin?: Phaser.Physics.Matter.Sprite;
-  private player?: Player;
-  private snowBallShooter?: Enemy;
-  private snowBallShooterSprite?: Phaser.Physics.Matter.Sprite;
+  private player!: Player;
+  private snowBallShooters: Enemy[] = [];
   private coins?: PickupItem[] = [];
   private uiLayer!: Phaser.GameObjects.Container;
+  private enemyTest: any;
   constructor() {
     super("game");
   }
@@ -100,13 +100,15 @@ export default class First extends Phaser.Scene {
         case "snowball-shooter-position": {
           const width = 255;
           const height = 235;
-          this.snowBallShooterSprite = this.matter.add
+
+          const snowBallshooterSprite = this.matter.add
             .sprite(x + width / 2, y, "snowball-shooter-animation-frames")
             .setFixedRotation()
             .setScale(72 / width, 64 / height);
-          this.snowBallShooter = new Enemy(
+
+          this.enemyTest = new Enemy(
             `Snowball-shooter-${index}`,
-            this.snowBallShooterSprite,
+            snowBallshooterSprite,
             [
               {
                 framesKey: "snowball-shooter-animation-frames",
@@ -130,6 +132,7 @@ export default class First extends Phaser.Scene {
               },
             ]
           );
+
           break;
         }
         case "blue-coin-hexagon": {
@@ -150,10 +153,11 @@ export default class First extends Phaser.Scene {
   }
 
   update(time: number, deltaTime: number) {
-    if (!this.player) return;
+    if (!this.player && this.enemyTest) return;
 
     this.player.update(deltaTime);
-    this.snowBallShooter?.update(deltaTime);
+    this.enemyTest.update(deltaTime);
+
     this.uiLayer.setPosition(
       this.cameras.main.scrollX,
       this.cameras.main.scrollY
