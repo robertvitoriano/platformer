@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="70" tileheight="70" infinite="0" nextlayerid="5" nextobjectid="28">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="70" tileheight="70" infinite="0" nextlayerid="5" nextobjectid="30">
  <editorsettings>
   <export target="penguin-game-tile.json" format="json"/>
  </editorsettings>
@@ -515,7 +515,7 @@
   <object id="21" name="blue-coin-hexagon" x="3006.67" y="2138.67" width="66.6667" height="62.6667"/>
   <object id="22" name="blue-coin-hexagon" x="2808.67" y="2032.67" width="66.6667" height="62.6667"/>
   <object id="23" name="blue-coin-hexagon" x="2580.67" y="1947.17" width="66.6667" height="62.6667"/>
-  <object id="27" name="snowball-shooter-position" x="2799.67" y="2868.67" width="64" height="60"/>
+  <object id="29" name="snowball-shooter-position" x="2804" y="2868" width="64" height="60"/>
  </objectgroup>
  <layer id="1" name="ground" width="50" height="50" offsetx="-10.8932" offsety="-10.8932">
   <data encoding="csv">

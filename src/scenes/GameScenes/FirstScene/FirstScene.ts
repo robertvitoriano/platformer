@@ -102,11 +102,7 @@ export default class First extends Phaser.Scene {
           const height = 235;
 
           const snowBallshooterSprite = this.matter.add
-            .sprite(
-              x + width / 2,
-              y,
-              `snowball-shooter-animation-frames-${index}`
-            )
+            .sprite(x + width / 2, y, `snowball-shooter-animation-frames`)
             .setFixedRotation()
             .setScale(72 / width, 64 / height);
 
@@ -159,9 +155,10 @@ export default class First extends Phaser.Scene {
 
     this.player.update(deltaTime);
 
-    for (let i = 0; i < this.snowBallShooters.length; i++) {
-      this.snowBallShooters[i].update(deltaTime);
-    }
+    this.snowBallShooters.forEach((snowBallShooter) =>
+      snowBallShooter.update(deltaTime)
+    );
+
     this.uiLayer.setPosition(
       this.cameras.main.scrollX,
       this.cameras.main.scrollY

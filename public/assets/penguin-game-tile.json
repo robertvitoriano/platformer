@@ -196,14 +196,14 @@
                 }, 
                 {
                  "height":60,
-                 "id":27,
+                 "id":29,
                  "name":"snowball-shooter-position",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":2799.67,
-                 "y":2868.66666666667
+                 "x":2804,
+                 "y":2868
                 }],
          "offsetx":4.26326e-14,
          "offsety":-2,
@@ -277,7 +277,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":28,
+ "nextobjectid":30,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
