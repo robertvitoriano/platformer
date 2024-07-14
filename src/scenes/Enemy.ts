@@ -19,7 +19,9 @@ export default class Enemy {
   private mainSpeed = 5;
   private isCollidingWithPlayer = false;
   private YPosition: number = 0;
-  private id: string = "Enemy";
+  private id!: string;
+  private destroyed: boolean = false;
+
   constructor(
     id: string,
     sprite: Phaser.Physics.Matter.Sprite,
@@ -62,7 +64,12 @@ export default class Enemy {
   public get getSprite(): Phaser.Physics.Matter.Sprite {
     return this.sprite;
   }
+
+  public get wasDestroyed(): boolean {
+    return this.destroyed;
+  }
   public update(deltaTime: number) {
+    if (this.destroyed) return;
     this.stateMachine?.update(deltaTime);
     this.detectFall();
   }
@@ -70,12 +77,15 @@ export default class Enemy {
   private detectFall() {
     const differenceInYToDetectFall = 50;
     const screenHeight = this.sprite.scene.scale.height;
-
     if (this.sprite.y - this.YPosition >= differenceInYToDetectFall) {
       this.isTouchingGround = false;
       this.sprite.setVelocityY(this.mainSpeed * 2);
     }
+    if (this.sprite.y > screenHeight * 4) {
+      this.destroy();
+    }
   }
+
   private createAnimations() {
     this.animations.forEach((animation) => {
       this.sprite.anims.create({
@@ -93,9 +103,12 @@ export default class Enemy {
   }
 
   private idleOnEnter() {
+    if (this.destroyed) return;
     this.sprite.play(this.animations[0].key, true);
   }
+
   private idleOnUpdate() {
+    if (this.destroyed) return;
     const distanceToStartToFollow = 320;
     const distnaceToResetCollision = 30;
     const player = Player.getInstance();
@@ -114,12 +127,14 @@ export default class Enemy {
   }
 
   private runOnEnter() {
+    if (this.destroyed) return;
     this.sprite.play(this.animations[1].key, true);
   }
+
   private runOnUpdate() {
+    if (this.destroyed) return;
     if (this.isCollidingWithPlayer) {
       this.stateMachine?.setState("idle");
-
       return;
     }
     if (this.isTouchingGround) {
@@ -133,5 +148,11 @@ export default class Enemy {
         this.sprite.setVelocityX(-this.mainSpeed);
       }
     }
+  }
+
+  private destroy() {
+    console.log("destroy enemy");
+    this.destroyed = true;
+    this.sprite.destroy();
   }
 }

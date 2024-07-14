@@ -155,6 +155,10 @@ export default class First extends Phaser.Scene {
 
     this.player.update(deltaTime);
 
+    this.snowBallShooters = this.snowBallShooters.filter(
+      (snowBallShooter) => !snowBallShooter.wasDestroyed
+    );
+
     this.snowBallShooters.forEach((snowBallShooter) =>
       snowBallShooter.update(deltaTime)
     );
