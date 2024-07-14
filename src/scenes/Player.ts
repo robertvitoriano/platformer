@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import StateMachine from "~/state-machine/StateMachine";
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
-export default class PlayerController {
+export default class Player {
   private sprite: Phaser.Physics.Matter.Sprite;
   private stateMachine: StateMachine;
   private cursors: CursorKeys;

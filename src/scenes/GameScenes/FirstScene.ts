@@ -1,12 +1,12 @@
 import Phaser from "phaser";
-import PlayerController from "../PlayerController";
-import ItemController from "../ItemController";
+import Player from "../Player";
+import PickupItem from "../PickupItem";
 
 export default class First extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private penguin?: Phaser.Physics.Matter.Sprite;
-  private playerController?: PlayerController;
-  private coins?: ItemController[] = [];
+  private player?: Player;
+  private coins?: PickupItem[] = [];
   private uiLayer!: Phaser.GameObjects.Container;
   constructor() {
     super("game");
@@ -79,13 +79,9 @@ export default class First extends Phaser.Scene {
           this.penguin = this.matter.add
             .sprite(x + width / 2, y, "penguin-animation-frames")
             .setFixedRotation();
-          this.playerController = new PlayerController(
-            this.penguin,
-            this.cursors,
-            this.uiLayer
-          );
+          this.player = new Player(this.penguin, this.cursors, this.uiLayer);
 
-          this.cameras.main.startFollow(this.playerController.getSprite);
+          this.cameras.main.startFollow(this.player.getSprite);
 
           break;
         }
@@ -95,9 +91,7 @@ export default class First extends Phaser.Scene {
             y,
             "blue-hexagon-coin"
           );
-          this.coins?.push(
-            new ItemController(coin, "blue-hexagon-coin-rotation")
-          );
+          this.coins?.push(new PickupItem(coin, "blue-hexagon-coin-rotation"));
 
           break;
         }
@@ -109,9 +103,9 @@ export default class First extends Phaser.Scene {
   }
 
   update(time: number, deltaTime: number) {
-    if (!this.playerController) return;
+    if (!this.player) return;
 
-    this.playerController.update(deltaTime);
+    this.player.update(deltaTime);
     this.uiLayer.setPosition(
       this.cameras.main.scrollX,
       this.cameras.main.scrollY

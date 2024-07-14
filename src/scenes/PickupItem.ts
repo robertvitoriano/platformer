@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-export default class ItemController {
+export default class PickupItem {
   private sprite: Phaser.Physics.Matter.Sprite;
   private hasBeenCollected: boolean = false;
   private itemAnimation: string = "";
