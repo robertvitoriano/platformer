@@ -1,6 +1,6 @@
 import Phaser from "phaser";
-import Player from "../Player";
-import PickupItem from "../PickupItem";
+import Player from "../../Player";
+import PickupItem from "../../PickupItem";
 
 export default class First extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -19,13 +19,18 @@ export default class First extends Phaser.Scene {
   preload() {
     this.load.atlas(
       "penguin-animation-frames",
-      "assets/penguin-animation/penguin-animation.png",
-      "assets/penguin-animation/penguin-animation.json"
+      "assets/animation/penguin-animation/penguin-animation.png",
+      "assets/animation/penguin-animation/penguin-animation.json"
     );
     this.load.atlas(
       "blue-hexagon-coin",
-      "assets/items-animations/coins/blue-coin-hexagon.png",
-      "assets/items-animations/coins/blue-coin-hexagon.json"
+      "assets/animation/items-animations/coins/blue-coin-hexagon.png",
+      "assets/animation/items-animations/coins/blue-coin-hexagon.json"
+    );
+    this.load.atlas(
+      "snowball-shooter-animation-frames",
+      "assets/animation/enemy/snow-ball-shooter-animation/snow-ball-shooter-animation.png",
+      "assets/animation/enemy/snow-ball-shooter-animation/snow-ball-shooter-animation.json"
     );
     this.load.image("tiles", "assets/sheet.png");
     this.load.image("bg", "assets/bg.png");
@@ -79,7 +84,25 @@ export default class First extends Phaser.Scene {
           this.penguin = this.matter.add
             .sprite(x + width / 2, y, "penguin-animation-frames")
             .setFixedRotation();
-          this.player = new Player(this.penguin, this.cursors, this.uiLayer);
+          this.player = Player.getInstance(
+            this.penguin,
+            this.cursors,
+            this.uiLayer
+          );
+
+          this.cameras.main.startFollow(this.player.getSprite);
+
+          break;
+        }
+        case "snowball-shooter-position": {
+          this.penguin = this.matter.add
+            .sprite(x + width / 2, y, "snowball-shooter-animation-frames")
+            .setFixedRotation();
+          this.player = Player.getInstance(
+            this.penguin,
+            this.cursors,
+            this.uiLayer
+          );
 
           this.cameras.main.startFollow(this.player.getSprite);
 

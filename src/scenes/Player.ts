@@ -19,8 +19,9 @@ export default class Player {
   private totalHealth = 100;
   private isTouchingGround = true;
   private uiLayer: Phaser.GameObjects.Container;
+  private static instance: Player | null = null;
 
-  constructor(
+  private constructor(
     sprite: Phaser.Physics.Matter.Sprite,
     cursors: CursorKeys,
     uiLayer: Phaser.GameObjects.Container
@@ -72,6 +73,17 @@ export default class Player {
 
   public get getSprite(): Phaser.Physics.Matter.Sprite {
     return this.sprite;
+  }
+  public static getInstance(
+    sprite?: Phaser.Physics.Matter.Sprite,
+    cursors?: CursorKeys,
+    uiLayer?: Phaser.GameObjects.Container
+  ): Player {
+    if (!this.instance) {
+      if (sprite && cursors && uiLayer)
+        return new Player(sprite, cursors, uiLayer);
+    }
+    return this.instance as Player;
   }
 
   private setupUiContainer() {

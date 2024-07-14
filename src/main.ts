@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import FirstScene from "./scenes/GameScenes/FirstScene";
+import FirstScene from "./scenes/GameScenes/FirstScene/FirstScene";
 import MenuScene from "./scenes/MenuScene";
 
 const config: Phaser.Types.Core.GameConfig = {

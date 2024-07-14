@@ -1,0 +1,76 @@
+{"frames": [
+
+{
+	"filename": "panda_01_idle_01.png",
+	"frame": {"x":0,"y":0,"w":255,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":235},
+	"sourceSize": {"w":255,"h":235}
+},
+{
+	"filename": "panda_01_idle_02.png",
+	"frame": {"x":255,"y":0,"w":255,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":235},
+	"sourceSize": {"w":255,"h":235}
+},
+{
+	"filename": "panda_01_idle_upset.png",
+	"frame": {"x":510,"y":0,"w":255,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":235},
+	"sourceSize": {"w":255,"h":235}
+},
+{
+	"filename": "panda_01_run_01.png",
+	"frame": {"x":765,"y":0,"w":255,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":235},
+	"sourceSize": {"w":255,"h":235}
+},
+{
+	"filename": "panda_01_run_02.png",
+	"frame": {"x":1020,"y":0,"w":255,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":235},
+	"sourceSize": {"w":255,"h":235}
+},
+{
+	"filename": "panda_01_run_03.png",
+	"frame": {"x":1275,"y":0,"w":255,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":235},
+	"sourceSize": {"w":255,"h":235}
+},
+{
+	"filename": "panda_01_run_04.png",
+	"frame": {"x":1530,"y":0,"w":255,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":235},
+	"sourceSize": {"w":255,"h":235}
+},
+{
+	"filename": "panda_01_run_05.png",
+	"frame": {"x":1785,"y":0,"w":255,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":255,"h":235},
+	"sourceSize": {"w":255,"h":235}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "snow-ball-shooter-animation.png",
+	"format": "RGBA8888",
+	"size": {"w":2040,"h":235},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e1631af095c7cd1dd5916598ba37b52d:67f978355725f9c4c1ee367d71dc86d4:8823a18a17102466c740f3685408bf32$"
+}
+}

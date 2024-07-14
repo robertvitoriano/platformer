@@ -10,13 +10,24 @@
                 {
                  "height":60,
                  "id":1,
+                 "name":"snowball-shooter-position",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":1334,
+                 "y":3078
+                }, 
+                {
+                 "height":60,
+                 "id":26,
                  "name":"spawn-position",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":150,
-                 "y":3084
+                 "x":140,
+                 "y":3080
                 }, 
                 {
                  "height":69.3333,
@@ -255,7 +266,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":26,
+ "nextobjectid":27,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
