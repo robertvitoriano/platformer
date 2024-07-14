@@ -102,14 +102,16 @@ export default class First extends Phaser.Scene {
           const height = 235;
 
           const snowBallshooterSprite = this.matter.add
-            .sprite(x + width / 2, y, "snowball-shooter-animation-frames")
+            .sprite(
+              x + width / 2,
+              y,
+              `snowball-shooter-animation-frames-${index}`
+            )
             .setFixedRotation()
             .setScale(72 / width, 64 / height);
 
-          this.enemyTest = new Enemy(
-            `Snowball-shooter-${index}`,
-            snowBallshooterSprite,
-            [
+          this.snowBallShooters.push(
+            new Enemy(`Snowball-shooter-${index}`, snowBallshooterSprite, [
               {
                 framesKey: "snowball-shooter-animation-frames",
                 key: `snow-ball-shooter-idle-${index}`,
@@ -130,7 +132,7 @@ export default class First extends Phaser.Scene {
                 frameRate: 8,
                 repeat: -1,
               },
-            ]
+            ])
           );
 
           break;
@@ -153,11 +155,13 @@ export default class First extends Phaser.Scene {
   }
 
   update(time: number, deltaTime: number) {
-    if (!this.player && this.enemyTest) return;
+    if (!this.player && this.snowBallShooters.length) return;
 
     this.player.update(deltaTime);
-    this.enemyTest.update(deltaTime);
 
+    for (let i = 0; i < this.snowBallShooters.length; i++) {
+      this.snowBallShooters[i].update(deltaTime);
+    }
     this.uiLayer.setPosition(
       this.cameras.main.scrollX,
       this.cameras.main.scrollY

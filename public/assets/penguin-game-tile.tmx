@@ -498,7 +498,7 @@
   </tile>
  </tileset>
  <objectgroup id="2" name="objects" offsetx="4.26326e-14" offsety="-2">
-  <object id="1" name="snowball-shooter-position" x="1333.33" y="3094" width="64" height="60"/>
+  <object id="1" name="snowball-shooter-position" x="1331" y="3079.33" width="64" height="60"/>
   <object id="26" name="spawn-position" x="140" y="3080" width="64" height="60"/>
   <object id="6" name="blue-coin-hexagon" x="632" y="3010.67" width="65.3333" height="69.3333"/>
   <object id="9" name="blue-coin-hexagon" x="910.667" y="3014.67" width="66.6667" height="62.6667"/>
@@ -515,7 +515,7 @@
   <object id="21" name="blue-coin-hexagon" x="3006.67" y="2138.67" width="66.6667" height="62.6667"/>
   <object id="22" name="blue-coin-hexagon" x="2808.67" y="2032.67" width="66.6667" height="62.6667"/>
   <object id="23" name="blue-coin-hexagon" x="2580.67" y="1947.17" width="66.6667" height="62.6667"/>
-  <object id="27" name="snowball-shooter-position" x="2798.67" y="2868" width="64" height="60"/>
+  <object id="27" name="snowball-shooter-position" x="2799.67" y="2868.67" width="64" height="60"/>
  </objectgroup>
  <layer id="1" name="ground" width="50" height="50" offsetx="-10.8932" offsety="-10.8932">
   <data encoding="csv">

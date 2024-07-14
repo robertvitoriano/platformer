@@ -1,5 +1,6 @@
 import StateMachine from "~/state-machine/StateMachine";
 import Player from "./Player";
+
 interface AnimationConfig {
   key: string;
   frameRate: number;
@@ -20,6 +21,7 @@ export default class Enemy {
   private mainSpeed = 5;
   private isCollidingWithPlayer = false;
   private YPosition: number = 0;
+
   constructor(
     id: string,
     sprite: Phaser.Physics.Matter.Sprite,
@@ -30,7 +32,7 @@ export default class Enemy {
     this.animations = animations;
     this.YPosition = this.sprite.y;
     this.createAnimations();
-    console.log(`${this.id} x position is ${this.sprite.x}`);
+
     this.sprite.setOnCollide(
       ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
         if (!bodyA.gameObject && !bodyB.gameObject) {
@@ -46,6 +48,7 @@ export default class Enemy {
         }
       }
     );
+
     this.stateMachine = new StateMachine(this, this.id);
     this.stateMachine.addState("idle", {
       onEnter: this.idleOnEnter,
@@ -62,6 +65,7 @@ export default class Enemy {
   public get getSprite(): Phaser.Physics.Matter.Sprite {
     return this.sprite;
   }
+
   public update(deltaTime: number) {
     this.stateMachine?.update(deltaTime);
     this.detectFall();
@@ -95,20 +99,24 @@ export default class Enemy {
         }),
       });
     });
+    console.log("Animations created:", this.sprite.anims);
   }
 
   private idleOnEnter() {
-    console.log(this.sprite);
+    console.log("Entering idle state:", this.sprite);
     if (this.sprite) this.sprite.play(this.animations[0].key, true);
   }
+
   private idleOnUpdate() {
-    console.log(`ENEMY: ${this.id} Enter in iddle state`);
+    console.log(`ENEMY: ${this.id} Enter in idle state`);
     const distanceToStartToFollow = 320;
     const distnaceToResetCollision = 30;
     const player = Player.getInstance();
+
     if (this.stateMachine?.isCurrentState("idle")) {
-      if (this.sprite) this.sprite?.play(this.animations[0].key, true);
+      if (this.sprite) this.sprite.play(this.animations[0].key, true);
     }
+
     if (player) {
       const distance = Math.abs(this.sprite.x - player.getSprite.x);
       if (distance > distnaceToResetCollision) {
@@ -117,20 +125,20 @@ export default class Enemy {
       console.log(`ENEMY: ${this.id} currentDistance: ${distance}`);
       if (distance <= distanceToStartToFollow && !this.isCollidingWithPlayer) {
         console.log(`ENEMY: ${this.id} should run`);
-
         this.stateMachine?.setState("run");
-        console.log(`ENEMY: ${this.id} Enter should  run`);
+        console.log(`ENEMY: ${this.id} Enter should run`);
       }
     }
   }
 
   private runOnEnter() {
+    console.log("Entering run state:", this.sprite);
     this.sprite.play(this.animations[1].key, true);
   }
+
   private runOnUpdate() {
     if (this.isCollidingWithPlayer) {
       this.stateMachine?.setState("idle");
-
       return;
     }
     if (this.isTouchingGround) {
