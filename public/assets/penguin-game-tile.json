@@ -15,7 +15,7 @@
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":1333.33333333333,
+                 "x":1333.33,
                  "y":3094
                 }, 
                 {
@@ -193,6 +193,17 @@
                  "width":66.6667,
                  "x":2580.67,
                  "y":1947.17
+                }, 
+                {
+                 "height":60,
+                 "id":27,
+                 "name":"snowball-shooter-position",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":2798.66666666667,
+                 "y":2868
                 }],
          "offsetx":4.26326e-14,
          "offsety":-2,
@@ -256,8 +267,8 @@
          "height":50,
          "id":1,
          "name":"ground",
-         "offsetx":-10.8932461873637,
-         "offsety":-10.8932461873642,
+         "offsetx":-10.8932,
+         "offsety":-10.8932,
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -266,7 +277,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":27,
+ "nextobjectid":28,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

@@ -12,6 +12,7 @@ interface AnimationConfig {
 }
 
 export default class Enemy {
+  private id: string = "Enemy";
   private sprite: Phaser.Physics.Matter.Sprite;
   private animations: AnimationConfig[] = [];
   private stateMachine: StateMachine | null = null;
@@ -20,9 +21,11 @@ export default class Enemy {
   private isCollidingWithPlayer = false;
   private YPosition: number = 0;
   constructor(
+    id: string,
     sprite: Phaser.Physics.Matter.Sprite,
     animations: AnimationConfig[]
   ) {
+    this.id = id;
     this.sprite = sprite;
     this.animations = animations;
     this.YPosition = this.sprite.y;
@@ -43,7 +46,7 @@ export default class Enemy {
         }
       }
     );
-    this.stateMachine = new StateMachine(this, "enemy");
+    this.stateMachine = new StateMachine(this, this.id);
     this.stateMachine.addState("idle", {
       onEnter: this.idleOnEnter,
       onUpdate: this.idleOnUpdate,
@@ -88,26 +91,28 @@ export default class Enemy {
   }
 
   private idleOnEnter() {
-    this.sprite.play("snow-ball-shooter-idle", true);
+    this.sprite.play(this.animations[0].key, true);
   }
   private idleOnUpdate() {
+    const distanceToStartToFollow = 320;
+    const distnaceToResetCollision = 30;
     const player = Player.getInstance();
     if (this.stateMachine?.isCurrentState("idle")) {
-      this.sprite.play("snow-ball-shooter-idle", true);
+      this.sprite.play(this.animations[0].key, true);
     }
     if (player) {
       const distance = Math.abs(this.sprite.x - player.getSprite.x);
-      if (distance > 30) {
+      if (distance > distnaceToResetCollision) {
         this.isCollidingWithPlayer = false;
       }
-      if (distance <= 320 && !this.isCollidingWithPlayer) {
+      if (distance <= distanceToStartToFollow && !this.isCollidingWithPlayer) {
         this.stateMachine?.setState("run");
       }
     }
   }
 
   private runOnEnter() {
-    this.sprite.play("snow-ball-shooter-run", true);
+    this.sprite.play(this.animations[1].key, true);
   }
   private runOnUpdate() {
     if (this.isCollidingWithPlayer) {
@@ -118,11 +123,11 @@ export default class Enemy {
     if (this.isTouchingGround) {
       if (Player.getInstance().getSprite.x > this.sprite.x) {
         this.sprite.setFlipX(true);
-        this.sprite.play("snow-ball-shooter-run", true);
+        this.sprite.play(this.animations[1].key, true);
         this.sprite.setVelocityX(this.mainSpeed);
       } else if (Player.getInstance().getSprite.x < this.sprite.x) {
         this.sprite.setFlipX(false);
-        this.sprite.play("snow-ball-shooter-run", true);
+        this.sprite.play(this.animations[1].key, true);
         this.sprite.setVelocityX(-this.mainSpeed);
       }
     }

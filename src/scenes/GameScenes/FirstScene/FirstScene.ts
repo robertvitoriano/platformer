@@ -80,7 +80,7 @@ export default class First extends Phaser.Scene {
     const objectsLayer = map.getObjectLayer("objects");
     this.uiLayer = this.add.container();
 
-    objectsLayer.objects.forEach((objectData) => {
+    objectsLayer.objects.forEach((objectData, index) => {
       const { x = 0, y = 0, name, width = 0 } = objectData;
       switch (name) {
         case "spawn-position": {
@@ -104,28 +104,32 @@ export default class First extends Phaser.Scene {
             .sprite(x + width / 2, y, "snowball-shooter-animation-frames")
             .setFixedRotation()
             .setScale(72 / width, 64 / height);
-          this.snowBallShooter = new Enemy(this.snowBallShooterSprite, [
-            {
-              framesKey: "snowball-shooter-animation-frames",
-              key: "snow-ball-shooter-idle",
-              prefix: "panda_01_idle_0",
-              suffix: ".png",
-              start: 1,
-              end: 3,
-              frameRate: 8,
-              repeat: -1,
-            },
-            {
-              framesKey: "snowball-shooter-animation-frames",
-              key: "snow-ball-shooter-run",
-              prefix: "panda_01_run_0",
-              suffix: ".png",
-              start: 1,
-              end: 5,
-              frameRate: 8,
-              repeat: -1,
-            },
-          ]);
+          this.snowBallShooter = new Enemy(
+            `Snowball-shooter-${index}`,
+            this.snowBallShooterSprite,
+            [
+              {
+                framesKey: "snowball-shooter-animation-frames",
+                key: `snow-ball-shooter-idle-${index}`,
+                prefix: "panda_01_idle_0",
+                suffix: ".png",
+                start: 1,
+                end: 3,
+                frameRate: 8,
+                repeat: -1,
+              },
+              {
+                framesKey: "snowball-shooter-animation-frames",
+                key: `snow-ball-shooter-run-${index}`,
+                prefix: "panda_01_run_0",
+                suffix: ".png",
+                start: 1,
+                end: 5,
+                frameRate: 8,
+                repeat: -1,
+              },
+            ]
+          );
           break;
         }
         case "blue-coin-hexagon": {
