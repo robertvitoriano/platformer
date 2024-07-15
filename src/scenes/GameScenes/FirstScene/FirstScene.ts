@@ -147,7 +147,7 @@ export default class First extends Phaser.Scene {
     });
 
     this.matter.world.convertTilemapLayer(ground);
-    this.sound.play("a-friagem", { loop: true, volume: 0.5 });
+    this.sound.play("a-friagem", { loop: true, volume: 0.3 });
   }
 
   update(time: number, deltaTime: number) {

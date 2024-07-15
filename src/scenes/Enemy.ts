@@ -52,17 +52,17 @@ export default class Enemy {
           bodyB.gameObject?.texture?.key === "penguin-animation-frames"
         ) {
           const player = Player.getInstance();
-          if (this.isBeingHit) {
-            this.isBeingHit = false;
-            return;
-          }
           if (player && this.isTopCollision(player.getSprite)) {
+            if (this.isBeingHit) {
+              return;
+            }
             this.isBeingHit = true;
             this.timesHitByPlayer++;
             this.sprite.scene.sound.play("enemy-hit-sound");
             if (!this.shrunk && this.timesHitByPlayer === 1) {
               this.shrink();
               this.shrunk = true;
+              this.resetHitStateAfterDelay();
             } else if (this.timesHitByPlayer === 2) {
               this.destroy();
             }
@@ -189,5 +189,11 @@ export default class Enemy {
   private shrink() {
     this.sprite.setScale(0.2).setFixedRotation();
     console.log("enemy shrunk to half size");
+  }
+
+  private resetHitStateAfterDelay() {
+    this.sprite.scene.time.delayedCall(1000, () => {
+      this.isBeingHit = false;
+    });
   }
 }
