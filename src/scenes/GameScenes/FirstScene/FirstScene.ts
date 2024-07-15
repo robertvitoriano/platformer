@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Player from "../../Player";
 import PickupItem from "../../PickupItem";
 import Enemy from "~/scenes/Enemy";
+import { enemies } from "~/config/EnemyConfig";
 
 export default class First extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -97,39 +98,22 @@ export default class First extends Phaser.Scene {
 
           break;
         }
-        case "snowball-shooter-position": {
+        case "snowball-shooter": {
           const width = 255;
           const height = 235;
 
+          const enemyConfig = enemies.snowBallShooter(index);
           const snowBallshooterSprite = this.matter.add
-            .sprite(x + width / 2, y, `snowball-shooter-animation-frames`)
+            .sprite(x + width / 2, y, enemyConfig.framesKey)
             .setFixedRotation()
             .setScale(72 / width, 64 / height);
 
-          this.snowBallShooters.push(
-            new Enemy(`Snowball-shooter-${index}`, snowBallshooterSprite, [
-              {
-                framesKey: "snowball-shooter-animation-frames",
-                key: `snow-ball-shooter-idle-${index}`,
-                prefix: "panda_01_idle_0",
-                suffix: ".png",
-                start: 1,
-                end: 3,
-                frameRate: 8,
-                repeat: -1,
-              },
-              {
-                framesKey: "snowball-shooter-animation-frames",
-                key: `snow-ball-shooter-run-${index}`,
-                prefix: "panda_01_run_0",
-                suffix: ".png",
-                start: 1,
-                end: 5,
-                frameRate: 8,
-                repeat: -1,
-              },
-            ])
+          const enemy = new Enemy(
+            enemyConfig.id,
+            snowBallshooterSprite,
+            enemyConfig.animations
           );
+          this.snowBallShooters.push(enemy);
 
           break;
         }

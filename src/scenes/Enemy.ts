@@ -1,16 +1,6 @@
 import StateMachine from "~/state-machine/StateMachine";
 import Player from "./Player";
-
-interface AnimationConfig {
-  key: string;
-  frameRate: number;
-  repeat: number;
-  framesKey: string;
-  prefix: string;
-  start: number;
-  end: number;
-  suffix: string;
-}
+import { AnimationConfig } from "~/config/EnemyConfig";
 
 export default class Enemy {
   private sprite: Phaser.Physics.Matter.Sprite;

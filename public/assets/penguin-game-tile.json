@@ -10,7 +10,7 @@
                 {
                  "height":60,
                  "id":1,
-                 "name":"snowball-shooter-position",
+                 "name":"snowball-shooter",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -197,7 +197,7 @@
                 {
                  "height":60,
                  "id":29,
-                 "name":"snowball-shooter-position",
+                 "name":"snowball-shooter ",
                  "rotation":0,
                  "type":"",
                  "visible":true,
