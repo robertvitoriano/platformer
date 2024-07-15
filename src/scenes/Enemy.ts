@@ -22,6 +22,9 @@ export default class Enemy {
   private YPosition: number = 0;
   private id!: string;
   private destroyed: boolean = false;
+  private shrunk: boolean = false;
+  private timesHitByPlayer = 0;
+  private isBeingHit = false;
 
   constructor(
     id: string,
@@ -49,8 +52,20 @@ export default class Enemy {
           bodyB.gameObject?.texture?.key === "penguin-animation-frames"
         ) {
           const player = Player.getInstance();
+          if (this.isBeingHit) {
+            this.isBeingHit = false;
+            return;
+          }
           if (player && this.isTopCollision(player.getSprite)) {
-            this.destroy();
+            this.isBeingHit = true;
+            this.timesHitByPlayer++;
+
+            if (!this.shrunk && this.timesHitByPlayer === 1) {
+              this.shrink();
+              this.shrunk = true;
+            } else if (this.timesHitByPlayer === 2) {
+              this.destroy();
+            }
           } else {
             this.isCollidingWithPlayer = true;
             this.sprite.setVelocityY(0);
@@ -122,14 +137,14 @@ export default class Enemy {
   private idleOnUpdate() {
     if (this.destroyed) return;
     const distanceToStartToFollow = 320;
-    const distnaceToResetCollision = 30;
+    const distanceToResetCollision = 30;
     const player = Player.getInstance();
     if (this.stateMachine?.isCurrentState("idle")) {
       this.sprite.play(this.animations[0].key, true);
     }
     if (player) {
       const distance = Math.abs(this.sprite.x - player.getSprite.x);
-      if (distance > distnaceToResetCollision) {
+      if (distance > distanceToResetCollision) {
         this.isCollidingWithPlayer = false;
       }
       if (distance <= distanceToStartToFollow && !this.isCollidingWithPlayer) {
@@ -163,12 +178,16 @@ export default class Enemy {
   }
 
   private destroy() {
-    console.log("destroy enemy");
     this.destroyed = true;
     this.sprite.destroy();
   }
 
   private isTopCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
     return playerSprite.y <= this.sprite.y;
+  }
+
+  private shrink() {
+    this.sprite.setScale(0.2).setFixedRotation();
+    console.log("enemy shrunk to half size");
   }
 }
