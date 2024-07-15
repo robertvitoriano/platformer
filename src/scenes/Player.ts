@@ -104,14 +104,14 @@ export default class Player {
 
   private setupUiContainer() {
     this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0);
-    const healthBar = this.sprite.scene.add.rectangle(
-      300,
-      100,
-      this.totalHealth * 4,
-      70,
-      0x00ff00
-    );
-    this.uiContainer.add(healthBar);
+    // const healthBar = this.sprite.scene.add.rectangle(
+    //   300,
+    //   100,
+    //   this.totalHealth * 4,
+    //   70,
+    //   0x00ff00
+    // );
+    // this.uiContainer.add(healthBar);
   }
 
   private idleOnEnter = () => {
