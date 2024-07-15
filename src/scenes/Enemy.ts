@@ -6,6 +6,7 @@ export default class Enemy {
   private sprite: Phaser.Physics.Matter.Sprite;
   private animations: AnimationConfig[] = [];
   private stateMachine: StateMachine | null = null;
+  private isTouchingGround: boolean = false;
   private mainSpeed = 3;
   private YPosition: number = 0;
   private id!: string;
@@ -33,6 +34,10 @@ export default class Enemy {
       ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
         if (!bodyA.gameObject && !bodyB.gameObject) {
           return;
+        }
+
+        if (bodyB.gameObject?.tile?.layer?.name === "ground") {
+          this.isTouchingGround = true;
         }
 
         if (
@@ -83,13 +88,14 @@ export default class Enemy {
   public update(deltaTime: number) {
     if (this.destroyed) return;
     this.stateMachine?.update(deltaTime);
-    this.detectFall();
+    // this.detectFall();
   }
 
   private detectFall() {
     const differenceInYToDetectFall = 50;
     const screenHeight = this.sprite.scene.scale.height;
     if (this.sprite.y - this.YPosition >= differenceInYToDetectFall) {
+      this.isTouchingGround = false;
       this.sprite.setVelocityY(this.mainSpeed * 2);
     }
     if (this.sprite.y > screenHeight * 4) {
@@ -127,8 +133,15 @@ export default class Enemy {
     }
     if (player) {
       const distanceX = Math.abs(this.sprite.x - player.getSprite.x);
+      const isInTheSameHeight =
+        Math.abs(this.sprite.y - player.getSprite.y) < 15;
 
-      if (distanceX <= distanceToStartToFollow) {
+      if (
+        distanceX <= distanceToStartToFollow &&
+        isInTheSameHeight &&
+        !this.playerDetected
+      ) {
+        this.playerDetected = true;
         this.stateMachine?.setState("run");
       }
     }
@@ -141,16 +154,18 @@ export default class Enemy {
 
   private runOnUpdate() {
     if (this.destroyed) return;
-    const player = Player.getInstance();
 
-    if (player.getSprite.x > this.sprite.x) {
-      this.sprite.setFlipX(true);
-      this.sprite.play(this.animations[1].key, true);
-      this.sprite.setVelocityX(this.mainSpeed);
-    } else if (player.getSprite.x < this.sprite.x) {
-      this.sprite.setFlipX(false);
-      this.sprite.play(this.animations[1].key, true);
-      this.sprite.setVelocityX(-this.mainSpeed);
+    const player = Player.getInstance();
+    if (this.isTouchingGround && this.playerDetected) {
+      if (player.getSprite.x > this.sprite.x) {
+        this.sprite.setFlipX(true);
+        this.sprite.play(this.animations[1].key, true);
+        this.sprite.setVelocityX(this.mainSpeed);
+      } else if (player.getSprite.x < this.sprite.x) {
+        this.sprite.setFlipX(false);
+        this.sprite.play(this.animations[1].key, true);
+        this.sprite.setVelocityX(-this.mainSpeed);
+      }
     }
   }
 
