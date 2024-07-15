@@ -1,0 +1,52 @@
+{"frames": [
+
+{
+	"filename": "alienYellow_idle1.png",
+	"frame": {"x":0,"y":0,"w":66,"h":82},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":82},
+	"sourceSize": {"w":66,"h":82}
+},
+{
+	"filename": "alienYellow_idle2.png",
+	"frame": {"x":0,"y":82,"w":69,"h":85},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":69,"h":85},
+	"sourceSize": {"w":69,"h":85}
+},
+{
+	"filename": "alienYellow_idle3.png",
+	"frame": {"x":0,"y":167,"w":70,"h":87},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":87},
+	"sourceSize": {"w":70,"h":87}
+},
+{
+	"filename": "alienYellow_walk1.png",
+	"frame": {"x":0,"y":254,"w":68,"h":83},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":68,"h":83},
+	"sourceSize": {"w":68,"h":83}
+},
+{
+	"filename": "alienYellow_walk2.png",
+	"frame": {"x":0,"y":337,"w":70,"h":86},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":86},
+	"sourceSize": {"w":70,"h":86}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "yellow-alien-animation.png",
+	"format": "RGBA8888",
+	"size": {"w":70,"h":423},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:6f4d476c39b7a559b36eebfd6132dd38:fa6f5c7db8f37684d57cc45cd3bd752a:a535cc1ec3bb63e3a467b2a318cfbe2d$"
+}
+}

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-import GameScene from "./scenes/GameScene";
+import FirstScene from "./scenes/GameScenes/FirstScene/FirstScene";
+import MenuScene from "./scenes/MenuScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -11,7 +12,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: [GameScene],
+  scene: [MenuScene, FirstScene],
   scale: {
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,

@@ -1,0 +1,60 @@
+{"frames": [
+
+{
+	"filename": "blue_coin_hexagon_1.png",
+	"frame": {"x":0,"y":0,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+{
+	"filename": "blue_coin_hexagon_2.png",
+	"frame": {"x":50,"y":0,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+{
+	"filename": "blue_coin_hexagon_3.png",
+	"frame": {"x":100,"y":0,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+{
+	"filename": "blue_coin_hexagon_4.png",
+	"frame": {"x":150,"y":0,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+{
+	"filename": "blue_coin_hexagon_5.png",
+	"frame": {"x":200,"y":0,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+{
+	"filename": "blue_coin_hexagon_6.png",
+	"frame": {"x":250,"y":0,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "blue-coin-hexagon.png",
+	"format": "RGBA8888",
+	"size": {"w":300,"h":50},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:bba1fc5aedb8080491e63fd1c67fa3ee:8f4e8211a8d97b6c34ec02174130db89:88b879eaf6b9c7e8037785c881802903$"
+}
+}
