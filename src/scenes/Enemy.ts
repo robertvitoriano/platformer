@@ -8,7 +8,6 @@ export default class Enemy {
   private stateMachine: StateMachine | null = null;
   private isTouchingGround: boolean = false;
   private mainSpeed = 3;
-  private isCollidingWithPlayer = false;
   private YPosition: number = 0;
   private id!: string;
   private destroyed: boolean = false;
@@ -16,6 +15,7 @@ export default class Enemy {
   private timesHitByPlayer = 0;
   private isBeingHit = false;
   private shrinkProportion = 0.5;
+  private playerDetected = false;
 
   constructor(
     id: string,
@@ -59,9 +59,6 @@ export default class Enemy {
             } else if (this.timesHitByPlayer === 2) {
               this.destroy();
             }
-          } else {
-            this.isCollidingWithPlayer = true;
-            this.sprite.setVelocityY(0);
           }
         }
       }
@@ -130,23 +127,21 @@ export default class Enemy {
   private idleOnUpdate() {
     if (this.destroyed) return;
     const distanceToStartToFollow = 320;
-    const distanceToResetCollision = 30;
     const player = Player.getInstance();
     if (this.stateMachine?.isCurrentState("idle")) {
       this.sprite.play(this.animations[0].key, true);
     }
     if (player) {
       const distanceX = Math.abs(this.sprite.x - player.getSprite.x);
-      const distanceY = Math.abs(this.sprite.y - player.getSprite.y);
+      const isInTheSameHeight =
+        Math.abs(this.sprite.y - player.getSprite.y) < 15;
 
-      if (distanceX > distanceToResetCollision) {
-        this.isCollidingWithPlayer = false;
-      }
       if (
         distanceX <= distanceToStartToFollow &&
-        distanceY < 15 &&
-        !this.isCollidingWithPlayer
+        isInTheSameHeight &&
+        !this.playerDetected
       ) {
+        this.playerDetected = true;
         this.stateMachine?.setState("run");
       }
     }
@@ -159,14 +154,9 @@ export default class Enemy {
 
   private runOnUpdate() {
     if (this.destroyed) return;
-    if (this.isCollidingWithPlayer) {
-      this.stateMachine?.setState("idle");
-      return;
-    }
-    const player = Player.getInstance();
-    const distanceY = Math.abs(this.sprite.y - player.getSprite.y);
 
-    if (this.isTouchingGround && distanceY < 15) {
+    const player = Player.getInstance();
+    if (this.isTouchingGround && this.playerDetected) {
       if (player.getSprite.x > this.sprite.x) {
         this.sprite.setFlipX(true);
         this.sprite.play(this.animations[1].key, true);
@@ -176,8 +166,6 @@ export default class Enemy {
         this.sprite.play(this.animations[1].key, true);
         this.sprite.setVelocityX(-this.mainSpeed);
       }
-    } else {
-      this.stateMachine?.setState("idle");
     }
   }
 
