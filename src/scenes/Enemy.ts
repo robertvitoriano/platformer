@@ -59,7 +59,7 @@ export default class Enemy {
           if (player && this.isTopCollision(player.getSprite)) {
             this.isBeingHit = true;
             this.timesHitByPlayer++;
-
+            this.sprite.scene.sound.play("enemy-hit-sound");
             if (!this.shrunk && this.timesHitByPlayer === 1) {
               this.shrink();
               this.shrunk = true;

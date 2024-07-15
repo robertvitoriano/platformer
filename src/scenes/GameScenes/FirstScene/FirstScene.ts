@@ -10,7 +10,6 @@ export default class First extends Phaser.Scene {
   private snowBallShooters: Enemy[] = [];
   private coins?: PickupItem[] = [];
   private uiLayer!: Phaser.GameObjects.Container;
-  private enemyTest: any;
   constructor() {
     super("game");
   }
@@ -50,6 +49,7 @@ export default class First extends Phaser.Scene {
     this.load.audio("coin-picked-sound", ["assets/audio/sx/coin-picked.mp3"]);
     this.load.audio("foot-steps-sound", ["assets/audio/sx/foot-steps.mp3"]);
     this.load.audio("jump-fall-sound", ["assets/audio/sx/jump-fall.mp3"]);
+    this.load.audio("enemy-hit-sound", ["assets/audio/sx/enemy-hit.ogg"]);
 
     this.load.audio("a-friagem", ["assets/audio/music/a-friagem.mp3"]);
 
