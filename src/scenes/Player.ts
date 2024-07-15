@@ -49,13 +49,25 @@ export default class Player {
       })
       .setState("idle");
 
-    this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
-      if (this.stateMachine.isCurrentState("jump")) {
-        this.sprite.play("player-idle");
-        this.stateMachine.setState("idle");
-        this.isTouchingGround = true;
+    this.sprite.setOnCollide(
+      ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
+        if (
+          this.stateMachine.isCurrentState("jump") &&
+          bodyB?.gameObject?.tile?.layer?.name === "ground"
+        ) {
+          this.isTouchingGround = true;
+          this.stateMachine.setState("idle");
+        } else if (
+          this.stateMachine.isCurrentState("jump") &&
+          (bodyA?.gameObject?.texture?.key ===
+            "snowball-shooter-animation-frames" ||
+            bodyB?.gameObject?.texture?.key ===
+              "snowball-shooter-animation-frames")
+        ) {
+          this.stateMachine.setState("idle");
+        }
       }
-    });
+    );
 
     this.isTouchDevice = this.checkTouchDevice();
     this.setupUiContainer();
@@ -73,6 +85,9 @@ export default class Player {
 
   public get getSprite(): Phaser.Physics.Matter.Sprite {
     return this.sprite;
+  }
+  public isJumping(): boolean {
+    return !this.isTouchingGround;
   }
   public static getInstance(
     sprite?: Phaser.Physics.Matter.Sprite,
@@ -181,7 +196,6 @@ export default class Player {
   };
 
   private jumpOnExit = () => {
-    this.isTouchingGround = true;
     if (this.isTouchDevice) {
       this.stateMachine.setState("walk");
     }

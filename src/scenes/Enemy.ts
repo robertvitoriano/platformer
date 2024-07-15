@@ -52,7 +52,7 @@ export default class Enemy {
           bodyB.gameObject?.texture?.key === "penguin-animation-frames"
         ) {
           const player = Player.getInstance();
-          if (player && this.isTopCollision(player.getSprite)) {
+          if (this.isTopCollision(player.getSprite) && player.isJumping()) {
             if (this.isBeingHit) {
               return;
             }
