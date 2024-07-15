@@ -1,5 +1,6 @@
 import StateMachine from "~/state-machine/StateMachine";
 import Player from "./Player";
+
 interface AnimationConfig {
   key: string;
   frameRate: number;
@@ -16,7 +17,7 @@ export default class Enemy {
   private animations: AnimationConfig[] = [];
   private stateMachine: StateMachine | null = null;
   private isTouchingGround: boolean = false;
-  private mainSpeed = 5;
+  private mainSpeed = 3;
   private isCollidingWithPlayer = false;
   private YPosition: number = 0;
   private id!: string;
@@ -42,12 +43,22 @@ export default class Enemy {
         if (bodyB.gameObject?.tile?.layer?.name === "ground") {
           this.isTouchingGround = true;
         }
-        if (bodyB.gameObject?.texture?.key === "penguin-animation-frames") {
-          this.isCollidingWithPlayer = true;
-          this.sprite.setVelocityY(0);
+
+        if (
+          bodyA.gameObject?.texture?.key === "penguin-animation-frames" ||
+          bodyB.gameObject?.texture?.key === "penguin-animation-frames"
+        ) {
+          const player = Player.getInstance();
+          if (player && this.isTopCollision(player.getSprite)) {
+            this.destroy();
+          } else {
+            this.isCollidingWithPlayer = true;
+            this.sprite.setVelocityY(0);
+          }
         }
       }
     );
+
     this.stateMachine = new StateMachine(this, this.id);
     this.stateMachine.addState("idle", {
       onEnter: this.idleOnEnter,
@@ -68,6 +79,7 @@ export default class Enemy {
   public get wasDestroyed(): boolean {
     return this.destroyed;
   }
+
   public update(deltaTime: number) {
     if (this.destroyed) return;
     this.stateMachine?.update(deltaTime);
@@ -154,5 +166,9 @@ export default class Enemy {
     console.log("destroy enemy");
     this.destroyed = true;
     this.sprite.destroy();
+  }
+
+  private isTopCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
+    return playerSprite.y <= this.sprite.y;
   }
 }
