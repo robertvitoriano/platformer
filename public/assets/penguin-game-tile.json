@@ -196,14 +196,80 @@
                 }, 
                 {
                  "height":60,
-                 "id":29,
-                 "name":"snowball-shooter ",
+                 "id":30,
+                 "name":"snowball-shooter",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":2804,
-                 "y":2868
+                 "x":2725.57575757576,
+                 "y":2872
+                }, 
+                {
+                 "height":60,
+                 "id":31,
+                 "name":"snowball-shooter",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":2870.66666666667,
+                 "y":2166.06060606061
+                }, 
+                {
+                 "height":57.333333333333,
+                 "id":32,
+                 "name":"yellow-alien  ",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":69.3333333333335,
+                 "x":2593.33333333333,
+                 "y":2098
+                }, 
+                {
+                 "height":57.3333,
+                 "id":33,
+                 "name":"yellow-alien  ",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":69.3333,
+                 "x":1617.33335,
+                 "y":1889.33335
+                }, 
+                {
+                 "height":60,
+                 "id":34,
+                 "name":"snowball-shooter",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":1466,
+                 "y":1818
+                }, 
+                {
+                 "height":56,
+                 "id":35,
+                 "name":"yellow-alien     ",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":76,
+                 "x":1052,
+                 "y":3080
+                }, 
+                {
+                 "height":57,
+                 "id":36,
+                 "name":"yellow-alien",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":63,
+                 "x":3293,
+                 "y":351
                 }],
          "offsetx":4.26326e-14,
          "offsety":-2,
@@ -277,7 +343,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":30,
+ "nextobjectid":37,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

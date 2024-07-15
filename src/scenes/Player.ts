@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { isEnemy } from "~/config/EnemyConfig";
 import StateMachine from "~/state-machine/StateMachine";
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
@@ -59,10 +60,8 @@ export default class Player {
           this.stateMachine.setState("idle");
         } else if (
           this.stateMachine.isCurrentState("jump") &&
-          (bodyA?.gameObject?.texture?.key ===
-            "snowball-shooter-animation-frames" ||
-            bodyB?.gameObject?.texture?.key ===
-              "snowball-shooter-animation-frames")
+          (isEnemy(bodyA?.gameObject?.texture?.key) ||
+            isEnemy(bodyB?.gameObject?.texture?.key))
         ) {
           this.stateMachine.setState("idle");
         }

@@ -9,6 +9,8 @@ export default class First extends Phaser.Scene {
   private penguin?: Phaser.Physics.Matter.Sprite;
   private player!: Player;
   private snowBallShooters: Enemy[] = [];
+  private yellowAliens: Enemy[] = [];
+
   private coins?: PickupItem[] = [];
   private uiLayer!: Phaser.GameObjects.Container;
   constructor() {
@@ -34,6 +36,11 @@ export default class First extends Phaser.Scene {
       "snowball-shooter-animation-frames",
       "assets/animation/enemy/snow-ball-shooter-animation/snow-ball-shooter-animation.png",
       "assets/animation/enemy/snow-ball-shooter-animation/snow-ball-shooter-animation.json"
+    );
+    this.load.atlas(
+      "yellow-alien-animation-frames",
+      "assets/animation/enemy/yellow-alien/yellow-alien-animation.png",
+      "assets/animation/enemy/yellow-alien/yellow-alien-animation.json"
     );
     this.load.image("tiles", "assets/sheet.png");
     this.load.image("bg", "assets/bg.png");
@@ -83,7 +90,8 @@ export default class First extends Phaser.Scene {
 
     objectsLayer.objects.forEach((objectData, index) => {
       const { x = 0, y = 0, name, width = 0 } = objectData;
-      switch (name) {
+
+      switch (name.trim()) {
         case "spawn-position": {
           this.penguin = this.matter.add
             .sprite(x + width / 2, y, "penguin-animation-frames")
@@ -111,9 +119,26 @@ export default class First extends Phaser.Scene {
           const enemy = new Enemy(
             enemyConfig.id,
             snowBallshooterSprite,
-            enemyConfig.animations
+            enemyConfig.animations,
+            enemyConfig.shrinkProportion
           );
           this.snowBallShooters.push(enemy);
+
+          break;
+        }
+        case "yellow-alien": {
+          const enemyConfig = enemies.yellowAlien(index);
+          const yellowAlienSprite = this.matter.add
+            .sprite(x + width / 2, y, enemyConfig.framesKey)
+            .setFixedRotation();
+
+          const enemy = new Enemy(
+            enemyConfig.id,
+            yellowAlienSprite,
+            enemyConfig.animations,
+            enemyConfig.shrinkProportion
+          );
+          this.yellowAliens.push(enemy);
 
           break;
         }
@@ -135,17 +160,25 @@ export default class First extends Phaser.Scene {
   }
 
   update(time: number, deltaTime: number) {
-    if (!this.player && this.snowBallShooters.length) return;
+    if (
+      !this.player &&
+      this.snowBallShooters.length &&
+      this.yellowAliens.length
+    )
+      return;
 
     this.player.update(deltaTime);
 
     this.snowBallShooters = this.snowBallShooters.filter(
       (snowBallShooter) => !snowBallShooter.wasDestroyed
     );
-
+    this.yellowAliens = this.yellowAliens.filter(
+      (yellowAlien) => !yellowAlien.wasDestroyed
+    );
     this.snowBallShooters.forEach((snowBallShooter) =>
       snowBallShooter.update(deltaTime)
     );
+    this.yellowAliens.forEach((yellowAlien) => yellowAlien.update(deltaTime));
 
     this.uiLayer.setPosition(
       this.cameras.main.scrollX,

@@ -15,16 +15,19 @@ export default class Enemy {
   private shrunk: boolean = false;
   private timesHitByPlayer = 0;
   private isBeingHit = false;
+  private shrinkProportion = 0.5;
 
   constructor(
     id: string,
     sprite: Phaser.Physics.Matter.Sprite,
-    animations: AnimationConfig[]
+    animations: AnimationConfig[],
+    shrinkProportion: number
   ) {
     this.id = id;
     this.sprite = sprite;
     this.animations = animations;
     this.YPosition = this.sprite.y;
+    this.shrinkProportion = shrinkProportion;
     this.createAnimations();
 
     this.sprite.setOnCollide(
@@ -177,7 +180,7 @@ export default class Enemy {
   }
 
   private shrink() {
-    this.sprite.setScale(0.2).setFixedRotation();
+    this.sprite.setScale(this.shrinkProportion).setFixedRotation();
     console.log("enemy shrunk to half size");
   }
 
