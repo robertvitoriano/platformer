@@ -136,11 +136,17 @@ export default class Enemy {
       this.sprite.play(this.animations[0].key, true);
     }
     if (player) {
-      const distance = Math.abs(this.sprite.x - player.getSprite.x);
-      if (distance > distanceToResetCollision) {
+      const distanceX = Math.abs(this.sprite.x - player.getSprite.x);
+      const distanceY = Math.abs(this.sprite.y - player.getSprite.y);
+
+      if (distanceX > distanceToResetCollision) {
         this.isCollidingWithPlayer = false;
       }
-      if (distance <= distanceToStartToFollow && !this.isCollidingWithPlayer) {
+      if (
+        distanceX <= distanceToStartToFollow &&
+        distanceY < 15 &&
+        !this.isCollidingWithPlayer
+      ) {
         this.stateMachine?.setState("run");
       }
     }
@@ -157,16 +163,21 @@ export default class Enemy {
       this.stateMachine?.setState("idle");
       return;
     }
-    if (this.isTouchingGround) {
-      if (Player.getInstance().getSprite.x > this.sprite.x) {
+    const player = Player.getInstance();
+    const distanceY = Math.abs(this.sprite.y - player.getSprite.y);
+
+    if (this.isTouchingGround && distanceY < 15) {
+      if (player.getSprite.x > this.sprite.x) {
         this.sprite.setFlipX(true);
         this.sprite.play(this.animations[1].key, true);
         this.sprite.setVelocityX(this.mainSpeed);
-      } else if (Player.getInstance().getSprite.x < this.sprite.x) {
+      } else if (player.getSprite.x < this.sprite.x) {
         this.sprite.setFlipX(false);
         this.sprite.play(this.animations[1].key, true);
         this.sprite.setVelocityX(-this.mainSpeed);
       }
+    } else {
+      this.stateMachine?.setState("idle");
     }
   }
 
