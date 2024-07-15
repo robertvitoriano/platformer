@@ -59,7 +59,9 @@ export default class First extends Phaser.Scene {
     this.load.audio("jump-fall-sound", ["assets/audio/sx/jump-fall.mp3"]);
     this.load.audio("enemy-hit-sound", ["assets/audio/sx/enemy-hit.ogg"]);
 
-    this.load.audio("a-friagem", ["assets/audio/music/a-friagem.mp3"]);
+    this.load.audio("background-music", [
+      "assets/audio/music/background_music.mp3",
+    ]);
 
     this.load.image("left-button", "assets/controls/left-button.png");
     this.load.image("right-button", "assets/controls/right-button.png");
@@ -156,7 +158,7 @@ export default class First extends Phaser.Scene {
     });
 
     this.matter.world.convertTilemapLayer(ground);
-    this.sound.play("a-friagem", { loop: true, volume: 0.3 });
+    this.sound.play("background-music", { loop: true, volume: 0.3 });
   }
 
   update(time: number, deltaTime: number) {
