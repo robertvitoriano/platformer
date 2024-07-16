@@ -154,17 +154,20 @@ export default class Enemy {
 
   private runOnUpdate() {
     if (this.destroyed) return;
-
     const player = Player.getInstance();
+    const isInTheSameHeight = Math.abs(this.sprite.y - player.getSprite.y) < 15;
     if (this.isTouchingGround && this.playerDetected) {
-      if (player.getSprite.x > this.sprite.x) {
+      if (player.getSprite.x > this.sprite.x && isInTheSameHeight) {
         this.sprite.setFlipX(true);
         this.sprite.play(this.animations[1].key, true);
         this.sprite.setVelocityX(this.mainSpeed);
-      } else if (player.getSprite.x < this.sprite.x) {
+      } else if (player.getSprite.x < this.sprite.x && isInTheSameHeight) {
         this.sprite.setFlipX(false);
         this.sprite.play(this.animations[1].key, true);
         this.sprite.setVelocityX(-this.mainSpeed);
+      } else if (!isInTheSameHeight) {
+        this.stateMachine?.setState("idle");
+        this.playerDetected = false;
       }
     }
   }
