@@ -4,17 +4,17 @@ import { AnimationConfig } from "~/config/EnemyConfig";
 
 export default class Enemy {
   private sprite: Phaser.Physics.Matter.Sprite;
-  private animations: AnimationConfig[] = [];
-  private stateMachine: StateMachine | null = null;
-  private isTouchingGround: boolean = false;
+  private animations: AnimationConfig[];
+  private stateMachine!: StateMachine;
+  private isTouchingGround = false;
   private mainSpeed = 3;
-  private YPosition: number = 0;
-  private id!: string;
-  private destroyed: boolean = false;
-  private shrunk: boolean = false;
+  private initialYPosition: number;
+  private id: string;
+  private destroyed = false;
+  private shrunk = false;
   private timesHitByPlayer = 0;
   private isBeingHit = false;
-  private shrinkProportion = 0.5;
+  private shrinkProportion: number;
   private playerDetected = false;
 
   constructor(
@@ -26,55 +26,12 @@ export default class Enemy {
     this.id = id;
     this.sprite = sprite;
     this.animations = animations;
-    this.YPosition = this.sprite.y;
+    this.initialYPosition = sprite.y;
     this.shrinkProportion = shrinkProportion;
+
+    this.initSprite();
     this.createAnimations();
-
-    this.sprite.setOnCollide(
-      ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
-        if (!bodyA.gameObject && !bodyB.gameObject) {
-          return;
-        }
-
-        if (bodyB.gameObject?.tile?.layer?.name === "ground") {
-          this.isTouchingGround = true;
-        }
-
-        if (
-          bodyA.gameObject?.texture?.key === "penguin-animation-frames" ||
-          bodyB.gameObject?.texture?.key === "penguin-animation-frames"
-        ) {
-          const player = Player.getInstance();
-          if (this.isTopCollision(player.getSprite) && player.isJumping()) {
-            if (this.isBeingHit) {
-              return;
-            }
-            this.isBeingHit = true;
-            this.timesHitByPlayer++;
-            this.sprite.scene.sound.play("enemy-hit-sound");
-            if (!this.shrunk && this.timesHitByPlayer === 1) {
-              this.shrink();
-              this.shrunk = true;
-              this.resetHitStateAfterDelay();
-            } else if (this.timesHitByPlayer === 2) {
-              this.destroy();
-            }
-          }
-        }
-      }
-    );
-
-    this.stateMachine = new StateMachine(this, this.id);
-    this.stateMachine.addState("idle", {
-      onEnter: this.idleOnEnter,
-      onUpdate: this.idleOnUpdate,
-    });
-    this.stateMachine.addState("run", {
-      onEnter: this.runOnEnter,
-      onUpdate: this.runOnUpdate,
-    });
-    this.stateMachine.setState("idle");
-    this.sprite.setFixedRotation();
+    this.initStateMachine();
   }
 
   public get getSprite(): Phaser.Physics.Matter.Sprite {
@@ -85,25 +42,56 @@ export default class Enemy {
     return this.destroyed;
   }
 
-  public update(deltaTime: number) {
-    if (this.destroyed) return;
-    this.stateMachine?.update(deltaTime);
-    // this.detectFall();
+  public update(deltaTime: number): void {
+    if (!this.destroyed) {
+      this.stateMachine.update(deltaTime);
+      // this.detectFall();
+    }
   }
 
-  private detectFall() {
-    const differenceInYToDetectFall = 50;
-    const screenHeight = this.sprite.scene.scale.height;
-    if (this.sprite.y - this.YPosition >= differenceInYToDetectFall) {
-      this.isTouchingGround = false;
-      this.sprite.setVelocityY(this.mainSpeed * 2);
+  private initSprite(): void {
+    this.sprite.setOnCollide(this.handleCollision.bind(this));
+    this.sprite.setFixedRotation();
+  }
+
+  private handleCollision({
+    bodyA,
+    bodyB,
+  }: Phaser.Types.Physics.Matter.MatterCollisionData): void {
+    if (!bodyA.gameObject && !bodyB.gameObject) return;
+
+    if (bodyB.gameObject?.tile?.layer?.name === "ground") {
+      this.isTouchingGround = true;
     }
-    if (this.sprite.y > screenHeight * 4) {
+
+    const player = Player.getInstance();
+    if (
+      (bodyA.gameObject?.texture?.key === "penguin-animation-frames" ||
+        bodyB.gameObject?.texture?.key === "penguin-animation-frames") &&
+      this.isTopCollision(player.getSprite) &&
+      player.isJumping()
+    ) {
+      this.handlePlayerCollision();
+    }
+  }
+
+  private handlePlayerCollision(): void {
+    if (this.isBeingHit) return;
+
+    this.isBeingHit = true;
+    this.timesHitByPlayer++;
+    this.sprite.scene.sound.play("enemy-hit-sound");
+
+    if (!this.shrunk && this.timesHitByPlayer === 1) {
+      this.shrink();
+      this.shrunk = true;
+      this.resetHitStateAfterDelay();
+    } else if (this.timesHitByPlayer === 2) {
       this.destroy();
     }
   }
 
-  private createAnimations() {
+  private createAnimations(): void {
     this.animations.forEach((animation) => {
       this.sprite.anims.create({
         key: animation.key,
@@ -119,18 +107,31 @@ export default class Enemy {
     });
   }
 
-  private idleOnEnter() {
-    if (this.destroyed) return;
-    this.sprite.play(this.animations[0].key, true);
+  private initStateMachine(): void {
+    this.stateMachine = new StateMachine(this, this.id);
+    this.stateMachine.addState("idle", {
+      onEnter: this.idleOnEnter.bind(this),
+      onUpdate: this.idleOnUpdate.bind(this),
+    });
+    this.stateMachine.addState("run", {
+      onEnter: this.runOnEnter.bind(this),
+      onUpdate: this.runOnUpdate.bind(this),
+    });
+    this.stateMachine.setState("idle");
   }
 
-  private idleOnUpdate() {
-    if (this.destroyed) return;
-    const distanceToStartToFollow = 320;
-    const player = Player.getInstance();
-    if (this.stateMachine?.isCurrentState("idle")) {
+  private idleOnEnter(): void {
+    if (!this.destroyed) {
       this.sprite.play(this.animations[0].key, true);
     }
+  }
+
+  private idleOnUpdate(): void {
+    if (this.destroyed) return;
+
+    const distanceToStartToFollow = 320;
+    const player = Player.getInstance();
+
     if (player) {
       const distanceX = Math.abs(this.sprite.x - player.getSprite.x);
       const isInTheSameHeight =
@@ -142,37 +143,44 @@ export default class Enemy {
         !this.playerDetected
       ) {
         this.playerDetected = true;
-        this.stateMachine?.setState("run");
+        this.stateMachine.setState("run");
       }
     }
   }
 
-  private runOnEnter() {
+  private runOnEnter(): void {
+    if (!this.destroyed) {
+      this.sprite.play(this.animations[1].key, true);
+    }
+  }
+
+  private runOnUpdate(): void {
     if (this.destroyed) return;
+
+    const player = Player.getInstance();
+    const isInTheSameHeight = Math.abs(this.sprite.y - player.getSprite.y) < 15;
+
+    if (this.isTouchingGround && this.playerDetected) {
+      this.handleRunMovement(player, isInTheSameHeight);
+    }
+  }
+
+  private handleRunMovement(player: Player, isInTheSameHeight: boolean): void {
+    if (player.getSprite.x > this.sprite.x && isInTheSameHeight) {
+      this.sprite.setFlipX(true);
+      this.sprite.setVelocityX(this.mainSpeed);
+    } else if (player.getSprite.x < this.sprite.x && isInTheSameHeight) {
+      this.sprite.setFlipX(false);
+      this.sprite.setVelocityX(-this.mainSpeed);
+    } else if (!isInTheSameHeight) {
+      this.stateMachine.setState("idle");
+      this.playerDetected = false;
+    }
+
     this.sprite.play(this.animations[1].key, true);
   }
 
-  private runOnUpdate() {
-    if (this.destroyed) return;
-    const player = Player.getInstance();
-    const isInTheSameHeight = Math.abs(this.sprite.y - player.getSprite.y) < 15;
-    if (this.isTouchingGround && this.playerDetected) {
-      if (player.getSprite.x > this.sprite.x && isInTheSameHeight) {
-        this.sprite.setFlipX(true);
-        this.sprite.play(this.animations[1].key, true);
-        this.sprite.setVelocityX(this.mainSpeed);
-      } else if (player.getSprite.x < this.sprite.x && isInTheSameHeight) {
-        this.sprite.setFlipX(false);
-        this.sprite.play(this.animations[1].key, true);
-        this.sprite.setVelocityX(-this.mainSpeed);
-      } else if (!isInTheSameHeight) {
-        this.stateMachine?.setState("idle");
-        this.playerDetected = false;
-      }
-    }
-  }
-
-  private destroy() {
+  private destroy(): void {
     this.destroyed = true;
     this.sprite.destroy();
   }
@@ -181,12 +189,12 @@ export default class Enemy {
     return playerSprite.y <= this.sprite.y;
   }
 
-  private shrink() {
+  private shrink(): void {
     this.sprite.setScale(this.shrinkProportion).setFixedRotation();
     console.log("enemy shrunk to half size");
   }
 
-  private resetHitStateAfterDelay() {
+  private resetHitStateAfterDelay(): void {
     this.sprite.scene.time.delayedCall(1000, () => {
       this.isBeingHit = false;
     });
