@@ -52,10 +52,7 @@ export default class Player {
 
     this.sprite.setOnCollide(
       ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
-        if (
-          this.stateMachine.isCurrentState("jump") &&
-          bodyB?.gameObject?.tile?.layer?.name === "ground"
-        ) {
+        if (bodyB?.gameObject?.tile?.layer?.name === "ground") {
           this.isTouchingGround = true;
           this.stateMachine.setState("idle");
         } else if (

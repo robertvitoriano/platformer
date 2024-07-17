@@ -30,40 +30,12 @@ export default class Enemy {
     this.shrinkProportion = shrinkProportion;
     this.createAnimations();
 
-    this.sprite.setOnCollide(
-      ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
-        if (!bodyA.gameObject && !bodyB.gameObject) {
-          return;
-        }
+    this.sprite.setOnCollide(this.handleCollisions.bind(this));
 
-        if (bodyB.gameObject?.tile?.layer?.name === "ground") {
-          this.isTouchingGround = true;
-        }
+    this.setupStateMachine();
+  }
 
-        if (
-          bodyA.gameObject?.texture?.key === "penguin-animation-frames" ||
-          bodyB.gameObject?.texture?.key === "penguin-animation-frames"
-        ) {
-          const player = Player.getInstance();
-          if (this.isTopCollision(player.getSprite) && player.isJumping()) {
-            if (this.isBeingHit) {
-              return;
-            }
-            this.isBeingHit = true;
-            this.timesHitByPlayer++;
-            this.sprite.scene.sound.play("enemy-hit-sound");
-            if (!this.shrunk && this.timesHitByPlayer === 1) {
-              this.shrink();
-              this.shrunk = true;
-              this.resetHitStateAfterDelay();
-            } else if (this.timesHitByPlayer === 2) {
-              this.destroy();
-            }
-          }
-        }
-      }
-    );
-
+  private setupStateMachine() {
     this.stateMachine = new StateMachine(this, this.id);
     this.stateMachine.addState("idle", {
       onEnter: this.idleOnEnter,
@@ -75,6 +47,25 @@ export default class Enemy {
     });
     this.stateMachine.setState("idle");
     this.sprite.setFixedRotation();
+  }
+  private handleCollisions({
+    bodyA,
+    bodyB,
+  }: Phaser.Types.Physics.Matter.MatterCollisionData) {
+    if (!bodyA.gameObject && !bodyB.gameObject) {
+      return;
+    }
+
+    if (bodyB.gameObject?.tile?.layer?.name === "ground") {
+      this.isTouchingGround = true;
+    }
+
+    if (
+      bodyA.gameObject?.texture?.key === "penguin-animation-frames" ||
+      bodyB.gameObject?.texture?.key === "penguin-animation-frames"
+    ) {
+      this.handlePlayerCollision();
+    }
   }
 
   public get getSprite(): Phaser.Physics.Matter.Sprite {
@@ -178,13 +169,48 @@ export default class Enemy {
     }
   }
 
+  private handlePlayerCollision() {
+    const player = Player.getInstance();
+    if (this.isSideCollision(player.getSprite) && !player.isJumping()) {
+      this.handlePlayerDamage();
+      return;
+    }
+    if (this.isTopCollision(player.getSprite) && player.isJumping()) {
+      this.handleEnemyDamage();
+      return;
+    }
+  }
+  private handlePlayerDamage() {
+    console.log("PLAYER IS HIT");
+  }
+  private handleEnemyDamage() {
+    if (this.isBeingHit) {
+      return;
+    }
+    this.isBeingHit = true;
+    this.timesHitByPlayer++;
+    this.sprite.scene.sound.play("enemy-hit-sound");
+    if (!this.shrunk && this.timesHitByPlayer === 1) {
+      this.shrink();
+      this.shrunk = true;
+      this.resetHitStateAfterDelay();
+    } else if (this.timesHitByPlayer === 2) {
+      this.destroy();
+    }
+  }
+
   private destroy() {
     this.destroyed = true;
     this.sprite.destroy();
   }
 
   private isTopCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
-    return playerSprite.y <= this.sprite.y;
+    if (playerSprite || this.sprite) return playerSprite.y <= this.sprite.y;
+    return false;
+  }
+  private isSideCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
+    if (playerSprite || this.sprite) return playerSprite.x <= this.sprite.x;
+    return false;
   }
 
   private shrink() {
