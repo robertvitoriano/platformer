@@ -181,8 +181,33 @@ export default class Enemy {
     }
   }
   private handlePlayerDamage() {
-    console.log("PLAYER IS HIT");
+    const player = Player.getInstance();
+    if (player) {
+      this.blinkPlayerRed(player);
+    }
   }
+
+  private blinkPlayerRed(player: Player) {
+    const blinkCount = 6;
+    const blinkDuration = 100;
+    let blinkIndex = 0;
+
+    const blinkTimer = this.sprite.scene.time.addEvent({
+      delay: blinkDuration,
+      repeat: blinkCount - 1,
+      callback: () => {
+        if (blinkIndex % 2 === 0) {
+          player.getSprite.setTint(0xff0000);
+        } else {
+          player.getSprite.clearTint();
+        }
+        blinkIndex++;
+      },
+      callbackScope: this,
+    });
+    player.getSprite.clearTint();
+  }
+
   private handleEnemyDamage() {
     if (this.isBeingHit) {
       return;
