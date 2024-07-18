@@ -13,7 +13,8 @@
     "build-android": "ionic capacitor build android",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "deploy": "aws s3 sync dist/ s3://plataformer --acl public-read",
-    "ionic:serve": "parcel src/index.html"
+    "ionic:serve": "parcel src/index.html",
+    "ionic:build":"parcel src/index.html"
   },
   "author": "supertommy",
   "license": "MIT",
