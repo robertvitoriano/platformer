@@ -235,12 +235,13 @@ export default class Player {
 
   private setupTouchControls() {
     const { width, height } = this.sprite.scene.scale;
-    const buttonSize = 100;
-    const walkButtonsOffset = 200;
-    const jumpButtonOffset = 100;
+    const buttonSize = 50;
+    const walkButtonsOffset = 100;
+    const jumpButtonOffset = 50;
 
     this.leftButton = this.sprite.scene.add
       .image(buttonSize, height - buttonSize - walkButtonsOffset, "left-button")
+      .setScale(0.5)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", this.onLeftTouchStart);
@@ -251,6 +252,7 @@ export default class Player {
         height - buttonSize - walkButtonsOffset,
         "right-button"
       )
+      .setScale(0.5)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", this.onRightTouchStart);
@@ -261,6 +263,7 @@ export default class Player {
         height - buttonSize - jumpButtonOffset,
         "jump-button"
       )
+      .setScale(0.5)
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", this.onJumpTouchStart)
