@@ -234,7 +234,8 @@ export default class Enemy {
     return false;
   }
   private isSideCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
-    if (playerSprite || this.sprite) return playerSprite.x <= this.sprite.x;
+    if (playerSprite || this.sprite)
+      return playerSprite.x <= this.sprite.x || this.sprite.x <= playerSprite.x;
     return false;
   }
 
