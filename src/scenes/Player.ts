@@ -381,6 +381,8 @@ export default class Player {
       .setOrigin(0.5)
       .setScrollFactor(0);
 
+    this.sprite.scene.scene.pause();
+
     let countdown = 3;
     const countdownInterval = setInterval(() => {
       countdown--;
@@ -395,6 +397,6 @@ export default class Player {
   }
 
   private restartGame() {
-    this.sprite.scene.scene.restart();
+    window.location.reload();
   }
 }
