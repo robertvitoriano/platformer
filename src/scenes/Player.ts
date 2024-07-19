@@ -63,12 +63,26 @@ export default class Player {
 
           this.isTouchingGround = true;
           this.stateMachine.setState("idle");
-        } else if (
-          this.stateMachine.isCurrentState("jump") &&
-          (isEnemy(bodyA?.gameObject?.texture?.key) ||
-            isEnemy(bodyB?.gameObject?.texture?.key))
-        ) {
-          this.stateMachine.setState("idle");
+        }
+        if (isEnemy(bodyB?.gameObject?.texture?.key)) {
+          console.log({
+            enemyXPosition: bodyB.position.x,
+            playerXPosition: bodyA.position.x,
+          });
+          if (this.stateMachine.isCurrentState("jump")) {
+            this.stateMachine.setState("idle");
+          } else {
+            const isSideCollision = this.checkSideCollisionWithEnemy({
+              enemyXPosition: bodyB.position.x,
+              playerXPosition: bodyA.position.x,
+            });
+            console.log({ isSideCollision });
+            if (isSideCollision) {
+              console.log({ bodyA, bodyB });
+
+              this.handlePlayerDamage();
+            }
+          }
         }
       }
     );
@@ -106,7 +120,38 @@ export default class Player {
     }
     return this.instance as Player;
   }
+  private handlePlayerDamage() {
+    if (Player.instance) {
+      this.blinkPlayerRed(Player.instance);
+    }
+  }
+  private blinkPlayerRed(player: Player) {
+    const blinkCount = 6;
+    const blinkDuration = 100;
+    let blinkIndex = 0;
 
+    const blinkTimer = this.sprite.scene.time.addEvent({
+      delay: blinkDuration,
+      repeat: blinkCount - 1,
+      callback: () => {
+        if (blinkIndex % 2 === 0) {
+          this.sprite.setTint(0xff0000);
+        } else {
+          this.sprite.clearTint();
+        }
+        blinkIndex++;
+      },
+      callbackScope: this,
+    });
+    this.sprite.clearTint();
+  }
+  private checkSideCollisionWithEnemy({ enemyXPosition, playerXPosition }) {
+    if (enemyXPosition || playerXPosition)
+      return (
+        enemyXPosition <= playerXPosition || playerXPosition <= enemyXPosition
+      );
+    return false;
+  }
   private setupUiContainer() {
     this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0);
     // const healthBar = this.sprite.scene.add.rectangle(
@@ -154,6 +199,7 @@ export default class Player {
       this.sprite.scene.sound.play("foot-steps-sound", { loop: true });
     }
   };
+  N;
 
   private walkOnUpdate = () => {
     if (this.cursors.left.isDown || this.shouldRunLeft) {
