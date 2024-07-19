@@ -76,10 +76,7 @@ export default class Player {
               enemyXPosition: bodyB.position.x,
               playerXPosition: bodyA.position.x,
             });
-            console.log({ isSideCollision });
             if (isSideCollision) {
-              console.log({ bodyA, bodyB });
-
               this.handlePlayerDamage();
             }
           }
