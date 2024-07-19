@@ -53,6 +53,14 @@ export default class Player {
     this.sprite.setOnCollide(
       ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
         if (bodyB?.gameObject?.tile?.layer?.name === "ground") {
+          const isCollidingWithCeiling = this.checkCeilingCollision({
+            groundYPosition: bodyB?.position.y,
+            playerYPosition: bodyA.position.y,
+          });
+          if (isCollidingWithCeiling) {
+            return;
+          }
+
           this.isTouchingGround = true;
           this.stateMachine.setState("idle");
         } else if (
@@ -110,7 +118,9 @@ export default class Player {
     // );
     // this.uiContainer.add(healthBar);
   }
-
+  private checkCeilingCollision({ groundYPosition, playerYPosition }) {
+    return groundYPosition < playerYPosition;
+  }
   private idleOnEnter = () => {
     this.sprite.play("player-idle");
     this.sprite.scene.sound.play("jump-fall-sound");
