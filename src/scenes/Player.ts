@@ -67,14 +67,14 @@ export default class Player {
         if (isEnemy(bodyB?.gameObject?.texture?.key)) {
           if (this.stateMachine.isCurrentState("jump")) {
             this.stateMachine.setState("idle");
-          } else {
-            const isSideCollision = this.checkSideCollisionWithEnemy({
-              enemyXPosition: bodyB.position.x,
-              playerXPosition: bodyA.position.x,
-            });
-            if (isSideCollision) {
-              this.handlePlayerDamage();
-            }
+            return;
+          }
+          const isSideCollision = this.checkSideCollisionWithEnemy({
+            enemyXPosition: bodyB.position.x,
+            playerXPosition: bodyA.position.x,
+          });
+          if (isSideCollision) {
+            this.handlePlayerDamage();
           }
         }
       }
