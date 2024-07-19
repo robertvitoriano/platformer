@@ -65,10 +65,6 @@ export default class Player {
           this.stateMachine.setState("idle");
         }
         if (isEnemy(bodyB?.gameObject?.texture?.key)) {
-          console.log({
-            enemyXPosition: bodyB.position.x,
-            playerXPosition: bodyA.position.x,
-          });
           if (this.stateMachine.isCurrentState("jump")) {
             this.stateMachine.setState("idle");
           } else {
