@@ -171,41 +171,10 @@ export default class Enemy {
 
   private handlePlayerCollision() {
     const player = Player.getInstance();
-    if (this.isSideCollision(player.getSprite) && !player.isJumping()) {
-      this.handlePlayerDamage();
-      return;
-    }
     if (this.isTopCollision(player.getSprite) && player.isJumping()) {
       this.handleEnemyDamage();
       return;
     }
-  }
-  private handlePlayerDamage() {
-    const player = Player.getInstance();
-    if (player) {
-      this.blinkPlayerRed(player);
-    }
-  }
-
-  private blinkPlayerRed(player: Player) {
-    const blinkCount = 6;
-    const blinkDuration = 100;
-    let blinkIndex = 0;
-
-    const blinkTimer = this.sprite.scene.time.addEvent({
-      delay: blinkDuration,
-      repeat: blinkCount - 1,
-      callback: () => {
-        if (blinkIndex % 2 === 0) {
-          player.getSprite.setTint(0xff0000);
-        } else {
-          player.getSprite.clearTint();
-        }
-        blinkIndex++;
-      },
-      callbackScope: this,
-    });
-    player.getSprite.clearTint();
   }
 
   private handleEnemyDamage() {
