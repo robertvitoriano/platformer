@@ -14,7 +14,6 @@ export default class Player {
   private jumpButton?: Phaser.GameObjects.Image;
   private shouldRunRight = false;
   private shouldRunLeft = false;
-
   private hasTouchedJump = false;
   private uiContainer?: Phaser.GameObjects.Container;
   private totalHealth = 100;
@@ -75,6 +74,7 @@ export default class Player {
           });
           if (isSideCollision) {
             this.handlePlayerDamage();
+            this.handleGameOver();
           }
         }
       }
@@ -97,9 +97,11 @@ export default class Player {
   public get getSprite(): Phaser.Physics.Matter.Sprite {
     return this.sprite;
   }
+
   public isJumping(): boolean {
     return !this.isTouchingGround;
   }
+
   public static getInstance(
     sprite?: Phaser.Physics.Matter.Sprite,
     cursors?: CursorKeys,
@@ -113,11 +115,13 @@ export default class Player {
     }
     return this.instance as Player;
   }
+
   private handlePlayerDamage() {
     if (Player.instance) {
       this.blinkPlayerRed(Player.instance);
     }
   }
+
   private blinkPlayerRed(player: Player) {
     const blinkCount = 6;
     const blinkDuration = 100;
@@ -138,6 +142,7 @@ export default class Player {
     });
     this.sprite.clearTint();
   }
+
   private checkSideCollisionWithEnemy({ enemyXPosition, playerXPosition }) {
     if (enemyXPosition || playerXPosition)
       return (
@@ -145,20 +150,15 @@ export default class Player {
       );
     return false;
   }
+
   private setupUiContainer() {
     this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0);
-    // const healthBar = this.sprite.scene.add.rectangle(
-    //   300,
-    //   100,
-    //   this.totalHealth * 4,
-    //   70,
-    //   0x00ff00
-    // );
-    // this.uiContainer.add(healthBar);
   }
+
   private checkCeilingCollision({ groundYPosition, playerYPosition }) {
     return groundYPosition < playerYPosition;
   }
+
   private idleOnEnter = () => {
     this.sprite.play("player-idle");
     this.sprite.scene.sound.play("jump-fall-sound");
@@ -192,7 +192,6 @@ export default class Player {
       this.sprite.scene.sound.play("foot-steps-sound", { loop: true });
     }
   };
-  N;
 
   private walkOnUpdate = () => {
     if (this.cursors.left.isDown || this.shouldRunLeft) {
@@ -235,7 +234,6 @@ export default class Player {
       this.sprite.setFlipX(true);
     } else if (this.cursors.right.isDown || this.shouldRunRight) {
       this.sprite.setVelocityX(this.mainSpeed);
-
       this.sprite.setFlipX(false);
     }
   };
@@ -356,4 +354,47 @@ export default class Player {
       this.stateMachine.setState("idle");
     }
   };
+  private handleGameOver() {
+    const gameOverText = this.sprite.scene.add
+      .text(
+        this.sprite.scene.scale.width / 2,
+        this.sprite.scene.scale.height / 2,
+        "Game Over",
+        {
+          fontSize: "64px",
+          color: "#ff0000",
+        }
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+
+    const countdownText = this.sprite.scene.add
+      .text(
+        this.sprite.scene.scale.width / 2,
+        this.sprite.scene.scale.height / 2 + 100,
+        "Restarting in 3...",
+        {
+          fontSize: "32px",
+          color: "#ffffff",
+        }
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+
+    let countdown = 3;
+    const countdownInterval = setInterval(() => {
+      countdown--;
+      countdownText.setText(`Restarting in ${countdown}...`);
+      if (countdown === 0) {
+        clearInterval(countdownInterval);
+        gameOverText.destroy();
+        countdownText.destroy();
+        this.restartGame();
+      }
+    }, 1000);
+  }
+
+  private restartGame() {
+    this.sprite.scene.scene.restart();
+  }
 }
