@@ -4,7 +4,7 @@
   "description": "A typescript template project for Phaser 3 using Parceljs",
   "scripts": {
     "start": "parcel src/index.html -p 7000",
-    "ionic-dev":"ionic capacitor run android --livereload --external",
+    "ionic-dev": "ionic capacitor run android --livereload --external",
     "build": "parcel build src/index.html  --out-dir dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "android": "npx cap run android",
@@ -13,7 +13,9 @@
     "build-android": "ionic capacitor build android",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "deploy": "aws s3 sync dist/ s3://plataformer --acl public-read",
-    "ionic:serve": "parcel src/index.html"
+    "ionic:serve": "parcel src/index.html",
+    "tauri": "tauri"
+
   },
   "author": "supertommy",
   "license": "MIT",
@@ -24,6 +26,7 @@
   "homepage": "https://github.com/ourcade/phaser3-parcel-template",
   "devDependencies": {
     "@capacitor/cli": "6.1.0",
+    "@tauri-apps/cli": "^1.6.0",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
     "cssnano": "^7.0.3",
