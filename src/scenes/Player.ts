@@ -20,7 +20,8 @@ export default class Player {
   private isTouchingGround = true;
   private uiLayer: Phaser.GameObjects.Container;
   private static instance: Player | null = null;
-
+  private static hasShrunk: boolean = false;
+  private static shrinkTimestamp: number = 0;
   private constructor(
     sprite: Phaser.Physics.Matter.Sprite,
     cursors: CursorKeys,
@@ -72,9 +73,8 @@ export default class Player {
             enemyXPosition: bodyB.position.x,
             playerXPosition: bodyA.position.x,
           });
-          if (isSideCollision) {
+          if (isSideCollision && this.isTouchingGround) {
             this.handlePlayerDamage();
-            this.handleGameOver();
           }
         }
       }
@@ -117,8 +117,18 @@ export default class Player {
   }
 
   private handlePlayerDamage() {
+    const elapsedSincePlayerSizeHasShrunk =
+      this.sprite.scene.time.now - Player.shrinkTimestamp;
+
+    if (Player.hasShrunk && elapsedSincePlayerSizeHasShrunk >= 1000) {
+      this.handleGameOver();
+      Player.shrinkTimestamp = 0;
+    }
     if (Player.instance) {
       this.blinkPlayerRed(Player.instance);
+      Player.hasShrunk = true;
+      Player.shrinkTimestamp = this.sprite.scene.time.now;
+      this.sprite.setScale(0.5).setFixedRotation();
     }
   }
 
