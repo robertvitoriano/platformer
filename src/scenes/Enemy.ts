@@ -53,9 +53,18 @@ export default class Enemy {
     this.weaponSprite.setIgnoreGravity(true);
   }
   private handleWeaponMovement() {
-    if (this.weaponSprite) {
-      const force = new Phaser.Math.Vector2(this.weapon.speed, 0);
-      this.weaponSprite.applyForce(force);
+    if (this.weaponSprite && this.weapon) {
+      const player = Player.getInstance();
+      if (player) {
+        const direction = new Phaser.Math.Vector2(
+          player.getSprite.x - this.sprite.x,
+          player.getSprite.y - this.sprite.y
+        );
+        direction.normalize();
+
+        const force = direction.scale(this.weapon.speed);
+        this.weaponSprite.applyForce(force);
+      }
     }
   }
   private setupStateMachine() {
