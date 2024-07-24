@@ -16,25 +16,48 @@ export default class Enemy {
   private isBeingHit = false;
   private shrinkProportion = 0.5;
   private playerDetected = false;
+  private weapon?: any;
+  private weaponSprite?: Phaser.Physics.Matter.Sprite;
 
   constructor(
     id: string,
     sprite: Phaser.Physics.Matter.Sprite,
     animations: AnimationConfig[],
-    shrinkProportion: number
+    shrinkProportion: number,
+    weapon?: any
   ) {
     this.id = id;
     this.sprite = sprite;
     this.animations = animations;
     this.YPosition = this.sprite.y;
     this.shrinkProportion = shrinkProportion;
+    this.weapon = weapon;
     this.createAnimations();
 
     this.sprite.setOnCollide(this.handleCollisions.bind(this));
 
     this.setupStateMachine();
+    if (weapon) {
+      this.instantiateWeapon();
+    }
   }
-
+  private instantiateWeapon() {
+    this.weaponSprite = this.sprite.scene.matter.add
+      .sprite(
+        this.sprite.x + this.sprite.width / 2 - 30,
+        this.sprite.y * 1.02,
+        this.weapon.frameKey
+      )
+      .setFixedRotation()
+      .setScale(0.02);
+    this.weaponSprite.setIgnoreGravity(true);
+  }
+  private handleWeaponMovement() {
+    if (this.weaponSprite) {
+      const force = new Phaser.Math.Vector2(this.weapon.speed, 0);
+      this.weaponSprite.applyForce(force);
+    }
+  }
   private setupStateMachine() {
     this.stateMachine = new StateMachine(this, this.id);
     this.stateMachine.addState("idle", {
@@ -48,6 +71,7 @@ export default class Enemy {
     this.stateMachine.setState("idle");
     this.sprite.setFixedRotation();
   }
+
   private handleCollisions({
     bodyA,
     bodyB,
@@ -134,6 +158,7 @@ export default class Enemy {
       ) {
         this.playerDetected = true;
         this.stateMachine?.setState("run");
+        this.handleWeaponMovement();
       }
     }
   }

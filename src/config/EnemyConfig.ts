@@ -14,6 +14,10 @@ export interface EnemyConfig {
   name: string;
   framesKey: string;
   shrinkProportion: number;
+  weapon?: {
+    frameKey: string;
+    speed: number;
+  };
   animations: AnimationConfig[];
 }
 
@@ -23,6 +27,10 @@ export const enemies: Record<string, (index: number) => EnemyConfig> = {
     name: `snow-ball-shooter`,
     framesKey: "snowball-shooter-animation-frames",
     shrinkProportion: 0.2,
+    weapon: {
+      frameKey: "snowball",
+      speed: 0.02,
+    },
     animations: [
       {
         framesKey: "snowball-shooter-animation-frames",

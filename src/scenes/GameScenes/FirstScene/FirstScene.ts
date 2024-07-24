@@ -66,6 +66,11 @@ export default class First extends Phaser.Scene {
     this.load.image("left-button", "assets/controls/left-button.png");
     this.load.image("right-button", "assets/controls/right-button.png");
     this.load.image("jump-button", "assets/controls/jump-button.png");
+
+    this.load.image(
+      "snowball",
+      "assets/animation/enemy/snow-ball-shooter-animation/snowball.png"
+    );
   }
 
   create() {
@@ -122,7 +127,8 @@ export default class First extends Phaser.Scene {
             enemyConfig.id,
             snowBallshooterSprite,
             enemyConfig.animations,
-            enemyConfig.shrinkProportion
+            enemyConfig.shrinkProportion,
+            enemyConfig.weapon
           );
           this.snowBallShooters.push(enemy);
 
