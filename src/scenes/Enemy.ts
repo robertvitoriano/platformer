@@ -18,7 +18,8 @@ export default class Enemy {
   private playerDetected = false;
   private weapon?: any;
   private weaponSprite?: Phaser.Physics.Matter.Sprite;
-
+  private shootEvent?: Phaser.Time.TimerEvent;
+  private playerWasShot: boolean = false;
   constructor(
     id: string,
     sprite: Phaser.Physics.Matter.Sprite,
@@ -38,9 +39,10 @@ export default class Enemy {
 
     this.setupStateMachine();
     if (weapon) {
-      this.instantiateWeapon();
+      this.startShooting();
     }
   }
+
   private instantiateWeapon() {
     this.weaponSprite = this.sprite.scene.matter.add
       .sprite(
@@ -51,9 +53,23 @@ export default class Enemy {
       .setFixedRotation()
       .setScale(0.02);
     this.weaponSprite.setIgnoreGravity(true);
+    this.weaponSprite.setOnCollide(
+      ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
+        if (
+          bodyA.gameObject?.texture?.key === "penguin-animation-frames" ||
+          bodyB.gameObject?.texture?.key === "penguin-animation-frames"
+        ) {
+          const player = Player.getInstance();
+
+          this.weaponSprite?.destroy();
+          player.handlePlayerDamage();
+        }
+      }
+    );
   }
+
   private handleWeaponMovement() {
-    if (this.weaponSprite && this.weapon) {
+    if (this.weaponSprite && this.weapon && !this.playerWasShot) {
       const player = Player.getInstance();
       if (player) {
         const direction = new Phaser.Math.Vector2(
@@ -67,6 +83,24 @@ export default class Enemy {
       }
     }
   }
+
+  private startShooting() {
+    this.shootEvent = this.sprite.scene.time.addEvent({
+      delay: 2000,
+      callback: this.shootWeapon,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  private shootWeapon() {
+    if (this.weaponSprite) {
+      this.weaponSprite.destroy();
+    }
+    this.instantiateWeapon();
+    this.handleWeaponMovement();
+  }
+
   private setupStateMachine() {
     this.stateMachine = new StateMachine(this, this.id);
     this.stateMachine.addState("idle", {
@@ -185,6 +219,7 @@ export default class Enemy {
       this.handleRunOnUpdate(player, isInTheSameHeight);
     }
   }
+
   private handleRunOnUpdate(player: Player, isInTheSameHeight: boolean) {
     if (!isInTheSameHeight) {
       this.stateMachine?.setState("idle");
@@ -230,12 +265,16 @@ export default class Enemy {
   private destroy() {
     this.destroyed = true;
     this.sprite.destroy();
+    if (this.shootEvent) {
+      this.shootEvent.remove(false);
+    }
   }
 
   private isTopCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
     if (playerSprite || this.sprite) return playerSprite.y <= this.sprite.y;
     return false;
   }
+
   private isSideCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
     if (playerSprite || this.sprite)
       return playerSprite.x <= this.sprite.x || this.sprite.x <= playerSprite.x;

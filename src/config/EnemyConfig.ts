@@ -29,7 +29,7 @@ export const enemies: Record<string, (index: number) => EnemyConfig> = {
     shrinkProportion: 0.2,
     weapon: {
       frameKey: "snowball",
-      speed: 0.02,
+      speed: 0.06,
     },
     animations: [
       {

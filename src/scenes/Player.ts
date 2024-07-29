@@ -116,7 +116,7 @@ export default class Player {
     return this.instance as Player;
   }
 
-  private handlePlayerDamage() {
+  public handlePlayerDamage() {
     const elapsedSincePlayerSizeHasShrunk =
       this.sprite.scene.time.now - Player.shrinkTimestamp;
 
