@@ -64,6 +64,7 @@ export default class Enemy {
           this.weaponSprite?.destroy();
           player.handlePlayerDamage();
           this.sprite.scene.sound.play("snowball-trow-sound");
+          this.playerWasShot = true;
         }
       }
     );
