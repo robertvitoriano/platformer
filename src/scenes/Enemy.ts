@@ -63,6 +63,7 @@ export default class Enemy {
 
           this.weaponSprite?.destroy();
           player.handlePlayerDamage();
+          this.sprite.scene.sound.play("snowball-trow-sound");
         }
       }
     );
@@ -80,6 +81,7 @@ export default class Enemy {
 
         const force = direction.scale(this.weapon.speed);
         this.weaponSprite.applyForce(force);
+        this.sprite.scene.sound.play("snowball-trow-sound");
       }
     }
   }

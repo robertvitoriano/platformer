@@ -54,6 +54,10 @@ export default class First extends Phaser.Scene {
       "assets/audio/sx/jump/jump.ogg",
       "assets/audio/sx/jump/jump.wav",
     ]);
+    this.load.audio(
+      "snowball-trow-sound",
+      "assets/audio/sx/snowball-trow-sound.mp3"
+    );
     this.load.audio("coin-picked-sound", ["assets/audio/sx/coin-picked.mp3"]);
     this.load.audio("foot-steps-sound", ["assets/audio/sx/foot-steps.mp3"]);
     this.load.audio("jump-fall-sound", ["assets/audio/sx/jump-fall.mp3"]);
