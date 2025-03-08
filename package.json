@@ -6,7 +6,17 @@
 	"scripts": {
 		"start": "vite",
 		"build": "tsc && vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",    
+		"android": "npx cap run android",
+    "sync": "npx cap sync",
+    "show-logs": "logkitty android 'console.log'",
+    "build-android": "ionic capacitor build android",
+    "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
+    "deploy": "aws s3 sync dist/ s3://plataformer-game --acl public-read",
+    "ionic:serve": "parcel src/index.html",
+    "tauri": "tauri",
+		"ionic-dev": "ionic capacitor run android --livereload --external"
+
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^5.40.0",
