@@ -1,22 +1,13 @@
-# 🚨 NOTE 🚨
-**October 2022**
-
-This template has been deprecated in favor of a more modern version using Vite. You can find it here: https://github.com/ourcade/phaser3-typescript-vite-template
-
----
-
-![phaser3-parceljs-template](https://user-images.githubusercontent.com/2236153/71606463-37a0da80-2b2e-11ea-9b5f-5d26ccc84f91.png)
-
-# Phaser 3 + TypeScript + Parcel Template
-> For people who want to spend time making Phaser 3 games in TypeScript instead of configuring build tools.
+# Phaser 3 + TypeScript + Vite.js Template
+> Make Phaser 3 games with TypeScript and modern frontend tooling.
 
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-This is a TypeScript specific fork of [phaser3-parcel-template](https://github.com/ourcade/phaser3-parcel-template).
+This is a TypeScript specific fork of [phaser3-vite-template](https://github.com/ourcade/phaser3-vite-template).
 
 ## Prerequisites
 
-You'll need [Node.js](https://nodejs.org/en/), [npm](https://www.npmjs.com/), and [Parcel](https://parceljs.org/) installed.
+You'll need [Node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/) installed.
 
 It is highly recommended to use [Node Version Manager](https://github.com/nvm-sh/nvm) (nvm) to install Node.js and npm.
 
@@ -32,30 +23,14 @@ nvm use node
 
 Replace 'node' with 'latest' for `nvm-windows`.
 
-Then install Parcel:
-
-```bash
-npm install -g parcel-bundler
-```
-
 ## Getting Started
 
-Clone this repository to your local machine:
+You can clone this repository or use [degit](https://github.com/Rich-Harris/degit) to scaffold the project like this:
 
 ```bash
-git clone https://github.com/ourcade/phaser3-typescript-parcel-template.git
-```
+npx degit https://github.com/ourcade/phaser3-typescript-vite-template my-folder-name
+cd my-folder-name
 
-This will create a folder named `phaser3-typescript-parcel-template`. You can specify a different folder name like this:
-
-```bash
-git clone https://github.com/ourcade/phaser3-typescript-parcel-template.git my-folder-name
-```
-
-Go into your new project folder and install dependencies:
-
-```bash
-cd phaser3-typescript-parcel-template # or 'my-folder-name'
 npm install
 ```
 
@@ -81,24 +56,23 @@ Production files will be placed in the `dist` folder. Then upload those files to
     ├── node_modules
     ├── public
     ├── src
-    │   ├── scenes
-    │   │   ├── HelloWorldScene.ts
-    │   ├── index.html
+    │   ├── HelloWorldScene.ts
     │   ├── main.ts
+	├── index.html
     ├── package.json
 ```
 
-The contents of this template is the basic [Phaser 3 getting started example](http://phaser.io/tutorials/getting-started-phaser3/part5).
-
-This template assumes you will want to organize your code into multiple files and use TypeScript.
-
 TypeScript files are intended for the `src` folder. `main.ts` is the entry point referenced by `index.html`.
 
-Other than that there is no opinion on how you should structure your project. There is a `scenes` folder in `src` where the `HelloWorldScene.ts` lives but you can do whatever you want.
+Other than that there is no opinion on how you should structure your project.
+
+There is an example `HelloWorldScene.ts` file that can be placed inside a `scenes` folder to organize by type or elsewhere to organize by function. For example, you can keep all files specific to the HelloWorld scene in a `hello-world` folder.
+
+It is all up to you!
 
 ## Static Assets
 
-Any static assets like images or audio files should be placed in the `public` folder. It'll then be served at http://localhost:8000/images/my-image.png
+Any static assets like images or audio files should be placed in the `public` folder. It'll then be served from the root. For example: http://localhost:8000/images/my-image.png
 
 Example `public` structure:
 
@@ -114,30 +88,27 @@ Example `public` structure:
 
 They can then be loaded by Phaser with `this.image.load('my-image', 'images/my-image.png')`.
 
-## TypeScript ESLint
+# TypeScript ESLint
 
 This template uses a basic `typescript-eslint` set up for code linting.
 
 It does not aim to be opinionated.
 
+[See here for rules to turn on or off](https://eslint.org/docs/rules/).
+
 ## Dev Server Port
 
-You can change the dev server's port number by modifying the `start` script in `package.json`. We use Parcel's `-p` option to specify the port number.
+You can change the dev server's port number by modifying the `vite.config.ts` file. Look for the `server` section:
 
-The script looks like this:
-
-```
-parcel src/index.html -p 8000
+```js
+{
+	// ...
+	server: { host: '0.0.0.0', port: 8000 },
+}
 ```
 
 Change 8000 to whatever you want.
 
-## Other Notes
-
-[parcel-plugin-clean-easy](https://github.com/lifuzhao100/parcel-plugin-clean-easy) is used to ensure only the latest files are in the `dist` folder. You can modify this behavior by changing `parcelCleanPaths` in `package.json`.
-
-[parcel-plugin-static-files](https://github.com/elwin013/parcel-plugin-static-files-copy#readme) is used to copy static files from `public` into the output directory and serve it. You can add additional paths by modifying `staticFiles` in `package.json`.
-
 ## License
 
-[MIT License](https://github.com/ourcade/phaser3-typescript-parcel-template/blob/master/LICENSE)
+[MIT License](https://github.com/ourcade/phaser3-vite-template/blob/master/LICENSE)

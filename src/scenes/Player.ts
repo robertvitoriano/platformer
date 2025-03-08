@@ -1,38 +1,38 @@
-import Phaser from "phaser";
-import { isEnemy } from "~/config/EnemyConfig";
-import StateMachine from "~/state-machine/StateMachine";
-type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
+import Phaser from "phaser"
+import { isEnemy } from "./../config/EnemyConfig"
+import StateMachine from "./../state-machine/StateMachine"
+type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
 export default class Player {
-  private sprite: Phaser.Physics.Matter.Sprite;
-  private stateMachine: StateMachine;
-  private cursors: CursorKeys;
-  private mainSpeed = 5;
-  private isTouchDevice: boolean;
-  private leftButton?: Phaser.GameObjects.Image;
-  private rightButton?: Phaser.GameObjects.Image;
-  private jumpButton?: Phaser.GameObjects.Image;
-  private shouldRunRight = false;
-  private shouldRunLeft = false;
-  private hasTouchedJump = false;
-  private uiContainer?: Phaser.GameObjects.Container;
-  private totalHealth = 100;
-  private isTouchingGround = true;
-  private uiLayer: Phaser.GameObjects.Container;
-  private static instance: Player | null = null;
-  private static hasShrunk: boolean = false;
-  private static shrinkTimestamp: number = 0;
+  private sprite: Phaser.Physics.Matter.Sprite
+  private stateMachine: StateMachine
+  private cursors: CursorKeys
+  private mainSpeed = 5
+  private isTouchDevice: boolean
+  private leftButton?: Phaser.GameObjects.Image
+  private rightButton?: Phaser.GameObjects.Image
+  private jumpButton?: Phaser.GameObjects.Image
+  private shouldRunRight = false
+  private shouldRunLeft = false
+  private hasTouchedJump = false
+  private uiContainer?: Phaser.GameObjects.Container
+  private totalHealth = 100
+  private isTouchingGround = true
+  private uiLayer: Phaser.GameObjects.Container
+  private static instance: Player | null = null
+  private static hasShrunk: boolean = false
+  private static shrinkTimestamp: number = 0
   private constructor(
     sprite: Phaser.Physics.Matter.Sprite,
     cursors: CursorKeys,
     uiLayer: Phaser.GameObjects.Container
   ) {
-    this.uiLayer = uiLayer;
-    this.sprite = sprite;
-    this.cursors = cursors;
-    this.createAnimations();
+    this.uiLayer = uiLayer
+    this.sprite = sprite
+    this.cursors = cursors
+    this.createAnimations()
 
-    this.stateMachine = new StateMachine(this, "player");
+    this.stateMachine = new StateMachine(this, "player")
     this.stateMachine
       .addState("idle", {
         onEnter: this.idleOnEnter,
@@ -48,7 +48,7 @@ export default class Player {
         onUpdate: this.jumpOnUpdate,
         onExit: this.jumpOnExit,
       })
-      .setState("idle");
+      .setState("idle")
 
     this.sprite.setOnCollide(
       ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
@@ -56,50 +56,50 @@ export default class Player {
           const isCollidingWithCeiling = this.checkCeilingCollision({
             groundYPosition: bodyB?.position.y,
             playerYPosition: bodyA.position.y,
-          });
+          })
           if (isCollidingWithCeiling) {
-            return;
+            return
           }
 
-          this.isTouchingGround = true;
-          this.stateMachine.setState("idle");
+          this.isTouchingGround = true
+          this.stateMachine.setState("idle")
         }
         if (isEnemy(bodyB?.gameObject?.texture?.key)) {
           if (this.stateMachine.isCurrentState("jump")) {
-            this.stateMachine.setState("idle");
-            return;
+            this.stateMachine.setState("idle")
+            return
           }
           const isSideCollision = this.checkSideCollisionWithEnemy({
             enemyXPosition: bodyB.position.x,
             playerXPosition: bodyA.position.x,
-          });
+          })
           if (isSideCollision && this.isTouchingGround) {
-            this.handlePlayerDamage();
+            this.handlePlayerDamage()
           }
         }
       }
-    );
+    )
 
-    this.isTouchDevice = this.checkTouchDevice();
-    this.setupUiContainer();
+    this.isTouchDevice = this.checkTouchDevice()
+    this.setupUiContainer()
 
     if (this.isTouchDevice) {
-      this.setupTouchControls();
-      this.stateMachine.setState("walk");
-      this.shouldRunRight = true;
+      this.setupTouchControls()
+      this.stateMachine.setState("walk")
+      this.shouldRunRight = true
     }
   }
 
   update(deltaTime: number) {
-    this.stateMachine.update(deltaTime);
+    this.stateMachine.update(deltaTime)
   }
 
   public get getSprite(): Phaser.Physics.Matter.Sprite {
-    return this.sprite;
+    return this.sprite
   }
 
   public isJumping(): boolean {
-    return !this.isTouchingGround;
+    return !this.isTouchingGround
   }
 
   public static getInstance(
@@ -109,74 +109,71 @@ export default class Player {
   ): Player {
     if (!this.instance) {
       if (sprite && cursors && uiLayer) {
-        this.instance = new Player(sprite, cursors, uiLayer);
-        return this.instance;
+        this.instance = new Player(sprite, cursors, uiLayer)
+        return this.instance
       }
     }
-    return this.instance as Player;
+    return this.instance as Player
   }
 
   public handlePlayerDamage() {
-    const elapsedSincePlayerSizeHasShrunk =
-      this.sprite.scene.time.now - Player.shrinkTimestamp;
+    const elapsedSincePlayerSizeHasShrunk = this.sprite.scene.time.now - Player.shrinkTimestamp
 
     if (Player.hasShrunk && elapsedSincePlayerSizeHasShrunk >= 1000) {
-      this.handleGameOver();
-      Player.shrinkTimestamp = 0;
+      this.handleGameOver()
+      Player.shrinkTimestamp = 0
     }
     if (Player.instance) {
-      this.blinkPlayerRed(Player.instance);
-      Player.hasShrunk = true;
-      Player.shrinkTimestamp = this.sprite.scene.time.now;
-      this.sprite.setScale(0.5).setFixedRotation();
+      this.blinkPlayerRed(Player.instance)
+      Player.hasShrunk = true
+      Player.shrinkTimestamp = this.sprite.scene.time.now
+      this.sprite.setScale(0.5).setFixedRotation()
     }
   }
 
   private blinkPlayerRed(player: Player) {
-    const blinkCount = 6;
-    const blinkDuration = 100;
-    let blinkIndex = 0;
+    const blinkCount = 6
+    const blinkDuration = 100
+    let blinkIndex = 0
 
     const blinkTimer = this.sprite.scene.time.addEvent({
       delay: blinkDuration,
       repeat: blinkCount - 1,
       callback: () => {
         if (blinkIndex % 2 === 0) {
-          this.sprite.setTint(0xff0000);
+          this.sprite.setTint(0xff0000)
         } else {
-          this.sprite.clearTint();
+          this.sprite.clearTint()
         }
-        blinkIndex++;
+        blinkIndex++
       },
       callbackScope: this,
-    });
-    this.sprite.clearTint();
+    })
+    this.sprite.clearTint()
   }
 
   private checkSideCollisionWithEnemy({ enemyXPosition, playerXPosition }) {
     if (enemyXPosition || playerXPosition)
-      return (
-        enemyXPosition <= playerXPosition || playerXPosition <= enemyXPosition
-      );
-    return false;
+      return enemyXPosition <= playerXPosition || playerXPosition <= enemyXPosition
+    return false
   }
 
   private setupUiContainer() {
-    this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0);
+    this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0)
   }
 
   private checkCeilingCollision({ groundYPosition, playerYPosition }) {
-    return groundYPosition < playerYPosition;
+    return groundYPosition < playerYPosition
   }
 
   private idleOnEnter = () => {
-    this.sprite.play("player-idle");
-    this.sprite.scene.sound.play("jump-fall-sound");
+    this.sprite.play("player-idle")
+    this.sprite.scene.sound.play("jump-fall-sound")
     if (this.isTouchDevice) {
-      this.shouldRunRight = true;
-      this.stateMachine.setState("walk");
+      this.shouldRunRight = true
+      this.stateMachine.setState("walk")
     }
-  };
+  }
 
   private idleOnUpdate = () => {
     if (
@@ -185,82 +182,74 @@ export default class Player {
       this.shouldRunRight ||
       this.shouldRunLeft
     ) {
-      this.stateMachine.setState("walk");
+      this.stateMachine.setState("walk")
     }
-    if (
-      Phaser.Input.Keyboard.JustDown(this.cursors.space) ||
-      this.hasTouchedJump
-    ) {
-      this.stateMachine.setState("jump");
-      this.hasTouchedJump = false;
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.space) || this.hasTouchedJump) {
+      this.stateMachine.setState("jump")
+      this.hasTouchedJump = false
     }
-  };
+  }
 
   private walkOnEnter = () => {
-    this.sprite.play("player-walk");
+    this.sprite.play("player-walk")
     if (this.isTouchingGround) {
-      this.sprite.scene.sound.play("foot-steps-sound", { loop: true });
+      this.sprite.scene.sound.play("foot-steps-sound", { loop: true })
     }
-  };
+  }
 
   private walkOnUpdate = () => {
     if (this.cursors.left.isDown || this.shouldRunLeft) {
-      this.sprite.setVelocityX(-this.mainSpeed);
-      this.sprite.setFlipX(true);
+      this.sprite.setVelocityX(-this.mainSpeed)
+      this.sprite.setFlipX(true)
     } else if (this.cursors.right.isDown || this.shouldRunRight) {
-      this.sprite.setVelocityX(this.mainSpeed);
-      this.sprite.setFlipX(false);
+      this.sprite.setVelocityX(this.mainSpeed)
+      this.sprite.setFlipX(false)
     } else {
-      this.sprite.setVelocityX(0);
-      this.stateMachine.setState("idle");
+      this.sprite.setVelocityX(0)
+      this.stateMachine.setState("idle")
     }
-    if (
-      Phaser.Input.Keyboard.JustDown(this.cursors.space) ||
-      this.hasTouchedJump
-    ) {
-      this.stateMachine.setState("jump");
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.space) || this.hasTouchedJump) {
+      this.stateMachine.setState("jump")
     }
     if (!this.isTouchingGround) {
-      this.sprite.scene.sound.stopByKey("foot-steps-sound");
+      this.sprite.scene.sound.stopByKey("foot-steps-sound")
     }
-  };
+  }
 
   private walkOnExit = () => {
-    this.shouldRunRight = false;
-    this.sprite.scene.sound.stopByKey("foot-steps-sound");
-  };
+    this.shouldRunRight = false
+    this.sprite.scene.sound.stopByKey("foot-steps-sound")
+  }
 
   private jumpOnEnter = () => {
-    this.sprite.scene.sound.play("jump-sound");
-    this.sprite.setVelocityY(-this.mainSpeed * 3);
-    this.sprite.play("player-jump");
-    this.isTouchingGround = false;
-    this.hasTouchedJump = false;
-  };
+    this.sprite.scene.sound.play("jump-sound")
+    this.sprite.setVelocityY(-this.mainSpeed * 3)
+    this.sprite.play("player-jump")
+    this.isTouchingGround = false
+    this.hasTouchedJump = false
+  }
 
   private jumpOnUpdate = () => {
     if (this.cursors.left.isDown || this.shouldRunLeft) {
-      this.sprite.setVelocityX(-this.mainSpeed);
-      this.sprite.setFlipX(true);
+      this.sprite.setVelocityX(-this.mainSpeed)
+      this.sprite.setFlipX(true)
     } else if (this.cursors.right.isDown || this.shouldRunRight) {
-      this.sprite.setVelocityX(this.mainSpeed);
-      this.sprite.setFlipX(false);
+      this.sprite.setVelocityX(this.mainSpeed)
+      this.sprite.setFlipX(false)
     }
-  };
+  }
 
   private jumpOnExit = () => {
     if (this.isTouchDevice) {
-      this.stateMachine.setState("walk");
+      this.stateMachine.setState("walk")
     }
-  };
+  }
 
   private createAnimations() {
     this.sprite.anims.create({
       key: "player-idle",
-      frames: [
-        { key: "penguin-animation-frames", frame: "penguin_walk01.png" },
-      ],
-    });
+      frames: [{ key: "penguin-animation-frames", frame: "penguin_walk01.png" }],
+    })
 
     this.sprite.anims.create({
       key: "player-jump",
@@ -271,7 +260,7 @@ export default class Player {
         prefix: "penguin_jump0",
         suffix: ".png",
       }),
-    });
+    })
 
     this.sprite.anims.create({
       key: "player-walk",
@@ -283,100 +272,84 @@ export default class Player {
         suffix: ".png",
       }),
       repeat: -1,
-    });
+    })
   }
 
   private checkTouchDevice(): boolean {
-    return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    return "ontouchstart" in window || navigator.maxTouchPoints > 0
   }
 
   private setupTouchControls() {
-    const { width, height } = this.sprite.scene.scale;
-    const buttonSize = 100;
-    const walkButtonsOffset = 200;
-    const jumpButtonOffset = 100;
+    const { width, height } = this.sprite.scene.scale
+    const buttonSize = 100
+    const walkButtonsOffset = 200
+    const jumpButtonOffset = 100
 
     this.leftButton = this.sprite.scene.add
       .image(buttonSize, height - buttonSize - walkButtonsOffset, "left-button")
       .setOrigin(0)
       .setInteractive()
-      .on("pointerdown", this.onLeftTouchStart);
+      .on("pointerdown", this.onLeftTouchStart)
 
     this.rightButton = this.sprite.scene.add
-      .image(
-        width - buttonSize * 2,
-        height - buttonSize - walkButtonsOffset,
-        "right-button"
-      )
+      .image(width - buttonSize * 2, height - buttonSize - walkButtonsOffset, "right-button")
       .setOrigin(0)
       .setInteractive()
-      .on("pointerdown", this.onRightTouchStart);
+      .on("pointerdown", this.onRightTouchStart)
 
     this.jumpButton = this.sprite.scene.add
-      .image(
-        width / 2 - buttonSize / 2,
-        height - buttonSize - jumpButtonOffset,
-        "jump-button"
-      )
+      .image(width / 2 - buttonSize / 2, height - buttonSize - jumpButtonOffset, "jump-button")
       .setOrigin(0)
       .setInteractive()
       .on("pointerdown", this.onJumpTouchStart)
-      .on("pointerup", this.onJumpTouchEnd);
+      .on("pointerup", this.onJumpTouchEnd)
 
-    this.uiLayer.add([this.leftButton, this.rightButton, this.jumpButton]);
+    this.uiLayer.add([this.leftButton, this.rightButton, this.jumpButton])
   }
 
   private onLeftTouchStart = () => {
-    this.shouldRunLeft = true;
-    this.shouldRunRight = false;
-    this.sprite.setVelocityX(-this.mainSpeed);
-    this.sprite.setFlipX(true);
-    this.stateMachine.setState("walk");
-  };
+    this.shouldRunLeft = true
+    this.shouldRunRight = false
+    this.sprite.setVelocityX(-this.mainSpeed)
+    this.sprite.setFlipX(true)
+    this.stateMachine.setState("walk")
+  }
 
   private onRightTouchStart = () => {
-    this.shouldRunLeft = false;
-    this.shouldRunRight = true;
-    this.sprite.setVelocityX(this.mainSpeed);
-    this.sprite.setFlipX(false);
-    this.stateMachine.setState("walk");
-  };
+    this.shouldRunLeft = false
+    this.shouldRunRight = true
+    this.sprite.setVelocityX(this.mainSpeed)
+    this.sprite.setFlipX(false)
+    this.stateMachine.setState("walk")
+  }
 
   private onJumpTouchStart = () => {
-    this.hasTouchedJump = true;
+    this.hasTouchedJump = true
 
     if (this.isTouchDevice) {
       if (this.shouldRunRight) {
-        this.sprite.setVelocityX(this.mainSpeed);
+        this.sprite.setVelocityX(this.mainSpeed)
       }
       if (this.shouldRunLeft) {
-        this.sprite.setVelocityX(-this.mainSpeed);
+        this.sprite.setVelocityX(-this.mainSpeed)
       }
     }
-  };
+  }
 
   private onJumpTouchEnd = () => {
-    this.sprite.setVelocityX(0);
-    if (
-      this.stateMachine.isCurrentState("walk") ||
-      this.stateMachine.isCurrentState("idle")
-    ) {
-      this.stateMachine.setState("idle");
+    this.sprite.setVelocityX(0)
+    if (this.stateMachine.isCurrentState("walk") || this.stateMachine.isCurrentState("idle")) {
+      this.stateMachine.setState("idle")
     }
-  };
+  }
   private handleGameOver() {
     const gameOverText = this.sprite.scene.add
-      .text(
-        this.sprite.scene.scale.width / 2,
-        this.sprite.scene.scale.height / 2,
-        "Game Over",
-        {
-          fontSize: "64px",
-          color: "#ff0000",
-        }
-      )
+      .text(this.sprite.scene.scale.width / 2, this.sprite.scene.scale.height / 2, "Game Over", {
+        fontSize: "64px",
+        color: "#ff0000",
+      })
       .setOrigin(0.5)
-      .setScrollFactor(0);
+      .setScrollFactor(0)
 
     const countdownText = this.sprite.scene.add
       .text(
@@ -389,24 +362,24 @@ export default class Player {
         }
       )
       .setOrigin(0.5)
-      .setScrollFactor(0);
+      .setScrollFactor(0)
 
-    this.sprite.scene.scene.pause();
+    this.sprite.scene.scene.pause()
 
-    let countdown = 3;
+    let countdown = 3
     const countdownInterval = setInterval(() => {
-      countdown--;
-      countdownText.setText(`Restarting in ${countdown}...`);
+      countdown--
+      countdownText.setText(`Restarting in ${countdown}...`)
       if (countdown === 0) {
-        clearInterval(countdownInterval);
-        gameOverText.destroy();
-        countdownText.destroy();
-        this.restartGame();
+        clearInterval(countdownInterval)
+        gameOverText.destroy()
+        countdownText.destroy()
+        this.restartGame()
       }
-    }, 1000);
+    }, 1000)
   }
 
   private restartGame() {
-    window.location.reload();
+    window.location.reload()
   }
 }

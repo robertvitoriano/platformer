@@ -1,6 +1,6 @@
-import Phaser from "phaser";
-import FirstScene from "./scenes/GameScenes/FirstScene/FirstScene";
-import MenuScene from "./scenes/MenuScene";
+import Phaser from "phaser"
+import FirstScene from "./scenes/GameScenes/FirstScene/FirstScene"
+import MenuScene from "./scenes/MenuScene"
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -17,12 +17,12 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-};
+}
 
-const game = new Phaser.Game(config);
+const game = new Phaser.Game(config)
 
 window.addEventListener("resize", () => {
-  game.scale.resize(window.innerWidth, window.innerHeight);
-});
+  game.scale.resize(window.innerWidth, window.innerHeight)
+})
 
-export default game;
+export default game
