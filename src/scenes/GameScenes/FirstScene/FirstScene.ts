@@ -63,7 +63,7 @@ export default class First extends Phaser.Scene {
     this.load.image("right-button", "assets/controls/right-button.png")
     this.load.image("jump-button", "assets/controls/jump-button.png")
 
-    this.load.image("snowball", "assets/animation/enemy/snow-ball-shooter-animation/snowball.png")
+    this.load.image("snowball", "assets/enemy/snow-ball-shooter-animation/snowball.png")
   }
 
   create() {
