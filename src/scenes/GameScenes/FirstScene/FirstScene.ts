@@ -34,13 +34,13 @@ export default class First extends Phaser.Scene {
     )
     this.load.atlas(
       "snowball-shooter-animation-frames",
-      "assets/animation/enemy/snow-ball-shooter-animation/snow-ball-shooter-animation.png",
-      "assets/animation/enemy/snow-ball-shooter-animation/snow-ball-shooter-animation.json"
+      "assets/enemy/snow-ball-shooter-animation/snow-ball-shooter-animation.png",
+      "assets/enemy/snow-ball-shooter-animation/snow-ball-shooter-animation.json"
     )
     this.load.atlas(
       "yellow-alien-animation-frames",
-      "assets/animation/enemy/yellow-alien/yellow-alien-animation.png",
-      "assets/animation/enemy/yellow-alien/yellow-alien-animation.json"
+      "assets/enemy/yellow-alien/yellow-alien-animation.png",
+      "assets/enemy/yellow-alien/yellow-alien-animation.json"
     )
     this.load.image("tiles", "assets/sheet.png")
     this.load.image("bg", "assets/bg.png")
