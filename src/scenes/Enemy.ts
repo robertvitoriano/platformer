@@ -146,7 +146,7 @@ export default class Enemy {
   public update(deltaTime: number) {
     if (this.destroyed) return
     this.stateMachine?.update(deltaTime)
-    // this.detectFall();
+    this.detectFall()
   }
 
   private detectFall() {
@@ -270,11 +270,11 @@ export default class Enemy {
     return false
   }
 
-  private isSideCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
-    if (playerSprite || this.sprite)
-      return playerSprite.x <= this.sprite.x || this.sprite.x <= playerSprite.x
-    return false
-  }
+  // private isSideCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
+  //   if (playerSprite || this.sprite)
+  //     return playerSprite.x <= this.sprite.x || this.sprite.x <= playerSprite.x
+  //   return false
+  // }
 
   private shrink() {
     this.sprite.setScale(this.shrinkProportion).setFixedRotation()

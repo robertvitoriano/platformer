@@ -15,8 +15,8 @@ export default class Player {
   private shouldRunRight = false
   private shouldRunLeft = false
   private hasTouchedJump = false
-  private uiContainer?: Phaser.GameObjects.Container
-  private totalHealth = 100
+  // private uiContainer?: Phaser.GameObjects.Container
+  // private totalHealth = 100
   private isTouchingGround = true
   private uiLayer: Phaser.GameObjects.Container
   private static instance: Player | null = null
@@ -124,19 +124,19 @@ export default class Player {
       Player.shrinkTimestamp = 0
     }
     if (Player.instance) {
-      this.blinkPlayerRed(Player.instance)
+      this.blinkPlayerRed()
       Player.hasShrunk = true
       Player.shrinkTimestamp = this.sprite.scene.time.now
       this.sprite.setScale(0.5).setFixedRotation()
     }
   }
 
-  private blinkPlayerRed(player: Player) {
+  private blinkPlayerRed() {
     const blinkCount = 6
     const blinkDuration = 100
     let blinkIndex = 0
 
-    const blinkTimer = this.sprite.scene.time.addEvent({
+    this.sprite.scene.time.addEvent({
       delay: blinkDuration,
       repeat: blinkCount - 1,
       callback: () => {
@@ -152,17 +152,29 @@ export default class Player {
     this.sprite.clearTint()
   }
 
-  private checkSideCollisionWithEnemy({ enemyXPosition, playerXPosition }) {
+  private checkSideCollisionWithEnemy({
+    enemyXPosition,
+    playerXPosition,
+  }: {
+    enemyXPosition: number
+    playerXPosition: number
+  }) {
     if (enemyXPosition || playerXPosition)
       return enemyXPosition <= playerXPosition || playerXPosition <= enemyXPosition
     return false
   }
 
   private setupUiContainer() {
-    this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0)
+    // this.uiContainer = this.sprite.scene.add.container(0, 0).setScrollFactor(0)
   }
 
-  private checkCeilingCollision({ groundYPosition, playerYPosition }) {
+  private checkCeilingCollision({
+    groundYPosition,
+    playerYPosition,
+  }: {
+    groundYPosition: number
+    playerYPosition: number
+  }) {
     return groundYPosition < playerYPosition
   }
 

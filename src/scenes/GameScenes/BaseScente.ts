@@ -30,7 +30,7 @@ export default class BaseScene extends Phaser.Scene {
     this.createSceneElements()
   }
 
-  update(time: number, deltaTime: number) {
+  update(_time: number, deltaTime: number) {
     if (!this.player) return
 
     this.player.update(deltaTime)

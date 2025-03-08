@@ -146,7 +146,7 @@ export default class First extends Phaser.Scene {
     this.sound.play("background-music", { loop: true, volume: 0.3 })
   }
 
-  update(time: number, deltaTime: number) {
+  update(_time: number, deltaTime: number) {
     if (!this.player && this.snowBallShooters.length && this.yellowAliens.length) return
 
     this.player.update(deltaTime)
