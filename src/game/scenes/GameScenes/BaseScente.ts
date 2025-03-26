@@ -1,7 +1,7 @@
 import Phaser from "phaser"
 import Player from "../Player"
 import PickupItem from "../PickupItem"
-import Enemy from "../../scenes/Enemy"
+import Enemy from "../Enemy"
 
 export default class BaseScene extends Phaser.Scene {
   protected cursors!: Phaser.Types.Input.Keyboard.CursorKeys

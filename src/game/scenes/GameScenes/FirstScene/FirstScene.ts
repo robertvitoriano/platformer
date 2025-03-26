@@ -1,7 +1,7 @@
 import Phaser from "phaser"
 import Player from "../../Player"
 import PickupItem from "../../PickupItem"
-import Enemy from "./../../../scenes/Enemy"
+import Enemy from "../../Enemy"
 import { enemies } from "./../../../config/EnemyConfig"
 
 export default class First extends Phaser.Scene {

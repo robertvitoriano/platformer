@@ -1,6 +1,6 @@
 import Phaser from "phaser"
-import { isEnemy } from "./../config/EnemyConfig"
-import StateMachine from "./../state-machine/StateMachine"
+import { isEnemy } from "../config/EnemyConfig"
+import StateMachine from "../state-machine/StateMachine"
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
 export default class Player {

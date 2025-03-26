@@ -1,6 +1,6 @@
-import StateMachine from "./../state-machine/StateMachine"
+import StateMachine from "../state-machine/StateMachine"
 import Player from "./Player"
-import { AnimationConfig } from "./../config/EnemyConfig"
+import { AnimationConfig } from "../config/EnemyConfig"
 
 export default class Enemy {
   private sprite: Phaser.Physics.Matter.Sprite
