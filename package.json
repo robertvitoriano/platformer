@@ -6,34 +6,38 @@
 	"scripts": {
 		"start": "vite",
 		"build": "tsc && vite build",
-		"preview": "vite preview",    
+		"preview": "vite preview",
 		"android": "npx cap run android",
-    "sync": "npx cap sync",
-    "show-logs": "logkitty android 'console.log'",
-    "build-android": "ionic capacitor build android",
-    "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
-    "deploy": "aws s3 sync dist/ s3://plataformer-game --acl public-read",
-    "ionic:serve": "parcel src/index.html",
-    "tauri": "tauri",
+		"sync": "npx cap sync",
+		"show-logs": "logkitty android 'console.log'",
+		"build-android": "ionic capacitor build android",
+		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
+		"deploy": "aws s3 sync dist/ s3://plataformer-game --acl public-read",
+		"ionic:serve": "parcel src/index.html",
+		"tauri": "tauri",
 		"ionic-dev": "ionic capacitor run android --livereload --external"
-
 	},
 	"devDependencies": {
-    "@eslint/js": "^9.21.0",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
-    "@vitejs/plugin-react": "^4.3.4",
-    "eslint": "^9.21.0",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
-    "globals": "^15.15.0",
-    "typescript": "~5.7.2",
-    "typescript-eslint": "^8.24.1",
-    "vite": "^6.2.0"
+		"@eslint/js": "^9.21.0",
+		"@types/react": "^19.0.10",
+		"@types/react-dom": "^19.0.4",
+		"@vitejs/plugin-react": "^4.3.4",
+		"eslint": "^9.21.0",
+		"eslint-plugin-react-hooks": "^5.1.0",
+		"eslint-plugin-react-refresh": "^0.4.19",
+		"globals": "^15.15.0",
+		"typescript": "~5.7.2",
+		"typescript-eslint": "^8.24.1",
+		"vite": "^6.2.0"
 	},
 	"dependencies": {
+		"@tailwindcss/postcss": "^4.0.17",
+		"@tailwindcss/vite": "^4.0.17",
 		"phaser": "^3.55.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+		"postcss": "^8.5.3",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"tailwindcss": "^4.0.17",
+		"zustand": "^5.0.3"
 	}
 }
