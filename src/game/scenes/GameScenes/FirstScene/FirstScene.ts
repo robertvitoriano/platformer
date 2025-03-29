@@ -3,6 +3,7 @@ import Player from "../../Player"
 import PickupItem from "../../PickupItem"
 import Enemy from "../../Enemy"
 import { enemies } from "./../../../config/EnemyConfig"
+import { useWebsocketStore } from "../../../../store/websocket-store"
 
 export default class First extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -18,7 +19,9 @@ export default class First extends Phaser.Scene {
   }
 
   init() {
-    this.cursors = this.input.keyboard.createCursorKeys()
+    this.cursors = this.input?.keyboard?.createCursorKeys()!
+    const socket = useWebsocketStore.getState().socket
+    socket?.send(JSON.stringify({ content: "My first level was loaded" }))
   }
 
   preload() {
