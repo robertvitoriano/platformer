@@ -29,21 +29,24 @@ function App() {
   const gameStateStore = useGameStateStore();
   useEffect(() => {
     webSocketStore.create();
-    document.addEventListener("keydown", handlePauseMenuShow);
-  }, []);
 
-  const handlePauseMenuShow = ({ code }: KeyboardEvent) => {
-    if (gameStateStore.hasStarted) {
-      if (code.toLocaleLowerCase() === "escape" && gameStateStore.state !== GameStates.PAUSED) {
-        gameStateStore.setState(GameStates.PAUSED);
-      } else if (
-        code.toLocaleLowerCase() === "escape" &&
-        gameStateStore.state === GameStates.PAUSED
-      ) {
-        gameStateStore.setState(GameStates.PLAYING);
+    const handleMenuDisplay = ({ code }: KeyboardEvent) => {
+      if (gameStateStore.hasStarted) {
+        if (code.toLocaleLowerCase() === "escape" && gameStateStore.state !== GameStates.PAUSED) {
+          gameStateStore.setState(GameStates.PAUSED);
+        } else if (
+          code.toLocaleLowerCase() === "escape" &&
+          gameStateStore.state === GameStates.PAUSED
+        ) {
+          gameStateStore.setState(GameStates.PLAYING);
+        }
       }
-    }
-  };
+    };
+
+    document.addEventListener("keydown", handleMenuDisplay);
+
+    return () => document.removeEventListener("keydown", handleMenuDisplay);
+  }, []);
 
   return (
     <div className="w-[100vw] h-[100vh] flex justify-center items-center">
