@@ -15,7 +15,7 @@ export default class First extends Phaser.Scene {
   private coins?: PickupItem[] = []
   private uiLayer!: Phaser.GameObjects.Container
   constructor() {
-    super("game")
+    super("first-scene")
   }
 
   init() {
@@ -79,13 +79,13 @@ export default class First extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, map.widthInPixels, tilesetHeight)
     this.cameras.main.scrollY = tilesetHeight
 
-    const ground = map.createLayer("ground", tileSet)
-    ground.setCollisionByProperty({ collides: true })
+    const ground = map.createLayer("ground", tileSet!)
+    ground?.setCollisionByProperty({ collides: true })
 
     const objectsLayer = map.getObjectLayer("objects")
     this.uiLayer = this.add.container()
 
-    objectsLayer.objects.forEach((objectData, index) => {
+    objectsLayer?.objects.forEach((objectData, index) => {
       const { x = 0, y = 0, name, width = 0 } = objectData
 
       switch (name.trim()) {
@@ -145,7 +145,7 @@ export default class First extends Phaser.Scene {
       }
     })
 
-    this.matter.world.convertTilemapLayer(ground)
+    this.matter.world.convertTilemapLayer(ground!)
     this.sound.play("background-music", { loop: true, volume: 0.3 })
   }
 

@@ -17,7 +17,7 @@ export default class BaseScene extends Phaser.Scene {
   }
 
   init() {
-    this.cursors = this.input.keyboard.createCursorKeys()
+    this.cursors = this.input.keyboard!.createCursorKeys()
   }
 
   preload() {
