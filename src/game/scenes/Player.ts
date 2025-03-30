@@ -1,6 +1,8 @@
 import Phaser from "phaser"
 import { isEnemy } from "../config/EnemyConfig"
 import StateMachine from "../state-machine/StateMachine"
+import { useAuthStore } from "@/store/auth-store"
+import { rgbaToHex } from "@/lib/utils"
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
 export default class Player {
@@ -15,6 +17,7 @@ export default class Player {
   private shouldRunRight = false
   private shouldRunLeft = false
   private hasTouchedJump = false
+  private username: Phaser.GameObjects.Text
   // private uiContainer?: Phaser.GameObjects.Container
   // private totalHealth = 100
   private isTouchingGround = true
@@ -92,6 +95,22 @@ export default class Player {
 
   update(deltaTime: number) {
     this.stateMachine.update(deltaTime)
+
+    const { username, color } = useAuthStore.getState().player!
+    const usernameX = this.sprite.x - 30
+    const usernameY = this.sprite.y - 60
+
+    if (!this.username) {
+      this.username = this.sprite.scene.add.text(usernameX, usernameY, username as string, {
+        fontSize: "20px",
+        color: "black",
+        fontFamily: "Arial",
+        backgroundColor: color,
+      })
+    }
+    this.sprite.setTint(rgbaToHex(color))
+    this.username.x = usernameX
+    this.username.y = usernameY
   }
 
   public get getSprite(): Phaser.Physics.Matter.Sprite {
@@ -220,6 +239,7 @@ export default class Player {
       this.sprite.setVelocityX(0)
       this.stateMachine.setState("idle")
     }
+
     if (Phaser.Input.Keyboard.JustDown(this.cursors.space) || this.hasTouchedJump) {
       this.stateMachine.setState("jump")
     }
