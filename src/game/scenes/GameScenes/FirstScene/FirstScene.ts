@@ -128,10 +128,28 @@ export default class First extends Phaser.Scene {
           this.cameras.main.startFollow(this.player.getSprite)
 
           socket!.onmessage = (message) => {
-            const playersFromServer = JSON.parse(message.data)
-            this.otherPlayersInitialData = playersFromServer.filter(
-              (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
-            )
+            const messageParsed = JSON.parse(message.data)
+
+            switch (messageParsed.event) {
+              case "set_initial_players_position": {
+                const { players } = messageParsed
+                this.otherPlayersInitialData = players.filter(
+                  (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
+                )
+                break
+              }
+              case "update_player_position": {
+                const { position, id } = messageParsed
+                if (id !== useAuthStore.getState().player?.id) {
+                  const otherPlayerIndex = this.otherPlayers.findIndex(
+                    (player: any) => player.id !== id
+                  )
+                  this.otherPlayers[otherPlayerIndex].getSprite.setX(position.x)
+                  this.otherPlayers[otherPlayerIndex].getSprite.setY(position.y)
+                }
+                break
+              }
+            }
           }
           break
         }

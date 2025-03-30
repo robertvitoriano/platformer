@@ -209,7 +209,7 @@ export default class Enemy {
   }
 
   private isTopCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
-    if (playerSprite || this.sprite) return playerSprite.y <= this.sprite.y
+    if (playerSprite?.body && this.sprite?.body) return playerSprite.y <= this.sprite.y
     return false
   }
 

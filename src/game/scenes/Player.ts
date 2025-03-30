@@ -3,6 +3,8 @@ import { isEnemy } from "../config/EnemyConfig"
 import StateMachine from "../state-machine/StateMachine"
 import { useAuthStore } from "@/store/auth-store"
 import { rgbaToHex } from "@/lib/utils"
+import { useWebsocketStore } from "@/store/websocket-store"
+import { GameEmitEvents } from "@/enums/game-events"
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
 export default class Player {
@@ -233,6 +235,18 @@ export default class Player {
       this.sprite.setVelocityX(0)
       this.stateMachine.setState("idle")
     }
+
+    const socket = useWebsocketStore.getState().socket
+    const token = useAuthStore.getState().token
+    const position = { x: this.sprite.x, y: this.sprite.y }
+
+    socket?.send(
+      JSON.stringify({
+        event: GameEmitEvents.PLAYER_MOVED,
+        position,
+        token,
+      })
+    )
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.space) || this.hasTouchedJump) {
       this.stateMachine.setState("jump")
