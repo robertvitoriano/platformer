@@ -4,6 +4,8 @@ import PickupItem from "../../PickupItem"
 import Enemy from "../../Enemy"
 import { enemies } from "./../../../config/EnemyConfig"
 import { useWebsocketStore } from "../../../../store/websocket-store"
+import { useGameStateStore } from "@/store/game-state-store"
+import { GameStates } from "@/enums/game-states"
 
 export default class First extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -149,7 +151,11 @@ export default class First extends Phaser.Scene {
   }
 
   update(_time: number, deltaTime: number) {
-    if (!this.player && this.snowBallShooters.length && this.yellowAliens.length) return
+    if (
+      (!this.player && this.snowBallShooters.length && this.yellowAliens.length) ||
+      useGameStateStore.getState().state === GameStates.PAUSED
+    )
+      return
 
     this.player.update(deltaTime)
 
@@ -167,11 +173,5 @@ export default class First extends Phaser.Scene {
     for (const enemy of enemies) {
       enemy.handlePlayerCollision(this.player)
     }
-
-    // std::vector<Enemy *> otherEnemies;
-    // if ((otherEnemies = this->_level.checkEnemyCollisions(this->_player.getBoundingBox())).size() > 0)
-    // {
-    //   this->_player.handleEnemyCollisions(otherEnemies);
-    // }
   }
 }
