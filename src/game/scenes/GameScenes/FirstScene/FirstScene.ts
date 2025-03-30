@@ -162,5 +162,13 @@ export default class First extends Phaser.Scene {
     this.yellowAliens.forEach((yellowAlien) => yellowAlien.update(deltaTime))
 
     this.uiLayer.setPosition(this.cameras.main.scrollX, this.cameras.main.scrollY)
+
+    const enemies: Enemy[] = [...this.snowBallShooters, ...this.yellowAliens]
+
+    // std::vector<Enemy *> otherEnemies;
+    // if ((otherEnemies = this->_level.checkEnemyCollisions(this->_player.getBoundingBox())).size() > 0)
+    // {
+    //   this->_player.handleEnemyCollisions(otherEnemies);
+    // }
   }
 }

@@ -3,39 +3,53 @@ import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useGameStateStore } from "@/store/game-state-store";
+import { useAuthStore } from "@/store/auth-store";
 import { Input } from "../ui/input";
+import { createUser } from "@/services/user-serivce";
 export const LoginForm = () => {
   const form = useForm();
   const gameStateStore = useGameStateStore();
+  const authStore = useAuthStore();
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     gameStateStore.setHasStarted(true);
+    const { username } = form.getValues();
+
+    const { user, token } = await createUser({ username });
+
+    authStore.setToken(token);
+    authStore.setPlayer(user);
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" className="text-2xl" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          className="bg-[0xa3dbf2] p-4 text-2xl cursor-pointer"
-          onClick={onSubmit}
+    <div className="bg-white p-4">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col justify-center items-center gap-4"
         >
-          Start Game
-        </Button>
-      </form>
-    </Form>
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-2xl text-black">Username</FormLabel>
+                <FormControl>
+                  <Input placeholder="type your username" className="text-2xl" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            className="bg-[#a3dbf2] border border-black p-4 text-2xl cursor-pointer text-black hover:opacity-90"
+            onClick={onSubmit}
+          >
+            Start Game
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 };
