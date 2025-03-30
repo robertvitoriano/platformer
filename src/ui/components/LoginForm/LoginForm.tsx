@@ -5,7 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useGameStateStore } from "@/store/game-state-store";
 import { useAuthStore } from "@/store/auth-store";
 import { Input } from "../ui/input";
-import { createUser } from "@/services/user-serivce";
+import { createPlayer } from "@/services/player-serivce";
 export const LoginForm = () => {
   const form = useForm();
   const gameStateStore = useGameStateStore();
@@ -15,7 +15,7 @@ export const LoginForm = () => {
     gameStateStore.setHasStarted(true);
     const { username } = form.getValues();
 
-    const { user, token } = await createUser({ username });
+    const { user, token } = await createPlayer({ username });
 
     authStore.setToken(token);
     authStore.setPlayer(user);
