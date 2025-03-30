@@ -15,10 +15,11 @@ export const LoginForm = () => {
     gameStateStore.setHasStarted(true);
     const { username } = form.getValues();
 
-    const { user, token } = await createPlayer({ username });
+    const { player, token } = await createPlayer({ username });
 
-    authStore.setToken(token);
-    authStore.setPlayer(user);
+    if (token) authStore.setToken(token);
+
+    authStore.setPlayer(player);
   };
 
   return (
