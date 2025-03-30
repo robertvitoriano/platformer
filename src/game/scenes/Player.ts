@@ -6,6 +6,7 @@ import { rgbaToHex } from "@/lib/utils"
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
 export default class Player {
+  private id: string = ""
   private sprite: Phaser.Physics.Matter.Sprite
   private stateMachine: StateMachine
   private cursors: CursorKeys
@@ -29,8 +30,12 @@ export default class Player {
   constructor(
     sprite: Phaser.Physics.Matter.Sprite,
     cursors: CursorKeys,
-    uiLayer: Phaser.GameObjects.Container
+    uiLayer: Phaser.GameObjects.Container,
+    id: string,
+    username: string,
+    color: string
   ) {
+    this.id = id
     this.uiLayer = uiLayer
     this.sprite = sprite
     this.cursors = cursors
@@ -92,24 +97,26 @@ export default class Player {
       this.stateMachine.setState("walk")
       this.shouldRunRight = true
     }
+
+    const usernameX = this.sprite.x - 30
+    const usernameY = this.sprite.y - 60
+
+    this.username = this.sprite.scene.add.text(usernameX, usernameY, username as string, {
+      fontSize: "20px",
+      color: "black",
+      fontFamily: "Arial",
+      backgroundColor: color,
+    })
+
+    this.sprite.setTint(rgbaToHex(color))
   }
 
   update(deltaTime: number) {
     this.stateMachine.update(deltaTime)
 
-    const { username, color } = useAuthStore.getState().player!
     const usernameX = this.sprite.x - 30
     const usernameY = this.sprite.y - 60
 
-    if (!this.username) {
-      this.username = this.sprite.scene.add.text(usernameX, usernameY, username as string, {
-        fontSize: "20px",
-        color: "black",
-        fontFamily: "Arial",
-        backgroundColor: color,
-      })
-    }
-    this.sprite.setTint(rgbaToHex(color))
     this.username.x = usernameX
     this.username.y = usernameY
   }

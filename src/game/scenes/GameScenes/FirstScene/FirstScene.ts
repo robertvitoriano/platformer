@@ -6,11 +6,21 @@ import { enemies } from "./../../../config/EnemyConfig"
 import { useWebsocketStore } from "../../../../store/websocket-store"
 import { useGameStateStore } from "@/store/game-state-store"
 import { GameStates } from "@/enums/game-states"
+import { GameEmitEvents } from "@/enums/game-events"
+import { useAuthStore } from "@/store/auth-store"
 
 export default class First extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private penguin?: Phaser.Physics.Matter.Sprite
   private player!: Player
+  private otherPlayersInitialData: {
+    id: string
+    position: { x: number; y: number }
+    color: string
+    username: string
+  }[] = []
+  private otherPlayers: Player[] = []
+
   private snowBallShooters: Enemy[] = []
   private yellowAliens: Enemy[] = []
 
@@ -22,8 +32,6 @@ export default class First extends Phaser.Scene {
 
   init() {
     this.cursors = this.input?.keyboard?.createCursorKeys()!
-    const socket = useWebsocketStore.getState().socket
-    socket?.send(JSON.stringify({ content: "My first level was loaded" }))
   }
 
   preload() {
@@ -92,13 +100,39 @@ export default class First extends Phaser.Scene {
 
       switch (name.trim()) {
         case "spawn-position": {
+          const playerXPosition = (x + width) / 2
+
+          const socket = useWebsocketStore.getState().socket
+
+          socket?.send(
+            JSON.stringify({
+              event: GameEmitEvents.START_GAME,
+              token: useAuthStore.getState().token,
+              position: { x: playerXPosition, y },
+            })
+          )
+
           this.penguin = this.matter.add
-            .sprite(x + width / 2, y, "penguin-animation-frames")
+            .sprite(playerXPosition, y, "penguin-animation-frames")
             .setFixedRotation()
-          this.player = new Player(this.penguin, this.cursors, this.uiLayer)
+
+          this.player = new Player(
+            this.penguin,
+            this.cursors,
+            this.uiLayer,
+            useAuthStore.getState().player?.id!,
+            useAuthStore.getState().player?.username!,
+            useAuthStore.getState().player?.color!
+          )
 
           this.cameras.main.startFollow(this.player.getSprite)
 
+          socket!.onmessage = (message) => {
+            const playersFromServer = JSON.parse(message.data)
+            this.otherPlayersInitialData = playersFromServer.filter(
+              (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
+            )
+          }
           break
         }
         case "snowball-shooter": {
@@ -173,6 +207,24 @@ export default class First extends Phaser.Scene {
     for (const enemy of enemies) {
       enemy.handlePlayerCollision(this.player)
       enemy.handlePlayerDetection(this.player)
+    }
+    if (this.otherPlayers.length != this.otherPlayersInitialData.length) {
+      for (const otherPlayer of this.otherPlayersInitialData) {
+        const otherPlayerSprite = this.matter.add
+          .sprite(otherPlayer.position.x, otherPlayer.position.y, "penguin-animation-frames")
+          .setFixedRotation()
+
+        this.otherPlayers.push(
+          new Player(
+            otherPlayerSprite,
+            this.cursors,
+            this.uiLayer,
+            otherPlayer.id,
+            otherPlayer.username,
+            otherPlayer.color
+          )
+        )
+      }
     }
   }
 }
