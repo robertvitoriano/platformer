@@ -95,7 +95,7 @@ export default class First extends Phaser.Scene {
           this.penguin = this.matter.add
             .sprite(x + width / 2, y, "penguin-animation-frames")
             .setFixedRotation()
-          this.player = Player.getInstance(this.penguin, this.cursors, this.uiLayer)
+          this.player = new Player(this.penguin, this.cursors, this.uiLayer)
 
           this.cameras.main.startFollow(this.player.getSprite)
 
@@ -172,6 +172,7 @@ export default class First extends Phaser.Scene {
 
     for (const enemy of enemies) {
       enemy.handlePlayerCollision(this.player)
+      enemy.handlePlayerDetection(this.player)
     }
   }
 }

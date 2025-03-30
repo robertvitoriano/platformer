@@ -20,6 +20,7 @@ export default class Enemy {
   private weaponSprite?: Phaser.Physics.Matter.Sprite
   private shootEvent?: Phaser.Time.TimerEvent
   private hasCollidedWithPlayer: boolean = false
+  private detectedPlayer: Player
   constructor(
     id: string,
     sprite: Phaser.Physics.Matter.Sprite,
@@ -120,19 +121,8 @@ export default class Enemy {
 
   private idleOnUpdate() {
     if (this.destroyed) return
-    const distanceToStartToFollow = 320
-    const player = Player.getInstance()
     if (this.stateMachine?.isCurrentState("idle")) {
       this.sprite.play(this.animations[0].key, true)
-    }
-    if (player) {
-      const distanceX = Math.abs(this.sprite.x - player.getSprite.x)
-      const isInTheSameHeight = Math.abs(this.sprite.y - player.getSprite.y) < 15
-
-      if (distanceX <= distanceToStartToFollow && isInTheSameHeight && !this.playerDetected) {
-        this.playerDetected = true
-        this.stateMachine?.setState("run")
-      }
     }
   }
 
@@ -143,10 +133,12 @@ export default class Enemy {
 
   private runOnUpdate() {
     if (this.destroyed) return
-    const player = Player.getInstance()
-    const isInTheSameHeight = Math.abs(this.sprite.y - player.getSprite.y) < 15
-    if (this.isTouchingGround && this.playerDetected) {
-      this.handleRunOnUpdate(player, isInTheSameHeight)
+
+    if (this.detectedPlayer) {
+      const isInTheSameHeight = Math.abs(this.sprite.y - this.detectedPlayer.getSprite.y) < 15
+      if (this.isTouchingGround) {
+        this.handleRunOnUpdate(this.detectedPlayer, isInTheSameHeight)
+      }
     }
   }
 
@@ -169,11 +161,27 @@ export default class Enemy {
   }
 
   public handlePlayerCollision(player: Player) {
+    if (!player) return
     if (this.isTopCollision(player.getSprite) && player.isJumping() && this.hasCollidedWithPlayer) {
       this.hasCollidedWithPlayer = false
       this.handleEnemyDamage()
       return
     }
+  }
+
+  public handlePlayerDetection(player: Player) {
+    if (!player || !this.sprite?.body) return
+
+    const distanceToStartToFollow = 320
+    const distanceX = Math.abs(this.sprite.x - player.getSprite.x)
+    const isInTheSameHeight = Math.abs(this.sprite.y - player.getSprite.y) < 15
+
+    if (distanceX <= distanceToStartToFollow && isInTheSameHeight && !this.playerDetected) {
+      this.playerDetected = true
+      this.stateMachine?.setState("run")
+    }
+
+    this.detectedPlayer = player
   }
 
   private handleEnemyDamage() {

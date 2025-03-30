@@ -25,7 +25,8 @@ export default class Player {
   private static instance: Player | null = null
   private static hasShrunk: boolean = false
   private static shrinkTimestamp: number = 0
-  private constructor(
+
+  constructor(
     sprite: Phaser.Physics.Matter.Sprite,
     cursors: CursorKeys,
     uiLayer: Phaser.GameObjects.Container
@@ -119,20 +120,6 @@ export default class Player {
 
   public isJumping(): boolean {
     return !this.isTouchingGround
-  }
-
-  public static getInstance(
-    sprite?: Phaser.Physics.Matter.Sprite,
-    cursors?: CursorKeys,
-    uiLayer?: Phaser.GameObjects.Container
-  ): Player {
-    if (!this.instance) {
-      if (sprite && cursors && uiLayer) {
-        this.instance = new Player(sprite, cursors, uiLayer)
-        return this.instance
-      }
-    }
-    return this.instance as Player
   }
 
   public handlePlayerDamage() {
