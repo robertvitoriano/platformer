@@ -165,6 +165,9 @@ export default class First extends Phaser.Scene {
 
     const enemies: Enemy[] = [...this.snowBallShooters, ...this.yellowAliens]
 
+    for (const enemy of enemies) {
+      enemy.handlePlayerCollision(this.player)
+    }
     // std::vector<Enemy *> otherEnemies;
     // if ((otherEnemies = this->_level.checkEnemyCollisions(this->_player.getBoundingBox())).size() > 0)
     // {

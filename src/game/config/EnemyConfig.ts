@@ -1,24 +1,24 @@
 export interface AnimationConfig {
-  framesKey: string;
-  key: string;
-  prefix: string;
-  suffix: string;
-  start: number;
-  end: number;
-  frameRate: number;
-  repeat: number;
+  framesKey: string
+  key: string
+  prefix: string
+  suffix: string
+  start: number
+  end: number
+  frameRate: number
+  repeat: number
 }
 
 export interface EnemyConfig {
-  id: string;
-  name: string;
-  framesKey: string;
-  shrinkProportion: number;
+  id: string
+  name: string
+  framesKey: string
+  shrinkProportion: number
   weapon?: {
-    frameKey: string;
-    speed: number;
-  };
-  animations: AnimationConfig[];
+    frameKey: string
+    speed: number
+  }
+  animations: AnimationConfig[]
 }
 
 export const enemies: Record<string, (index: number) => EnemyConfig> = {
@@ -82,14 +82,13 @@ export const enemies: Record<string, (index: number) => EnemyConfig> = {
       },
     ],
   }),
-};
+}
 
-export const enemiesFrames = [
-  "snowball-shooter-animation-frames",
-  "yellow-alien-animation-frames",
-];
+export const enemiesFrames = ["snowball-shooter-animation-frames", "yellow-alien-animation-frames"]
+
+export const playerFrames = []
 
 export const isEnemy = (enemyName: string): boolean => {
-  if (!enemyName) return false;
-  return enemiesFrames.includes(enemyName);
-};
+  if (!enemyName) return false
+  return enemiesFrames.includes(enemyName)
+}

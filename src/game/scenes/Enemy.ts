@@ -20,6 +20,7 @@ export default class Enemy {
   private weaponSprite?: Phaser.Physics.Matter.Sprite
   private shootEvent?: Phaser.Time.TimerEvent
   private playerWasShot: boolean = false
+  private hasCollidedWithPlayer: boolean = false
   constructor(
     id: string,
     sprite: Phaser.Physics.Matter.Sprite,
@@ -131,7 +132,7 @@ export default class Enemy {
       bodyA.gameObject?.texture?.key === "penguin-animation-frames" ||
       bodyB.gameObject?.texture?.key === "penguin-animation-frames"
     ) {
-      this.handlePlayerCollision()
+      this.hasCollidedWithPlayer = true
     }
   }
 
@@ -233,9 +234,9 @@ export default class Enemy {
     }
   }
 
-  private handlePlayerCollision() {
-    const player = Player.getInstance()
-    if (this.isTopCollision(player.getSprite) && player.isJumping()) {
+  public handlePlayerCollision(player: Player) {
+    if (this.isTopCollision(player.getSprite) && player.isJumping() && this.hasCollidedWithPlayer) {
+      this.hasCollidedWithPlayer = false
       this.handleEnemyDamage()
       return
     }
