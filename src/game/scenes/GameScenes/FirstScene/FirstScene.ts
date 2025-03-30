@@ -113,8 +113,7 @@ export default class First extends Phaser.Scene {
             enemyConfig.id,
             snowBallshooterSprite,
             enemyConfig.animations,
-            enemyConfig.shrinkProportion,
-            enemyConfig.weapon
+            enemyConfig.shrinkProportion
           )
           this.snowBallShooters.push(enemy)
 
@@ -168,6 +167,7 @@ export default class First extends Phaser.Scene {
     for (const enemy of enemies) {
       enemy.handlePlayerCollision(this.player)
     }
+
     // std::vector<Enemy *> otherEnemies;
     // if ((otherEnemies = this->_level.checkEnemyCollisions(this->_player.getBoundingBox())).size() > 0)
     // {

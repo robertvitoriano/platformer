@@ -19,7 +19,6 @@ export default class Enemy {
   private weapon?: any
   private weaponSprite?: Phaser.Physics.Matter.Sprite
   private shootEvent?: Phaser.Time.TimerEvent
-  private playerWasShot: boolean = false
   private hasCollidedWithPlayer: boolean = false
   constructor(
     id: string,
@@ -39,70 +38,6 @@ export default class Enemy {
     this.sprite.setOnCollide(this.handleCollisions.bind(this))
 
     this.setupStateMachine()
-    if (weapon) {
-      this.startShooting()
-    }
-  }
-
-  private instantiateWeapon() {
-    this.weaponSprite = this.sprite.scene.matter.add
-      .sprite(
-        this.sprite.x + this.sprite.width / 2 - 30,
-        this.sprite.y * 1.02,
-        this.weapon.frameKey
-      )
-      .setFixedRotation()
-      .setScale(0.02)
-    this.weaponSprite.setIgnoreGravity(true)
-    this.weaponSprite.setOnCollide(
-      ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionData) => {
-        if (
-          bodyA.gameObject?.texture?.key === "penguin-animation-frames" ||
-          bodyB.gameObject?.texture?.key === "penguin-animation-frames"
-        ) {
-          const player = Player.getInstance()
-
-          this.weaponSprite?.destroy()
-          player.handlePlayerDamage()
-          this.sprite.scene.sound.play("snowball-trow-sound")
-          this.playerWasShot = true
-        }
-      }
-    )
-  }
-
-  private handleWeaponMovement() {
-    if (this.weaponSprite && this.weapon && !this.playerWasShot) {
-      const player = Player.getInstance()
-      if (player) {
-        const direction = new Phaser.Math.Vector2(
-          player.getSprite.x - this.sprite.x,
-          player.getSprite.y - this.sprite.y
-        )
-        direction.normalize()
-
-        const force = direction.scale(this.weapon.speed)
-        this.weaponSprite.applyForce(force)
-        this.sprite.scene.sound.play("snowball-trow-sound")
-      }
-    }
-  }
-
-  private startShooting() {
-    this.shootEvent = this.sprite.scene.time.addEvent({
-      delay: 2000,
-      callback: this.shootWeapon,
-      callbackScope: this,
-      loop: true,
-    })
-  }
-
-  private shootWeapon() {
-    if (this.weaponSprite) {
-      this.weaponSprite.destroy()
-    }
-    this.instantiateWeapon()
-    this.handleWeaponMovement()
   }
 
   private setupStateMachine() {
@@ -197,7 +132,6 @@ export default class Enemy {
       if (distanceX <= distanceToStartToFollow && isInTheSameHeight && !this.playerDetected) {
         this.playerDetected = true
         this.stateMachine?.setState("run")
-        this.handleWeaponMovement()
       }
     }
   }
@@ -270,12 +204,6 @@ export default class Enemy {
     if (playerSprite || this.sprite) return playerSprite.y <= this.sprite.y
     return false
   }
-
-  // private isSideCollision(playerSprite: Phaser.Physics.Matter.Sprite): boolean {
-  //   if (playerSprite || this.sprite)
-  //     return playerSprite.x <= this.sprite.x || this.sprite.x <= playerSprite.x
-  //   return false
-  // }
 
   private shrink() {
     this.sprite.setScale(this.shrinkProportion).setFixedRotation()
