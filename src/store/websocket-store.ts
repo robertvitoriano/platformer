@@ -7,5 +7,5 @@ type WebSocketStore = {
 
 export const useWebsocketStore = create<WebSocketStore>()((set) => ({
   socket: null,
-  create: () => set(() => ({ socket: new WebSocket("ws://localhost:8080/") })),
+  create: () => set(() => ({ socket: new WebSocket("ws://localhost:8080/ws") })),
 }))
