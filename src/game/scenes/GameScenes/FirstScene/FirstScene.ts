@@ -139,13 +139,16 @@ export default class First extends Phaser.Scene {
                 break
               }
               case "update_player_position": {
-                const { position, id } = messageParsed
+                const { position, id, currentState, isFlipped } = messageParsed
+                console.log({ playerId: id, position })
                 if (id !== useAuthStore.getState().player?.id) {
                   const otherPlayerIndex = this.otherPlayers.findIndex(
-                    (player: any) => player.id !== id
+                    (player: any) => player.id === id
                   )
                   this.otherPlayers[otherPlayerIndex].getSprite.setX(position.x)
                   this.otherPlayers[otherPlayerIndex].getSprite.setY(position.y)
+                  this.otherPlayers[otherPlayerIndex].stateMachine.setState(currentState)
+                  this.otherPlayers[otherPlayerIndex].getSprite.setFlipX(isFlipped)
                 }
                 break
               }

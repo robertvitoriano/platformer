@@ -10,7 +10,7 @@ type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 export default class Player {
   private id: string = ""
   private sprite: Phaser.Physics.Matter.Sprite
-  private stateMachine: StateMachine
+  public stateMachine: StateMachine
   private cursors: CursorKeys
   private mainSpeed = 5
   private isTouchDevice: boolean
@@ -242,7 +242,9 @@ export default class Player {
 
     socket?.send(
       JSON.stringify({
+        isFlipped: this.sprite.flipX,
         event: GameEmitEvents.PLAYER_MOVED,
+        currentState: this.stateMachine.getCurrentState()?.name,
         position,
         token,
       })
@@ -250,6 +252,15 @@ export default class Player {
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.space) || this.hasTouchedJump) {
       this.stateMachine.setState("jump")
+      socket?.send(
+        JSON.stringify({
+          isFlipped: this.sprite.flipX,
+          event: GameEmitEvents.PLAYER_MOVED,
+          currentState: this.stateMachine.getCurrentState()?.name,
+          position,
+          token,
+        })
+      )
     }
     if (!this.isTouchingGround) {
       this.sprite.scene.sound.stopByKey("foot-steps-sound")
