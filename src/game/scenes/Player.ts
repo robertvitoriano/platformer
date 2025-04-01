@@ -123,6 +123,14 @@ export default class Player {
     this.username.y = usernameY
   }
 
+  public updateUsernamePosition(position: { x: number; y: number }) {
+    const usernameX = position.x - 30
+    const usernameY = position.y - 60
+
+    this.username.x = usernameX
+    this.username.y = usernameY
+  }
+
   public get getSprite(): Phaser.Physics.Matter.Sprite {
     return this.sprite
   }

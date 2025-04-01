@@ -149,6 +149,7 @@ export default class First extends Phaser.Scene {
                   this.otherPlayers[otherPlayerIndex].getSprite.setY(position.y)
                   this.otherPlayers[otherPlayerIndex].stateMachine.setState(currentState)
                   this.otherPlayers[otherPlayerIndex].getSprite.setFlipX(isFlipped)
+                  this.otherPlayers[otherPlayerIndex].updateUsernamePosition(position)
                 }
                 break
               }
