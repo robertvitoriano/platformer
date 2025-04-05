@@ -230,8 +230,9 @@ export default class First extends Phaser.Scene {
       enemy.handlePlayerCollision(this.player)
       enemy.handlePlayerDetection(this.player)
     }
-    if (this.otherPlayers.length != this.otherPlayersInitialData.length) {
-      for (const otherPlayer of this.otherPlayersInitialData) {
+    const currentPlayerIds = this.otherPlayers.map((player) => player.getId())
+    for (const otherPlayer of this.otherPlayersInitialData) {
+      if (!currentPlayerIds.includes(otherPlayer.id)) {
         const otherPlayerSprite = this.matter.add
           .sprite(otherPlayer.position.x, otherPlayer.position.y, "penguin-animation-frames")
           .setFixedRotation()

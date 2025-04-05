@@ -138,6 +138,9 @@ export default class Player {
   public isJumping(): boolean {
     return !this.isTouchingGround
   }
+  public getId(): string {
+    return this.id
+  }
 
   public handlePlayerDamage() {
     const elapsedSincePlayerSizeHasShrunk = this.sprite.scene.time.now - Player.shrinkTimestamp
