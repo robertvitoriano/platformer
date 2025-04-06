@@ -1,6 +1,4 @@
-import { GameStates } from "@/enums/game-states"
 import { useGameStateStore } from "@/store/game-state-store"
-import { useWebsocketStore } from "@/store/websocket-store"
 
 export default class MenuScene extends Phaser.Scene {
   constructor() {

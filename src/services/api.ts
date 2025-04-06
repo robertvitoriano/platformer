@@ -2,7 +2,7 @@ import { useAuthStore } from "@/store/auth-store"
 import axios, { InternalAxiosRequestConfig, AxiosError } from "axios"
 
 export const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "http://localhost:7777",
 })
 
 const requestIntercepter = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
