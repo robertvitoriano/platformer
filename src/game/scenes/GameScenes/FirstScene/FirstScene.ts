@@ -136,6 +136,14 @@ export default class First extends Phaser.Scene {
                 this.otherPlayersInitialData = players.filter(
                   (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
                 )
+                const { position } = players.find(
+                  (player: { id: string; position: { x: number; y: number } }) =>
+                    player.id === useAuthStore.getState().player?.id
+                )
+
+                this.player.getSprite.setX(position.x)
+                this.player.getSprite.setY(position.y)
+
                 break
               }
               case "update_player_position": {
