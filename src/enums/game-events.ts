@@ -1,6 +1,7 @@
 export const GameEmitEvents = {
   START_GAME: "start_game",
   PLAYER_MOVED: "player_moved",
+  MESSAGE_SENT: "message_sent",
 } as const
 
 export type GameEmitEvent = (typeof GameEmitEvents)[keyof typeof GameEmitEvents]

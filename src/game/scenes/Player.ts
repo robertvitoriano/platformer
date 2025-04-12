@@ -91,15 +91,6 @@ export default class Player {
       }
     )
 
-    this.isTouchDevice = this.checkTouchDevice()
-    this.setupUiContainer()
-
-    if (this.isTouchDevice) {
-      this.setupTouchControls()
-      this.stateMachine.setState("walk")
-      this.shouldRunRight = true
-    }
-
     const usernameX = this.sprite.x - 30
     const usernameY = this.sprite.y - 60
 
@@ -337,73 +328,6 @@ export default class Player {
     })
   }
 
-  private checkTouchDevice(): boolean {
-    return "ontouchstart" in window || navigator.maxTouchPoints > 0
-  }
-
-  private setupTouchControls() {
-    const { width, height } = this.sprite.scene.scale
-    const buttonSize = 100
-    const walkButtonsOffset = 200
-    const jumpButtonOffset = 100
-
-    this.leftButton = this.sprite.scene.add
-      .image(buttonSize, height - buttonSize - walkButtonsOffset, "left-button")
-      .setOrigin(0)
-      .setInteractive()
-      .on("pointerdown", this.onLeftTouchStart)
-
-    this.rightButton = this.sprite.scene.add
-      .image(width - buttonSize * 2, height - buttonSize - walkButtonsOffset, "right-button")
-      .setOrigin(0)
-      .setInteractive()
-      .on("pointerdown", this.onRightTouchStart)
-
-    this.jumpButton = this.sprite.scene.add
-      .image(width / 2 - buttonSize / 2, height - buttonSize - jumpButtonOffset, "jump-button")
-      .setOrigin(0)
-      .setInteractive()
-      .on("pointerdown", this.onJumpTouchStart)
-      .on("pointerup", this.onJumpTouchEnd)
-
-    this.uiLayer.add([this.leftButton, this.rightButton, this.jumpButton])
-  }
-
-  private onLeftTouchStart = () => {
-    this.shouldRunLeft = true
-    this.shouldRunRight = false
-    this.sprite.setVelocityX(-this.mainSpeed)
-    this.sprite.setFlipX(true)
-    this.stateMachine.setState("walk")
-  }
-
-  private onRightTouchStart = () => {
-    this.shouldRunLeft = false
-    this.shouldRunRight = true
-    this.sprite.setVelocityX(this.mainSpeed)
-    this.sprite.setFlipX(false)
-    this.stateMachine.setState("walk")
-  }
-
-  private onJumpTouchStart = () => {
-    this.hasTouchedJump = true
-
-    if (this.isTouchDevice) {
-      if (this.shouldRunRight) {
-        this.sprite.setVelocityX(this.mainSpeed)
-      }
-      if (this.shouldRunLeft) {
-        this.sprite.setVelocityX(-this.mainSpeed)
-      }
-    }
-  }
-
-  private onJumpTouchEnd = () => {
-    this.sprite.setVelocityX(0)
-    if (this.stateMachine.isCurrentState("walk") || this.stateMachine.isCurrentState("idle")) {
-      this.stateMachine.setState("idle")
-    }
-  }
   private handleGameOver() {
     const gameOverText = this.sprite.scene.add
       .text(this.sprite.scene.scale.width / 2, this.sprite.scene.scale.height / 2, "Game Over", {
