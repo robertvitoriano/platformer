@@ -6,14 +6,16 @@ import { GameStates } from "@/enums/game-states";
 import { LoginForm } from "./components/LoginForm/LoginForm";
 import { PauseMenu } from "./components/PauseMenu/PauseMenu";
 import { useAuthStore } from "@/store/auth-store";
-
+import { useMainStore } from "@/store/main-store";
 import { Chat } from "./components/Chat/Chat";
+import { Platforms } from "@/enums/platforms";
+import { GameButtons } from "./components/GameButtons/GameButtons";
 
 function App() {
   const webSocketStore = useWebsocketStore();
   const gameStateStore = useGameStateStore();
   const authStore = useAuthStore();
-
+  const mainStore = useMainStore();
   useEffect(() => {
     webSocketStore.create();
   }, []);
@@ -27,6 +29,7 @@ function App() {
     <div className="w-[100vw] h-[100vh] flex justify-center items-center relative">
       {!gameStateStore.hasStarted && <LoginForm />}
       {gameStateStore.state === GameStates.PAUSED && <PauseMenu />}
+      {mainStore.platform === Platforms.MOBILE && <GameButtons />}
       <Chat />
     </div>
   );

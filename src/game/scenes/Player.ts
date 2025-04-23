@@ -5,6 +5,10 @@ import { useAuthStore } from "@/store/auth-store"
 import { rgbaToHex } from "@/lib/utils"
 import { useWebsocketStore } from "@/store/websocket-store"
 import { GameEmitEvents } from "@/enums/game-events"
+import { useMainStore } from "@/store/main-store"
+import { Platforms } from "@/enums/platforms"
+import { usePlayerStore } from "@/store/player-store"
+import { PlayerMoves } from "@/enums/player-moves"
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
 export default class Player {
@@ -13,10 +17,7 @@ export default class Player {
   public stateMachine: StateMachine
   private cursors: CursorKeys
   private mainSpeed = 5
-  private isTouchDevice: boolean
-  private leftButton?: Phaser.GameObjects.Image
-  private rightButton?: Phaser.GameObjects.Image
-  private jumpButton?: Phaser.GameObjects.Image
+  private isTouchDevice: boolean = false
   private shouldRunRight = false
   private shouldRunLeft = false
   private hasTouchedJump = false
@@ -105,6 +106,12 @@ export default class Player {
   }
 
   update(deltaTime: number) {
+    if (this.sprite.scene.sys.game.device.os.desktop) {
+      useMainStore.getState().setPlatform(Platforms.DESKTOP)
+    } else {
+      useMainStore.getState().setPlatform(Platforms.MOBILE)
+      this.isTouchDevice = true
+    }
     this.stateMachine.update(deltaTime)
 
     const usernameX = this.sprite.x - 30
@@ -112,6 +119,11 @@ export default class Player {
 
     this.username.x = usernameX
     this.username.y = usernameY
+    if (this.isTouchDevice) {
+      this.shouldRunLeft = usePlayerStore.getState().playerMove === PlayerMoves.LEFT
+      this.shouldRunRight = usePlayerStore.getState().playerMove === PlayerMoves.RIGHT
+      this.hasTouchedJump = usePlayerStore.getState().playerMove === PlayerMoves.JUMP
+    }
   }
 
   public updateUsernamePosition(position: { x: number; y: number }) {
@@ -198,10 +210,6 @@ export default class Player {
   private idleOnEnter = () => {
     this.sprite.play("player-idle")
     this.sprite.scene.sound.play("jump-fall-sound")
-    if (this.isTouchDevice) {
-      this.shouldRunRight = true
-      this.stateMachine.setState("walk")
-    }
   }
 
   private idleOnUpdate = () => {
@@ -227,10 +235,16 @@ export default class Player {
   }
 
   private walkOnUpdate = () => {
+    console.log("SHOULDE BE MOVING LEFT")
+    console.log("PLAYER MOVING LEFT", usePlayerStore.getState().playerMove)
     if (this.cursors.left.isDown || this.shouldRunLeft) {
       this.sprite.setVelocityX(-this.mainSpeed)
       this.sprite.setFlipX(true)
-    } else if (this.cursors.right.isDown || this.shouldRunRight) {
+    } else if (
+      this.cursors.right.isDown ||
+      this.shouldRunRight ||
+      usePlayerStore.getState().playerMove === PlayerMoves.RIGHT
+    ) {
       this.sprite.setVelocityX(this.mainSpeed)
       this.sprite.setFlipX(false)
     } else {
@@ -280,6 +294,7 @@ export default class Player {
     this.sprite.play("player-jump")
     this.isTouchingGround = false
     this.hasTouchedJump = false
+    usePlayerStore.getState().setPlayerMove(PlayerMoves.NONE)
   }
 
   private jumpOnUpdate = () => {
@@ -292,11 +307,7 @@ export default class Player {
     }
   }
 
-  private jumpOnExit = () => {
-    if (this.isTouchDevice) {
-      this.stateMachine.setState("walk")
-    }
-  }
+  private jumpOnExit = () => {}
 
   private createAnimations() {
     this.sprite.anims.create({

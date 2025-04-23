@@ -19,12 +19,13 @@ export const Chat = () => {
         token,
       })
     );
+    setMessage("");
   };
 
   return (
     <div className="flex items-center w-full absolute bottom-0 gap-8  p-4">
       {showMessageInput && (
-        <div className="flex items-center flex-col">
+        <div className="flex items-center flex-col w-full">
           <div
             className="bg-white w-fit rounded-full p-1"
             onClick={() => setShowMessageInput(!showMessageInput)}
@@ -33,7 +34,7 @@ export const Chat = () => {
           </div>
           <div className="w-full flex gap-8 items-center">
             <Input
-              className="bg-white"
+              className="bg-white w-full"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
