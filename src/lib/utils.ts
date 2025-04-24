@@ -6,11 +6,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function rgbaToHex(rgba: string): number {
-  // Extract numbers from the "rgba(r, g, b, a)" string
   const match = rgba.match(/\d+/g)
-  if (!match || match.length < 3) return 0xffffff // Default to white if parsing fails
+  if (!match || match.length < 3) return 0xffffff
 
-  // Convert to hexadecimal
   const [r, g, b] = match.map(Number)
   return (r << 16) | (g << 8) | b
 }
