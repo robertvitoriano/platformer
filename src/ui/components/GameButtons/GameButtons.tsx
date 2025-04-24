@@ -15,16 +15,10 @@ export const GameButtons = () => {
   };
 
   return (
-    <div className="absolute bottom-50 left-0 w-full h-[10%] bg-transparent flex justify-around items-center">
-      <button className="bg-blue-500 text-white p-10 rounded" onClick={moveLeft}>
-        LEFT
-      </button>
-      <button className="bg-blue-500 text-white p-10 rounded" onClick={jump}>
-        JUMP
-      </button>
-      <button className="bg-blue-500 text-white p-10 rounded" onClick={moveRight}>
-        RIGHT
-      </button>
+    <div className="absolute bottom-50 left-0 w-full  bg-transparent flex justify-around items-center">
+      <button className="bg-transparent text-white h-80 w-30 rounded" onClick={moveLeft}></button>
+      <button className="bg-transparent text-white rounded-full h-80 w-20 " onClick={jump}></button>
+      <button className="bg-transparent text-white h-80 w-30 rounded" onClick={moveRight}></button>
     </div>
   );
 };
