@@ -235,8 +235,6 @@ export default class Player {
   }
 
   private walkOnUpdate = () => {
-    console.log("SHOULDE BE MOVING LEFT")
-    console.log("PLAYER MOVING LEFT", usePlayerStore.getState().playerMove)
     if (this.cursors.left.isDown || this.shouldRunLeft) {
       this.sprite.setVelocityX(-this.mainSpeed)
       this.sprite.setFlipX(true)

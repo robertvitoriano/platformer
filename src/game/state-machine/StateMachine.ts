@@ -79,7 +79,7 @@ export default class StateMachine {
 
     this.isChangingState = true
 
-    console.log(
+    console.info(
       `[StateMachine (${this.id})] change from ${this.currentState?.name ?? "none"} to ${name}`
     )
 
