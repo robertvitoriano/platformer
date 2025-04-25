@@ -11,6 +11,7 @@ import { Chat } from "./components/Chat/Chat";
 import { Platforms } from "@/enums/platforms";
 import { GameButtons } from "./components/GameButtons/GameButtons";
 import AudioCaptureButton from "./components/AudioCaptureButton/AudioCaptureButton";
+import AudioPlayer from "./components/AudioPlayer/AudioPlayer";
 
 function App() {
   const webSocketStore = useWebsocketStore();
@@ -32,9 +33,14 @@ function App() {
     <div className="w-[100vw] h-[100vh] flex justify-center items-center relative">
       {!gameStateStore.hasStarted && <LoginForm />}
       {gameStateStore.state === GameStates.PAUSED && <PauseMenu />}
-      {mainStore.platform === Platforms.MOBILE && <GameButtons />}
-      <AudioCaptureButton />
-      <Chat />
+      {mainStore.platform === Platforms.MOBILE && gameStateStore.hasStarted && <GameButtons />}
+      {gameStateStore.hasStarted && (
+        <>
+          <AudioCaptureButton />
+          <AudioPlayer />
+          <Chat />
+        </>
+      )}
     </div>
   );
 }
