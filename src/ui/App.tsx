@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useWebsocketStore } from "../store/websocket-store";
 
 import { useGameStateStore } from "@/store/game-state-store";
@@ -10,15 +10,18 @@ import { useMainStore } from "@/store/main-store";
 import { Chat } from "./components/Chat/Chat";
 import { Platforms } from "@/enums/platforms";
 import { GameButtons } from "./components/GameButtons/GameButtons";
+import AudioCaptureButton from "./components/AudioCaptureButton/AudioCaptureButton";
 
 function App() {
   const webSocketStore = useWebsocketStore();
   const gameStateStore = useGameStateStore();
   const authStore = useAuthStore();
   const mainStore = useMainStore();
+
   useEffect(() => {
     webSocketStore.create();
   }, []);
+
   useEffect(() => {
     if (authStore.token) {
       gameStateStore.setHasStarted(true);
@@ -30,6 +33,7 @@ function App() {
       {!gameStateStore.hasStarted && <LoginForm />}
       {gameStateStore.state === GameStates.PAUSED && <PauseMenu />}
       {mainStore.platform === Platforms.MOBILE && <GameButtons />}
+      <AudioCaptureButton />
       <Chat />
     </div>
   );

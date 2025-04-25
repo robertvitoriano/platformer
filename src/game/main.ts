@@ -1,4 +1,13 @@
 import Phaser from "phaser"
+
+// Extend the Window interface to include custom properties
+declare global {
+  interface Window {
+    localAudio?: HTMLAudioElement
+    localStream?: MediaStream
+  }
+}
+
 import FirstScene from "./scenes/GameScenes/FirstScene/FirstScene"
 import MenuScene from "./scenes/MenuScene"
 import { useGameStateStore } from "@/store/game-state-store"
