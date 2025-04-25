@@ -4,26 +4,23 @@ import React, { useEffect, useRef } from "react";
 
 export const AudioPlayer = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
-  const audioQueueRef = useRef<Blob[]>([]); // Queue to store audio chunks
+  const audioQueueRef = useRef<Blob[]>([]);
   const isPlayingRef = useRef(false);
   const authStore = useAuthStore();
   const { socket } = useWebsocketStore();
+
   useEffect(() => {
     if (!socket) return;
 
     audioContextRef.current = new AudioContext();
 
-    socket.onmessage = (message) => {
-      const data = JSON.parse(message.data);
-
-      if (
-        data.event === "audio_chunk_received" &&
-        data.chunk &&
-        authStore.player?.id !== data.senderId
-      ) {
-        convertAudioChunkToBlob(data);
+    const handleAudioChunkReceived = (data: any) => {
+      if (data.chunk && authStore.player?.id !== data.senderId) {
+        convertAudioChunkToBlob(data.chunk);
       }
     };
+
+    useWebsocketStore.getState().addListener("audio_chunk_received", handleAudioChunkReceived);
 
     const convertAudioChunkToBlob = (chunk: ArrayBuffer) => {
       const blob = new Blob([chunk], { type: "audio/webm" });
@@ -39,6 +36,7 @@ export const AudioPlayer = () => {
         audioContextRef.current.close();
         audioContextRef.current = null;
       }
+      useWebsocketStore.getState().removeListener("audio_chunk_received", handleAudioChunkReceived);
     };
   }, [socket]);
 

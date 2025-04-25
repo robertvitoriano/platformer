@@ -127,42 +127,36 @@ export default class First extends Phaser.Scene {
 
           this.cameras.main.startFollow(this.player.getSprite)
 
-          socket!.onmessage = (message) => {
-            const messageParsed = JSON.parse(message.data)
+          useWebsocketStore
+            .getState()
+            .addListener("set_initial_players_position", (messageParsed) => {
+              const { players } = messageParsed
+              this.otherPlayersInitialData = players.filter(
+                (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
+              )
+              const { position } = players.find(
+                (player: { id: string; position: { x: number; y: number } }) =>
+                  player.id === useAuthStore.getState().player?.id
+              )
 
-            switch (messageParsed.event) {
-              case "set_initial_players_position": {
-                const { players } = messageParsed
-                this.otherPlayersInitialData = players.filter(
-                  (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
-                )
-                const { position } = players.find(
-                  (player: { id: string; position: { x: number; y: number } }) =>
-                    player.id === useAuthStore.getState().player?.id
-                )
+              this.player.getSprite.setX(position.x)
+              this.player.getSprite.setY(position.y)
+            })
 
-                this.player.getSprite.setX(position.x)
-                this.player.getSprite.setY(position.y)
-
-                break
-              }
-              case "update_player_position": {
-                const { position, id, currentState, isFlipped } = messageParsed
-                console.log({ playerId: id, position })
-                if (id !== useAuthStore.getState().player?.id) {
-                  const otherPlayerIndex = this.otherPlayers.findIndex(
-                    (player: any) => player.id === id
-                  )
-                  this.otherPlayers[otherPlayerIndex].getSprite.setX(position.x)
-                  this.otherPlayers[otherPlayerIndex].getSprite.setY(position.y)
-                  this.otherPlayers[otherPlayerIndex].stateMachine.setState(currentState)
-                  this.otherPlayers[otherPlayerIndex].getSprite.setFlipX(isFlipped)
-                  this.otherPlayers[otherPlayerIndex].updateUsernamePosition(position)
-                }
-                break
-              }
+          useWebsocketStore.getState().addListener("update_player_position", (messageParsed) => {
+            const { position, id, currentState, isFlipped } = messageParsed
+            console.log({ playerId: id, position })
+            if (id !== useAuthStore.getState().player?.id) {
+              const otherPlayerIndex = this.otherPlayers.findIndex(
+                (player: any) => player.id === id
+              )
+              this.otherPlayers[otherPlayerIndex].getSprite.setX(position.x)
+              this.otherPlayers[otherPlayerIndex].getSprite.setY(position.y)
+              this.otherPlayers[otherPlayerIndex].stateMachine.setState(currentState)
+              this.otherPlayers[otherPlayerIndex].getSprite.setFlipX(isFlipped)
+              this.otherPlayers[otherPlayerIndex].updateUsernamePosition(position)
             }
-          }
+          })
           break
         }
         case "snowball-shooter": {
