@@ -15,9 +15,10 @@ export const useWebsocketStore = create<WebSocketStore>()((set, get) => ({
     const socket = new WebSocket("ws://localhost:7777/ws")
     socket.onmessage = (message) => {
       const data = JSON.parse(message.data)
-      const eventListener = get().listeners[data.event] || []
-
-      eventListener(data)
+      const eventListener = get().listeners[data.event]
+      if (eventListener) {
+        eventListener(data)
+      }
     }
     set({ socket })
   },
