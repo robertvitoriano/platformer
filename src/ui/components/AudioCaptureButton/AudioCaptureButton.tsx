@@ -17,15 +17,14 @@ function AudioCaptureButton() {
         mediaRecorderRef.current = mediaRecorder;
 
         mediaRecorder.ondataavailable = async (event) => {
-          if (event.data.size > 0 && webSocketStore.socket?.readyState === WebSocket.OPEN) {
+          if (event.data.size > 0) {
             const arrayBuffer = await event.data.arrayBuffer();
-            webSocketStore.socket.send(
-              JSON.stringify({
-                event: GameEmitEvents.AUDIO_CHUNK_SENT,
-                chunk: Array.from(new Uint8Array(arrayBuffer)),
-                token,
-              })
-            );
+
+            webSocketStore.socket!.emit({
+              event: GameEmitEvents.AUDIO_CHUNK_SENT,
+              chunk: Array.from(new Uint8Array(arrayBuffer)),
+              token,
+            });
           }
         };
 

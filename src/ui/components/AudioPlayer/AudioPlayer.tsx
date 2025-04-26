@@ -51,7 +51,7 @@ export const useAudioPlayer = () => {
       }
     };
 
-    useWebsocketStore.getState().addListener("audio_chunk_received", handleAudioChunkReceived);
+    socket!.on("audio_chunk_received", handleAudioChunkReceived);
 
     return () => {
       if (audioRef.current) {

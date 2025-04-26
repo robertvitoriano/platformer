@@ -102,15 +102,13 @@ export default class First extends Phaser.Scene {
         case "spawn-position": {
           const playerXPosition = (x + width) / 2
 
-          const socket = useWebsocketStore.getState().socket
+          const { socket } = useWebsocketStore.getState()
 
-          socket?.send(
-            JSON.stringify({
-              event: GameEmitEvents.START_GAME,
-              token: useAuthStore.getState().token,
-              position: { x: playerXPosition, y },
-            })
-          )
+          socket?.emit({
+            event: GameEmitEvents.START_GAME,
+            token: useAuthStore.getState().token,
+            position: { x: playerXPosition, y },
+          })
 
           this.penguin = this.matter.add
             .sprite(playerXPosition, y, "penguin-animation-frames")
@@ -126,24 +124,23 @@ export default class First extends Phaser.Scene {
           )
 
           this.cameras.main.startFollow(this.player.getSprite)
+          const webSocketStore = useWebsocketStore.getState()
 
-          useWebsocketStore
-            .getState()
-            .addListener("set_initial_players_position", (messageParsed) => {
-              const { players } = messageParsed
-              this.otherPlayersInitialData = players.filter(
-                (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
-              )
-              const { position } = players.find(
-                (player: { id: string; position: { x: number; y: number } }) =>
-                  player.id === useAuthStore.getState().player?.id
-              )
+          webSocketStore.socket!.on("set_initial_players_position", (messageParsed) => {
+            const { players } = messageParsed
+            this.otherPlayersInitialData = players.filter(
+              (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
+            )
+            const { position } = players.find(
+              (player: { id: string; position: { x: number; y: number } }) =>
+                player.id === useAuthStore.getState().player?.id
+            )
 
-              this.player.getSprite.setX(position.x)
-              this.player.getSprite.setY(position.y)
-            })
+            this.player.getSprite.setX(position.x)
+            this.player.getSprite.setY(position.y)
+          })
 
-          useWebsocketStore.getState().addListener("update_player_position", (messageParsed) => {
+          webSocketStore.socket!.on("update_player_position", (messageParsed) => {
             const { position, id, currentState, isFlipped } = messageParsed
             console.log({ playerId: id, position })
             if (id !== useAuthStore.getState().player?.id) {

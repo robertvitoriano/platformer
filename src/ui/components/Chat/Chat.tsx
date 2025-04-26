@@ -12,13 +12,11 @@ export const Chat = () => {
   const { token } = useAuthStore();
 
   const sendMessage = () => {
-    socket?.send(
-      JSON.stringify({
-        event: GameEmitEvents.MESSAGE_SENT,
-        message,
-        token,
-      })
-    );
+    socket?.emit({
+      event: GameEmitEvents.MESSAGE_SENT,
+      message,
+      token,
+    });
     setMessage("");
   };
 

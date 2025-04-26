@@ -254,27 +254,23 @@ export default class Player {
     const token = useAuthStore.getState().token
     const position = { x: this.sprite.x, y: this.sprite.y }
 
-    socket?.send(
-      JSON.stringify({
+    socket?.emit({
+      isFlipped: this.sprite.flipX,
+      event: GameEmitEvents.PLAYER_MOVED,
+      currentState: this.stateMachine.getCurrentState()?.name,
+      position,
+      token,
+    })
+
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.space) || this.hasTouchedJump) {
+      this.stateMachine.setState("jump")
+      socket?.emit({
         isFlipped: this.sprite.flipX,
         event: GameEmitEvents.PLAYER_MOVED,
         currentState: this.stateMachine.getCurrentState()?.name,
         position,
         token,
       })
-    )
-
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.space) || this.hasTouchedJump) {
-      this.stateMachine.setState("jump")
-      socket?.send(
-        JSON.stringify({
-          isFlipped: this.sprite.flipX,
-          event: GameEmitEvents.PLAYER_MOVED,
-          currentState: this.stateMachine.getCurrentState()?.name,
-          position,
-          token,
-        })
-      )
     }
     if (!this.isTouchingGround) {
       this.sprite.scene.sound.stopByKey("foot-steps-sound")
