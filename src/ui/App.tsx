@@ -39,7 +39,7 @@ function App() {
       {gameStateStore.hasStarted && (
         <>
           <AudioCaptureButton />
-          <Chat />
+          {/* <Chat /> */}
         </>
       )}
     </div>
