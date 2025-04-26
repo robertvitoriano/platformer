@@ -11,13 +11,15 @@ import { Chat } from "./components/Chat/Chat";
 import { Platforms } from "@/enums/platforms";
 import { GameButtons } from "./components/GameButtons/GameButtons";
 import AudioCaptureButton from "./components/AudioCaptureButton/AudioCaptureButton";
-import AudioPlayer from "./components/AudioPlayer/AudioPlayer";
+import { useAudioPlayer } from "./components/AudioPlayer/AudioPlayer";
 
 function App() {
   const webSocketStore = useWebsocketStore();
   const gameStateStore = useGameStateStore();
   const authStore = useAuthStore();
   const mainStore = useMainStore();
+
+  useAudioPlayer();
 
   useEffect(() => {
     webSocketStore.create();
@@ -37,7 +39,6 @@ function App() {
       {gameStateStore.hasStarted && (
         <>
           <AudioCaptureButton />
-          <AudioPlayer />
           <Chat />
         </>
       )}

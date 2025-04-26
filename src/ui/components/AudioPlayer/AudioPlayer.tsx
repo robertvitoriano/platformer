@@ -1,71 +1,70 @@
+import { useEffect, useRef } from "react";
 import { useAuthStore } from "@/store/auth-store";
 import { useWebsocketStore } from "@/store/websocket-store";
-import React, { useEffect, useRef } from "react";
 
-export const AudioPlayer = () => {
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const audioQueueRef = useRef<Blob[]>([]);
-  const isPlayingRef = useRef(false);
+export const useAudioPlayer = () => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const mediaSourceRef = useRef<MediaSource | null>(null);
+  const sourceBufferRef = useRef<SourceBuffer | null>(null);
+  const queueRef = useRef<Uint8Array[]>([]);
   const authStore = useAuthStore();
   const { socket } = useWebsocketStore();
 
   useEffect(() => {
     if (!socket) return;
 
-    audioContextRef.current = new AudioContext();
+    const mediaSource = new MediaSource();
+    mediaSourceRef.current = mediaSource;
+
+    const audio = new Audio();
+    audioRef.current = audio;
+    audio.src = URL.createObjectURL(mediaSource);
+    audio.autoplay = true;
+    audio.play().catch(() => {});
+
+    mediaSource.addEventListener("sourceopen", () => {
+      const sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
+      sourceBufferRef.current = sourceBuffer;
+
+      sourceBuffer.addEventListener("updateend", processQueue);
+    });
 
     const handleAudioChunkReceived = (data: any) => {
-      if (data.chunk && authStore.player?.id !== data.senderId) {
-        convertAudioChunkToBlob(data.chunk);
+      if (!data.chunk || authStore.player?.id === data.senderId) return;
+
+      const uint8Array = new Uint8Array(data.chunk);
+      queueRef.current.push(uint8Array);
+      processQueue();
+    };
+
+    const processQueue = () => {
+      const sourceBuffer = sourceBufferRef.current;
+      if (!sourceBuffer || sourceBuffer.updating || queueRef.current.length === 0) return;
+
+      const chunk = queueRef.current.shift();
+      if (chunk) {
+        try {
+          sourceBuffer.appendBuffer(chunk);
+        } catch (e) {
+          console.error("appendBuffer error:", e);
+        }
       }
     };
 
     useWebsocketStore.getState().addListener("audio_chunk_received", handleAudioChunkReceived);
 
-    const convertAudioChunkToBlob = (chunk: ArrayBuffer) => {
-      const blob = new Blob([chunk], { type: "audio/webm" });
-      audioQueueRef.current.push(blob);
-
-      if (!isPlayingRef.current) {
-        playAudioChunks();
-      }
-    };
-
     return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-        audioContextRef.current = null;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
       }
-      useWebsocketStore.getState().removeListener("audio_chunk_received", handleAudioChunkReceived);
+      if (mediaSourceRef.current) {
+        mediaSourceRef.current = null;
+      }
+      if (sourceBufferRef.current) {
+        sourceBufferRef.current = null;
+      }
+      useWebsocketStore.getState().removeListener("audio_chunk_received");
     };
   }, [socket]);
-
-  const playAudioChunks = async () => {
-    if (!audioContextRef.current) return;
-
-    isPlayingRef.current = true;
-
-    while (audioQueueRef.current.length > 0) {
-      const audioBlob = audioQueueRef.current.shift();
-      if (!audioBlob) continue;
-
-      const arrayBuffer = await audioBlob.arrayBuffer();
-      const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
-
-      const source = audioContextRef.current.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(audioContextRef.current.destination);
-      source.start();
-
-      await new Promise((resolve) => {
-        source.onended = resolve;
-      });
-    }
-
-    isPlayingRef.current = false;
-  };
-
-  return <div>Listening to audio stream...</div>;
 };
-
-export default AudioPlayer;

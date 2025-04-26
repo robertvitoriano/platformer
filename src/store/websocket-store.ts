@@ -5,7 +5,7 @@ type WebSocketStore = {
   listeners: { [event: string]: (data: any) => void }
   create: () => void
   addListener: (event: string, callback: (data: any) => void) => void
-  removeListener: (event: string, callback: (data: any) => void) => void
+  removeListener: (event: string) => void
 }
 
 export const useWebsocketStore = create<WebSocketStore>()((set, get) => ({
@@ -16,6 +16,7 @@ export const useWebsocketStore = create<WebSocketStore>()((set, get) => ({
     socket.onmessage = (message) => {
       const data = JSON.parse(message.data)
       const eventListener = get().listeners[data.event] || []
+
       eventListener(data)
     }
     set({ socket })
