@@ -30,7 +30,7 @@ function AudioCaptureButton() {
         };
 
         mediaRecorder.start(100);
-        setIsCapturing(true);
+        setIsCapturing(!isCapturing);
       })
       .catch((err) => {
         console.error("Error capturing audio:", err);
@@ -43,7 +43,7 @@ function AudioCaptureButton() {
       mediaRecorderRef.current = null;
     }
 
-    setIsCapturing(false);
+    setIsCapturing(!isCapturing);
   };
 
   const handleButtonClick = () => {
