@@ -18,20 +18,29 @@ function AudioCaptureButton() {
 
   useEffect(() => {
     if (peer) {
-      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-        stream.getTracks().forEach((track) => peer.addTrack(track, stream));
-      });
-      peer.ontrack = (event) => {
-        const remoteAudio = document.getElementById("remoteAudio") as HTMLMediaElement;
-        remoteAudio.srcObject = event.streams[0];
-      };
-      peer.onicecandidate = ({ candidate }) => {
-        if (candidate) {
-          socket!.emit({ event: GameEmitEvents.WEBRTC_CANDIDATE_SENT, candidate, token });
-        }
-      };
+      registerPeerEvents();
     }
+    registerSocketEvents();
+  }, [peer]);
 
+  const registerPeerEvents = () => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      stream.getTracks().forEach((track) => peer!.addTrack(track, stream));
+    });
+
+    peer?.addEventListener("track", (event) => {
+      const remoteAudio = document.getElementById("remoteAudio") as HTMLMediaElement;
+      remoteAudio.srcObject = event.streams[0];
+    });
+
+    peer?.addEventListener("icecandidate", ({ candidate }) => {
+      if (candidate) {
+        socket!.emit({ event: GameEmitEvents.WEBRTC_CANDIDATE_SENT, candidate, token });
+      }
+    });
+  };
+
+  const registerSocketEvents = () => {
     socket?.on(GameReceiveEvents.WEBRTC_OFFER_RECEIVED, async (message) => {
       if (message.offer && peer) {
         await peer.setRemoteDescription(new RTCSessionDescription(message.offer));
@@ -50,7 +59,7 @@ function AudioCaptureButton() {
         await peer.addIceCandidate(new RTCIceCandidate(message.candidate));
       }
     });
-  }, [peer]);
+  };
 
   const startAudioCapture = async () => {
     setIsCapturing(!isCapturing);
