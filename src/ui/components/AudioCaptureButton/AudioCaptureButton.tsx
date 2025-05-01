@@ -11,23 +11,22 @@ function AudioCaptureButton() {
   const [peer, setPeer] = useState<RTCPeerConnection | null>(null);
 
   useEffect(() => {
-    setPeer(new RTCPeerConnection());
+    if (!peer) {
+      setPeer(new RTCPeerConnection());
+    }
   }, []);
 
   useEffect(() => {
     if (peer) {
-      const remoteAudio = document.getElementById("remoteAudio") as HTMLMediaElement;
       navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
         stream.getTracks().forEach((track) => peer.addTrack(track, stream));
       });
-      if (isCapturing) {
-        peer.ontrack = (event) => {
-          remoteAudio.srcObject = event.streams[0];
-        };
-      }
+      peer.ontrack = (event) => {
+        const remoteAudio = document.getElementById("remoteAudio") as HTMLMediaElement;
+        remoteAudio.srcObject = event.streams[0];
+      };
       peer.onicecandidate = ({ candidate }) => {
         if (candidate) {
-          console.log({ candidate });
           socket!.emit({ event: GameEmitEvents.WEBRTC_CANDIDATE_SENT, candidate, token });
         }
       };
@@ -39,7 +38,6 @@ function AudioCaptureButton() {
         const answer = await peer.createAnswer();
         await peer.setLocalDescription(answer);
         socket!.emit({ event: GameEmitEvents.WEBRTC_ANSWER_SENT, answer, token });
-        console.log({ answer });
       }
     });
     socket?.on(GameReceiveEvents.WEBRTC_ANSWER_RECEIVED, async (message) => {
@@ -60,7 +58,7 @@ function AudioCaptureButton() {
     if (peer) {
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
-      console.log({ offer });
+
       socket!.emit({
         event: GameEmitEvents.WEBRTC_OFFER_SENT,
         token,
