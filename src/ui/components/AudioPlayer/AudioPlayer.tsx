@@ -39,7 +39,17 @@ export const useAudioPlayer = () => {
 
     const processQueue = () => {
       const sourceBuffer = sourceBufferRef.current;
-      if (!sourceBuffer || sourceBuffer.updating || queueRef.current.length === 0) return;
+      const mediaSource = mediaSourceRef.current;
+
+      if (
+        !sourceBuffer ||
+        !mediaSource ||
+        mediaSource.readyState !== "open" ||
+        sourceBuffer.updating ||
+        queueRef.current.length === 0
+      ) {
+        return;
+      }
 
       const chunk = queueRef.current.shift();
       if (chunk) {
@@ -59,9 +69,11 @@ export const useAudioPlayer = () => {
         audioRef.current.src = "";
       }
       if (mediaSourceRef.current) {
+        mediaSourceRef.current.removeEventListener("sourceopen", processQueue);
         mediaSourceRef.current = null;
       }
       if (sourceBufferRef.current) {
+        sourceBufferRef.current.removeEventListener("updateend", processQueue);
         sourceBufferRef.current = null;
       }
       useWebsocketStore.getState().removeListener("audio_chunk_received");
