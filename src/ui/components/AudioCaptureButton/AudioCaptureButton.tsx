@@ -1,7 +1,7 @@
 import { GameEmitEvents } from "@/enums/game-events";
 import { useAuthStore } from "@/store/auth-store";
 import { useWebsocketStore } from "@/store/websocket-store";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Mic, Pause } from "lucide-react";
 function AudioCaptureButton() {
   const [isCapturing, setIsCapturing] = useState(false);
@@ -55,7 +55,7 @@ function AudioCaptureButton() {
 
   return (
     <div
-      className={`w-12 h-12  bg-blue-500 text-white  absolute left-10  bottom-10 cursor-pointer rounded-full flex justify-center items-center ${
+      className={`w-12 h-12  bg-blue-500 text-white  absolute left-10  bottom-30 cursor-pointer rounded-full flex justify-center items-center ${
         isCapturing ? "bg-red-500" : ""
       }`}
       onClick={handleButtonClick}
