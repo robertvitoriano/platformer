@@ -93,8 +93,22 @@ export default class First extends Phaser.Scene {
     ground?.setCollisionByProperty({ collides: true })
 
     const objectsLayer = map.getObjectLayer("objects")
+    const itemsLayer = map.getObjectLayer("items")
+    const enemiesLayer = map.getObjectLayer("enemies")
     this.uiLayer = this.add.container()
 
+    itemsLayer?.objects.forEach((objectData, index) => {
+      const { x = 0, y = 0, name, width = 0 } = objectData
+
+      switch (name.trim()) {
+        case "blue-coin-hexagon": {
+          const coin = this.matter.add.sprite(x + width / 2, y, "blue-hexagon-coin")
+          this.coins?.push(new PickupItem(coin, "blue-hexagon-coin-rotation"))
+
+          break
+        }
+      }
+    })
     objectsLayer?.objects.forEach((objectData, index) => {
       const { x = 0, y = 0, name, width = 0 } = objectData
 
@@ -156,6 +170,12 @@ export default class First extends Phaser.Scene {
           })
           break
         }
+      }
+    })
+
+    enemiesLayer?.objects.forEach((objectsData, index) => {
+      const { x = 0, y = 0, name, width = 0 } = objectsData
+      switch (name.trim()) {
         case "snowball-shooter": {
           const width = 255
           const height = 235
@@ -189,12 +209,6 @@ export default class First extends Phaser.Scene {
             enemyConfig.shrinkProportion
           )
           this.yellowAliens.push(enemy)
-
-          break
-        }
-        case "blue-coin-hexagon": {
-          const coin = this.matter.add.sprite(x + width / 2, y, "blue-hexagon-coin")
-          this.coins?.push(new PickupItem(coin, "blue-hexagon-coin-rotation"))
 
           break
         }

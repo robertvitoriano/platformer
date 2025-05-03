@@ -45,6 +45,7 @@ function AudioCaptureButton() {
       if (message.offer && peer) {
         await peer.setRemoteDescription(new RTCSessionDescription(message.offer));
         const answer = await peer.createAnswer();
+
         await peer.setLocalDescription(answer);
         socket!.emit({ event: GameEmitEvents.WEBRTC_ANSWER_SENT, answer, token });
       }
