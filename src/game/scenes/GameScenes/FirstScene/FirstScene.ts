@@ -8,6 +8,7 @@ import { useGameStateStore } from "@/store/game-state-store"
 import { GameStates } from "@/enums/game-states"
 import { GameEmitEvents } from "@/enums/game-events"
 import { useAuthStore } from "@/store/auth-store"
+import { getLevel } from "@/services/level-service"
 
 export default class First extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -32,6 +33,7 @@ export default class First extends Phaser.Scene {
 
   init() {
     this.cursors = this.input?.keyboard?.createCursorKeys()!
+    
   }
 
   preload() {
@@ -80,6 +82,8 @@ export default class First extends Phaser.Scene {
   }
 
   create() {
+    this.registerWebsocketEvents()
+    
     const map = this.make.tilemap({ key: "penguin-game-tilemap" })
 
     const bg = this.add.tileSprite(0, 0, map.widthInPixels, map.heightInPixels, "bg")
@@ -95,20 +99,10 @@ export default class First extends Phaser.Scene {
     const objectsLayer = map.getObjectLayer("objects")
     const itemsLayer = map.getObjectLayer("items")
     const enemiesLayer = map.getObjectLayer("enemies")
+    
     this.uiLayer = this.add.container()
 
-    itemsLayer?.objects.forEach((objectData, index) => {
-      const { x = 0, y = 0, name, width = 0 } = objectData
 
-      switch (name.trim()) {
-        case "blue-coin-hexagon": {
-          const coin = this.matter.add.sprite(x + width / 2, y, "blue-hexagon-coin")
-          this.coins?.push(new PickupItem(coin, "blue-hexagon-coin-rotation"))
-
-          break
-        }
-      }
-    })
     objectsLayer?.objects.forEach((objectData, index) => {
       const { x = 0, y = 0, name, width = 0 } = objectData
 
@@ -138,41 +132,25 @@ export default class First extends Phaser.Scene {
           )
 
           this.cameras.main.startFollow(this.player.getSprite)
-          const webSocketStore = useWebsocketStore.getState()
 
-          webSocketStore.socket!.on("set_initial_players_position", (messageParsed) => {
-            const { players } = messageParsed
-            this.otherPlayersInitialData = players.filter(
-              (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
-            )
-            const { position } = players.find(
-              (player: { id: string; position: { x: number; y: number } }) =>
-                player.id === useAuthStore.getState().player?.id
-            )
-
-            this.player.getSprite.setX(position.x)
-            this.player.getSprite.setY(position.y)
-          })
-
-          webSocketStore.socket!.on("update_player_position", (messageParsed) => {
-            const { position, id, currentState, isFlipped } = messageParsed
-            console.log({ playerId: id, position })
-            if (id !== useAuthStore.getState().player?.id) {
-              const otherPlayerIndex = this.otherPlayers.findIndex(
-                (player: any) => player.id === id
-              )
-              this.otherPlayers[otherPlayerIndex].getSprite.setX(position.x)
-              this.otherPlayers[otherPlayerIndex].getSprite.setY(position.y)
-              this.otherPlayers[otherPlayerIndex].stateMachine.setState(currentState)
-              this.otherPlayers[otherPlayerIndex].getSprite.setFlipX(isFlipped)
-              this.otherPlayers[otherPlayerIndex].updateUsernamePosition(position)
-            }
-          })
           break
         }
       }
     })
+    
+    itemsLayer?.objects.forEach((objectData, index) => {
+      const { x = 0, y = 0, name, width = 0 } = objectData
 
+      switch (name.trim()) {
+        case "blue-coin-hexagon": {
+          const coin = this.matter.add.sprite(x + width / 2, y, "blue-hexagon-coin")
+          this.coins?.push(new PickupItem(coin, "blue-hexagon-coin-rotation"))
+
+          break
+        }
+      }
+    })
+    
     enemiesLayer?.objects.forEach((objectsData, index) => {
       const { x = 0, y = 0, name, width = 0 } = objectsData
       switch (name.trim()) {
@@ -262,5 +240,38 @@ export default class First extends Phaser.Scene {
         )
       }
     }
+  }
+  
+  private registerWebsocketEvents(){
+    const webSocketStore = useWebsocketStore.getState()
+
+    webSocketStore.socket!.on("set_initial_players_position", (messageParsed) => {
+      const { players } = messageParsed
+      this.otherPlayersInitialData = players.filter(
+        (player: { id: string }) => player.id !== useAuthStore.getState().player?.id
+      )
+      const { position } = players.find(
+        (player: { id: string; position: { x: number; y: number } }) =>
+          player.id === useAuthStore.getState().player?.id
+      )
+
+      this.player.getSprite.setX(position.x)
+      this.player.getSprite.setY(position.y)
+    })
+
+    webSocketStore.socket!.on("update_player_position", (messageParsed) => {
+      const { position, id, currentState, isFlipped } = messageParsed
+      console.log({ playerId: id, position })
+      if (id !== useAuthStore.getState().player?.id) {
+        const otherPlayerIndex = this.otherPlayers.findIndex(
+          (player: any) => player.id === id
+        )
+        this.otherPlayers[otherPlayerIndex].getSprite.setX(position.x)
+        this.otherPlayers[otherPlayerIndex].getSprite.setY(position.y)
+        this.otherPlayers[otherPlayerIndex].stateMachine.setState(currentState)
+        this.otherPlayers[otherPlayerIndex].getSprite.setFlipX(isFlipped)
+        this.otherPlayers[otherPlayerIndex].updateUsernamePosition(position)
+      }
+    })
   }
 }
