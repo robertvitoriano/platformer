@@ -81,7 +81,7 @@ export default class First extends Phaser.Scene {
     this.load.image("snowball", "assets/enemy/snow-ball-shooter-animation/snowball.png")
   }
 
-  create() {
+   create() {
     this.registerWebsocketEvents()
     
     const map = this.make.tilemap({ key: "penguin-game-tilemap" })
@@ -97,11 +97,65 @@ export default class First extends Phaser.Scene {
     ground?.setCollisionByProperty({ collides: true })
 
     const objectsLayer = map.getObjectLayer("objects")
-    const itemsLayer = map.getObjectLayer("items")
-    const enemiesLayer = map.getObjectLayer("enemies")
-    
-    this.uiLayer = this.add.container()
 
+    this.uiLayer = this.add.container()
+    
+     getLevel().then(({items, enemies:mapEnemies})=>{
+      items.forEach((item, index) => {
+        const { position:{x,y}, name, size:{width, height}, id } = item
+  
+        switch (name.trim()) {
+          case "blue-coin-hexagon": {
+            const coin = this.matter.add.sprite(x + width / 2, y, "blue-hexagon-coin")
+            this.coins?.push(new PickupItem(coin, "blue-hexagon-coin-rotation"))
+  
+            break
+          }
+        }
+      })
+      
+      mapEnemies.forEach((enemy, index) => {
+        const { position:{x,y}, name, size:{width}, id } = enemy
+        switch (name.trim()) {
+          case "snowball-shooter": {
+            const width = 255
+            const height = 235
+  
+            const enemyConfig = enemies.snowBallShooter(index)
+            const snowBallshooterSprite = this.matter.add
+              .sprite(x + width / 2, y, enemyConfig.framesKey)
+              .setFixedRotation()
+              .setScale(72 / width, 64 / height)
+  
+            const enemy = new Enemy(
+              enemyConfig.id,
+              snowBallshooterSprite,
+              enemyConfig.animations,
+              enemyConfig.shrinkProportion
+            )
+            this.snowBallShooters.push(enemy)
+  
+            break
+          }
+          case "yellow-alien": {
+            const enemyConfig = enemies.yellowAlien(index)
+            const yellowAlienSprite = this.matter.add
+              .sprite(x + width / 2, y, enemyConfig.framesKey)
+              .setFixedRotation()
+  
+            const enemy = new Enemy(
+              enemyConfig.id,
+              yellowAlienSprite,
+              enemyConfig.animations,
+              enemyConfig.shrinkProportion
+            )
+            this.yellowAliens.push(enemy)
+  
+            break
+          }
+        }
+      })
+     })
 
     objectsLayer?.objects.forEach((objectData, index) => {
       const { x = 0, y = 0, name, width = 0 } = objectData
@@ -138,61 +192,6 @@ export default class First extends Phaser.Scene {
       }
     })
     
-    itemsLayer?.objects.forEach((objectData, index) => {
-      const { x = 0, y = 0, name, width = 0 } = objectData
-
-      switch (name.trim()) {
-        case "blue-coin-hexagon": {
-          const coin = this.matter.add.sprite(x + width / 2, y, "blue-hexagon-coin")
-          this.coins?.push(new PickupItem(coin, "blue-hexagon-coin-rotation"))
-
-          break
-        }
-      }
-    })
-    
-    enemiesLayer?.objects.forEach((objectsData, index) => {
-      const { x = 0, y = 0, name, width = 0 } = objectsData
-      switch (name.trim()) {
-        case "snowball-shooter": {
-          const width = 255
-          const height = 235
-
-          const enemyConfig = enemies.snowBallShooter(index)
-          const snowBallshooterSprite = this.matter.add
-            .sprite(x + width / 2, y, enemyConfig.framesKey)
-            .setFixedRotation()
-            .setScale(72 / width, 64 / height)
-
-          const enemy = new Enemy(
-            enemyConfig.id,
-            snowBallshooterSprite,
-            enemyConfig.animations,
-            enemyConfig.shrinkProportion
-          )
-          this.snowBallShooters.push(enemy)
-
-          break
-        }
-        case "yellow-alien": {
-          const enemyConfig = enemies.yellowAlien(index)
-          const yellowAlienSprite = this.matter.add
-            .sprite(x + width / 2, y, enemyConfig.framesKey)
-            .setFixedRotation()
-
-          const enemy = new Enemy(
-            enemyConfig.id,
-            yellowAlienSprite,
-            enemyConfig.animations,
-            enemyConfig.shrinkProportion
-          )
-          this.yellowAliens.push(enemy)
-
-          break
-        }
-      }
-    })
-
     this.matter.world.convertTilemapLayer(ground!)
     this.sound.play("background-music", { loop: true, volume: 0.3 })
   }
