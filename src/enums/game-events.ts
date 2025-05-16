@@ -17,6 +17,7 @@ export const GameReceiveEvents = {
   WEBRTC_OFFER_RECEIVED: "webrtc_offer_received",
   WEBRTC_ANSWER_RECEIVED: "webrtc_answer_received",
   WEBRTC_CANDIDATE_RECEIVED: "webrtc_candidate_received",
+  PLAYER_NOT_FOUND: "player_not_found"
 } as const
 
 export type GameReceiveEvent = (typeof GameReceiveEvents)[keyof typeof GameReceiveEvents]

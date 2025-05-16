@@ -26,7 +26,7 @@ export const useWebsocketStore = create<WebSocketStore>()((set, get) => ({
         const eventDataParsed = JSON.stringify(event)
         this._webSocketInstance.send(eventDataParsed)
       },
-      _webSocketInstance: new WebSocket("ws://localhost:7777/ws"),
+      _webSocketInstance: new WebSocket(`${import.meta.env.VITE_API_URL}/ws`),
     }
 
     socket._webSocketInstance.addEventListener("message", (message) => {

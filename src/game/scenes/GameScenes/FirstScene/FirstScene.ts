@@ -6,7 +6,7 @@ import { enemies } from "./../../../config/EnemyConfig"
 import { useWebsocketStore } from "../../../../store/websocket-store"
 import { useGameStateStore } from "@/store/game-state-store"
 import { GameStates } from "@/enums/game-states"
-import { GameEmitEvents } from "@/enums/game-events"
+import { GameEmitEvents, GameReceiveEvents } from "@/enums/game-events"
 import { useAuthStore } from "@/store/auth-store"
 import { getLevel } from "@/services/level-service"
 
@@ -89,7 +89,9 @@ export default class First extends Phaser.Scene {
     const bg = this.add.tileSprite(0, 0, map.widthInPixels, map.heightInPixels, "bg")
     bg.setOrigin(0, 0)
     const tileSet = map.addTilesetImage("iceworld", "tiles")
+    
     const tilesetHeight = map.heightInPixels
+    
     this.cameras.main.setBounds(0, 0, map.widthInPixels, tilesetHeight)
     this.cameras.main.scrollY = tilesetHeight
 
@@ -257,7 +259,10 @@ export default class First extends Phaser.Scene {
       this.player.getSprite.setX(position.x)
       this.player.getSprite.setY(position.y)
     })
-
+    webSocketStore.socket!.on(GameReceiveEvents.PLAYER_NOT_FOUND, () => {
+      localStorage.clear()
+      location.reload()
+    })
     webSocketStore.socket!.on("update_player_position", (messageParsed) => {
       const { position, id, currentState, isFlipped } = messageParsed
       console.log({ playerId: id, position })
