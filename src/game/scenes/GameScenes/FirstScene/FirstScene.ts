@@ -265,7 +265,7 @@ export default class First extends Phaser.Scene {
     })
     webSocketStore.socket!.on("update_player_position", (messageParsed) => {
       const { position, id, currentState, isFlipped } = messageParsed
-      console.log({ playerId: id, position })
+      
       if (id !== useAuthStore.getState().player?.id) {
         const otherPlayerIndex = this.otherPlayers.findIndex(
           (player: any) => player.id === id

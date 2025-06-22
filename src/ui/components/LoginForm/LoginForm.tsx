@@ -15,7 +15,7 @@ export const LoginForm = () => {
     const { username } = form.getValues();
     
     const { player, token } = await createPlayer({ username });
-    
+
     authStore.setToken(token);
     authStore.setPlayer(player);
     
