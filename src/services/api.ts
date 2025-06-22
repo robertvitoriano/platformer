@@ -23,8 +23,8 @@ api.interceptors.response.use(
       error.response.status === 401 &&
       !error.request.responseURL.includes("/log-out")
     ) {
+      console.error("Error response", error.response)
       localStorage.clear()
-      //window.location.href = "/auth/sign-in";
     }
     return Promise.reject(error)
   }
