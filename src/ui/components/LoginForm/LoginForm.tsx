@@ -12,14 +12,14 @@ export const LoginForm = () => {
   const authStore = useAuthStore();
 
   const onSubmit = async () => {
-    gameStateStore.setHasStarted(true);
     const { username } = form.getValues();
-
+    
     const { player, token } = await createPlayer({ username });
-
-    if (token) authStore.setToken(token);
-
+    
+    authStore.setToken(token);
     authStore.setPlayer(player);
+    
+    gameStateStore.setHasStarted(true);
   };
 
   return (
